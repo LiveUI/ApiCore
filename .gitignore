@@ -8,8 +8,10 @@ Config/secrets
 Packages
 .build
 xcuserdata
-*.xcodeproj
 DerivedData/
 .DS_Store
+*_Info.plist
 
-# End of https://www.gitignore.io/api/vapor
+/ApiCore.xcodeproj/GeneratedModuleMap
+/ApiCore.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+/ApiCore.xcodeproj/xcshareddata/xcschemes/xcschememanagement.plist

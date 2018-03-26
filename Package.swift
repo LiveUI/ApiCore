@@ -20,6 +20,17 @@ let package = Package(
         .package(url: "https://github.com/LiveUI/FluentTestTools.git", .branch("master"))
     ],
     targets: [
+        .target(
+            name: "App",
+            dependencies: [
+                "Vapor",
+                "ApiCore"
+            ]
+        ),
+        .target(name: "Run", dependencies: [
+            "App"
+            ]
+        ),
         .target(name: "ApiCore", dependencies: [
             "Vapor",
             "Fluent",
