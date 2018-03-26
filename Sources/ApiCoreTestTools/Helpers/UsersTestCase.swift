@@ -35,7 +35,7 @@ extension UsersTestCase {
         user1 = User.testable.createSu(on: app)
         _ = try! adminTeam.users.attach(user1, on: req).wait()
         
-        let authenticationCache = try! app.make(AuthenticationCache.self, for: Request.self)
+        let authenticationCache = try! app.make(AuthenticationCache.self)
         authenticationCache[User.self] = user1
         
         user2 = User.testable.create(on: app)
