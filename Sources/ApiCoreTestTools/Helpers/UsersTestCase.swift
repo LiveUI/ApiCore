@@ -16,6 +16,7 @@ import FluentTestTools
 public protocol UsersTestCase: class {
     var app: Application! { get }
     
+    var adminTeam: Team! { get set }
     var user1: User! { get set }
     var user2: User! { get set }
 }
@@ -30,7 +31,7 @@ extension UsersTestCase {
         
         let req = app.testable.fakeRequest()
         
-        let adminTeam = Team.testable.create("Admin team", on: app)
+        adminTeam = Team.testable.create("Admin team", admin: true, on: app)
         
         user1 = User.testable.createSu(on: app)
         _ = try! adminTeam.users.attach(user1, on: req).wait()

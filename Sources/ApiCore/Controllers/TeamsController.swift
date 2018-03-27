@@ -21,6 +21,7 @@ class TeamsController: Controller {
         case userAlreadyMember
         case userNotMember
         case youAreTheLastUser
+        case unableToDeleteAdminTeam
         
         var code: String {
             return "team_error"
@@ -38,6 +39,8 @@ class TeamsController: Controller {
                 return "User is not a member of the team"
             case .youAreTheLastUser:
                 return "You are the last user in this team; Please delete the team instead"
+            case .unableToDeleteAdminTeam:
+                return "Can't delete admin team"
             }
         }
         
@@ -45,13 +48,7 @@ class TeamsController: Controller {
             switch self {
             case .userNotFound:
                 return .notFound
-            case .cantAddYourself:
-                return .conflict
-            case .userAlreadyMember:
-                return .conflict
-            case .userNotMember:
-                return .conflict
-            case .youAreTheLastUser:
+            case .cantAddYourself, .userAlreadyMember, .userNotMember, .youAreTheLastUser, .unableToDeleteAdminTeam:
                 return .conflict
             }
         }
@@ -165,13 +162,13 @@ class TeamsController: Controller {
                     if let canDelete = ApiCore.deleteTeamWarning {
                         return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
                             guard let error = error else {
-                                return delete(team: team, request: req)
+                                return try delete(team: team, request: req)
                             }
                             throw error
                         })
                     }
                     else {
-                        return delete(team: team, request: req)
+                        return try delete(team: team, request: req)
                     }
                 }).catchMap { (error) -> Response in
                     throw ErrorsCore.HTTPError.notFound
@@ -184,7 +181,11 @@ class TeamsController: Controller {
 
 extension TeamsController {
     
-    private static func delete(team: Team, request req: Request) -> Future<Response> {
+    private static func delete(team: Team, request req: Request) throws -> Future<Response> {
+        if team.admin {
+            throw TeamError.unableToDeleteAdminTeam
+        }
+        // TODO: Cascade through all team data (that is not shared with other teams, possibly dleete users too?) !!!!!!
         return team.delete(on: req).map(to: Response.self, { (_) -> Response in
             return try req.response.deleted()
         })

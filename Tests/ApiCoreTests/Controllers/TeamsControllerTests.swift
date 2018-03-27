@@ -19,6 +19,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
     
     var app: Application!
     
+    var adminTeam: Team!
     var team1: Team!
     var team2: Team!
     
@@ -37,6 +38,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         ("testUpdateSingleTeam", testUpdateSingleTeam),
         ("testPatchSingleTeam", testPatchSingleTeam),
         ("testDeleteSingleTeam", testDeleteSingleTeam),
+        ("testDeleteAdminTeam", testDeleteAdminTeam),
         ("testUnableToDeleteOtherPeoplesTeam", testUnableToDeleteOtherPeoplesTeam),
         ("testLinkUser", testLinkUser),
         ("testTryLinkUserWhereHeIs", testTryLinkUserWhereHeIs),
@@ -421,6 +423,22 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         XCTAssertTrue(all.contains(where: { (team) -> Bool in
             team.id == team2.id
         }), "Team 2 should not have been deleted")
+    }
+    
+    func testDeleteAdminTeam() {
+        let count = app.testable.count(allFor: Team.self)
+        XCTAssertEqual(count, 3)
+        
+        let req = HTTPRequest.testable.delete(uri: "/teams/\(adminTeam.id!.uuidString)", authorizedUser: user1, on: app)
+        let r = app.testable.response(to: req)
+        
+        r.response.testable.debug()
+        
+        XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
+        
+        let message = r.response.testable.content(as: ErrorResponse.self)!
+        XCTAssertEqual(message.error, "team_error")
+        XCTAssertEqual(message.description, "Can't delete admin team")
     }
     
     func testUnableToDeleteOtherPeoplesTeam() {

@@ -20,6 +20,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     
     var app: Application!
     
+    var adminTeam: Team!
     var user1: User!
     var user2: User!
     
