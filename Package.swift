@@ -21,14 +21,14 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "App",
+            name: "ApiCoreApp",
             dependencies: [
                 "Vapor",
                 "ApiCore"
             ]
         ),
-        .target(name: "Run", dependencies: [
-            "App"
+        .target(name: "ApiCoreRun", dependencies: [
+            "ApiCoreApp"
             ]
         ),
         .target(name: "ApiCore", dependencies: [

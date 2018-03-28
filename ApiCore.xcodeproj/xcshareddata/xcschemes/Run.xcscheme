@@ -42,9 +42,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ApiCore::Run"
-            BuildableName = "Run"
-            BlueprintName = "Run"
+            BlueprintIdentifier = "ApiCore::ApiCoreRun"
+            BuildableName = "ApiCoreRun"
+            BlueprintName = "ApiCoreRun"
             ReferencedContainer = "container:ApiCore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,9 +65,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ApiCore::Run"
-            BuildableName = "Run"
-            BlueprintName = "Run"
+            BlueprintIdentifier = "ApiCore::ApiCoreRun"
+            BuildableName = "ApiCoreRun"
+            BlueprintName = "ApiCoreRun"
             ReferencedContainer = "container:ApiCore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
