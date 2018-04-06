@@ -14,7 +14,7 @@ extension String {
     
     public func passwordHash(_ req: Request) throws -> String {
         if req.environment == .production {
-            let result: Data = try BCrypt.make(message: self)
+            let result: Data = try BCrypt.hash(self)
             guard let hashedString = String(bytes: result, encoding: .utf8) else {
                 fatalError("Should never happen!")
             }
@@ -33,7 +33,7 @@ extension String {
     
     public var md5: String? {
         guard let data = data(using: .utf8) else { return nil }
-        return try? MD5.digest(data).hexEncodedString()
+        return try? MD5.hash(data).hexEncodedString()
     }
     
 }
