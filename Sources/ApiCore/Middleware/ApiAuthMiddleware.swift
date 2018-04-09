@@ -48,38 +48,45 @@ public final class ApiAuthMiddleware: Middleware, Service {
     public func respond(to req: Request, chainingTo next: Responder) throws -> Future<Response> {
         debug(request: req)
         
-        // Maintenance URI
-        if ApiAuthMiddleware.debugUri.contains(req.http.url.path) {
-            self.printUrl(req: req, type: .maintenance)
-            
-            if req.environment == .production {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            
-            return try next.respond(to: req)
-        }
-        
-        // Unsecured URI
-        if self.allowed(request: req) {
-            self.printUrl(req: req, type: .unsecured)
-            
-            return try next.respond(to: req)
-        }
-        
-        // Secured
-        self.printUrl(req: req, type: .secured)
-        
         guard let userPayload = try? jwtPayload(request: req) else {
-            throw ErrorsCore.HTTPError.notAuthorized
+            return try req.response.notAuthorized().asFuture(on: req)
         }
+        
         return try User.find(userPayload.userId, on: req).flatMap(to: Response.self) { user in
             guard let user = user else {
-                throw ErrorsCore.HTTPError.notAuthorized
+                return try req.response.notAuthorized().asFuture(on: req)
             }
-            let authenticationCache = try req.make(AuthenticationCache.self)
-            authenticationCache[User.self] = user
             
-            return try next.respond(to: req)
+            return try next.respond(to: req).flatMap(to: Response.self) { res in
+                let promise = req.eventLoop.newPromise(Response.self)
+                
+                // Maintenance URI
+                if ApiAuthMiddleware.debugUri.contains(req.http.url.path) {
+                    self.printUrl(req: req, type: .maintenance)
+                    if req.environment == .production {
+                        promise.fail(error: ErrorsCore.HTTPError.notAuthorized)
+                        return promise.futureResult
+                    }
+                    promise.succeed(result: res)
+                    return promise.futureResult
+                }
+                
+                // Unsecured URI
+                if self.allowed(request: req) {
+                    self.printUrl(req: req, type: .unsecured)
+                    promise.succeed(result: res)
+                    return promise.futureResult
+                }
+                
+                // Secured
+                self.printUrl(req: req, type: .secured)
+                
+                let authenticationCache = try req.make(AuthenticationCache.self)
+                authenticationCache[User.self] = user
+                
+                promise.succeed(result: res)
+                return promise.futureResult
+            }
         }
     }
     
@@ -135,4 +142,3 @@ public final class ApiAuthMiddleware: Middleware, Service {
     public init() { }
     
 }
-

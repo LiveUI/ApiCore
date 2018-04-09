@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		15622608207BE8BD0037CECA /* Response+Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15622607207BE8BD0037CECA /* Response+Tools.swift */; };
 		OBJ_1011 /* ApiCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* ApiCore.swift */; };
 		OBJ_1012 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Configuration.swift */; };
 		OBJ_1013 /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* AuthController.swift */; };
@@ -8197,6 +8198,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		15622607207BE8BD0037CECA /* Response+Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Response+Tools.swift"; sourceTree = "<group>"; };
 		"ApiCore::ApiCore::Product" /* ApiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ApiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"ApiCore::ApiCoreApp::Product" /* ApiCoreApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ApiCoreApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"ApiCore::ApiCoreRun::Product" /* ApiCoreRun */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApiCoreRun; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10694,6 +10696,7 @@
 				OBJ_31 /* Router+Extended.swift */,
 				OBJ_32 /* String+Crypto.swift */,
 				OBJ_33 /* String+Manipulation.swift */,
+				15622607207BE8BD0037CECA /* Response+Tools.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -15122,6 +15125,7 @@
 				OBJ_1016 /* LogsController.swift in Sources */,
 				OBJ_1017 /* TeamsController.swift in Sources */,
 				OBJ_1018 /* UsersController.swift in Sources */,
+				15622608207BE8BD0037CECA /* Response+Tools.swift in Sources */,
 				OBJ_1019 /* Content+Response.swift in Sources */,
 				OBJ_1020 /* Data+Response.swift in Sources */,
 				OBJ_1021 /* Date+Tools.swift in Sources */,

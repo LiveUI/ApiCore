@@ -56,15 +56,6 @@ public class ApiCore {
         services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
         try services.register(LeafProvider())
         
-
-        // Authentication
-        let jwtSecret = ProcessInfo.processInfo.environment["JWT_SECRET"] ?? "secret"
-        if env.isRelease && jwtSecret == "secret" {
-            fatalError("You can't run in production mode with JWT_SECRET set to \"secret\"")
-        }
-        let jwtService = JWTService(secret: jwtSecret)
-        services.register(jwtService)
-        services.register(AuthenticationCache())
         
         // UUID service
         services.register(RequestIdService.self)
@@ -77,9 +68,17 @@ public class ApiCore {
         middlewareConfig.use(ErrorsCoreMiddleware.self)
         services.register(ErrorsCoreMiddleware(environment: env, log: PrintLogger()))
         
-        // Auth
+        // Authentication
         middlewareConfig.use(ApiAuthMiddleware.self)
         services.register(ApiAuthMiddleware())
+        
+        let jwtSecret = ProcessInfo.processInfo.environment["JWT_SECRET"] ?? "secret"
+        if env.isRelease && jwtSecret == "secret" {
+            fatalError("You can't run in production mode with JWT_SECRET set to \"secret\"")
+        }
+        let jwtService = JWTService(secret: jwtSecret)
+        services.register(jwtService)
+        services.register(AuthenticationCache())
         
         // CORS
         let corsConfig = CORSMiddleware.Configuration(
