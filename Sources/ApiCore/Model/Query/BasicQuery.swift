@@ -7,13 +7,15 @@
 
 import Foundation
 import Vapor
+import Fluent
 
 
 public struct BasicQuery: Codable {
     
     public let plain: Bool?
-    public let from: Int?
+    public let page: Int?
     public let limit: Int?
+    public let search: String?
     
 }
 
@@ -29,13 +31,34 @@ extension QueryContainer {
         return basic?.plain
     }
     
-    public var from: Int? {
-        return basic?.from
+    public var page: Int? {
+        return basic?.page
     }
     
     public var limit: Int? {
         return basic?.limit
     }
     
+    public var search: String? {
+        return basic?.search
+    }
     
+}
+
+
+extension QueryBuilder {
+    
+    public func paginate(on req: Request) throws -> Self {
+        var s = self
+        
+        // Limit & pagination
+        if let limit = req.query.basic?.limit {
+            let page = req.query.basic?.page ?? 0
+            let lower = (page * limit)
+            s = s.range(lower: lower, upper: (lower + limit))
+        }
+        
+        return s
+    }
+
 }

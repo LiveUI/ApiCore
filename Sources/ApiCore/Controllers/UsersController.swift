@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import FluentPostgreSQL
+import FluentSQL
 import MailCore
 
 
@@ -19,7 +20,7 @@ public class UsersController: Controller {
     
     public static func boot(router: Router) throws {
         router.get("users") { (req) -> Future<[User.Display]> in
-            return User.query(on: req).decode(User.Display.self).all()
+            return try User.query(on: req).decode(User.Display.self).paginate(on: req).all()
         }
         
         router.post("users") { (req) -> Future<Response> in
@@ -50,9 +51,13 @@ public class UsersController: Controller {
         
         router.get("users", "search") { (req) -> Future<[User.AllSearch]> in
             // TODO: Add proper limiter/pagination!!
-            // TODO: Add the actual search!!!!!!!
-            // TODO: Mask info of people from other teams!!!!
-            return User.query(on: req).all().map(to: [User.AllSearch].self) { (users) -> [User.AllSearch] in
+            return try User.query(on: req).group(.or) { or in
+                if let search = req.query.search {
+                    try or.filter(\User.firstname ~~ search)
+                    try or.filter(\User.lastname ~~ search)
+                    try or.filter(\User.email ~~ search)
+                }
+                }.paginate(on: req).all().map(to: [User.AllSearch].self) { (users) -> [User.AllSearch] in
                 return users.compactMap { (user) -> User.AllSearch in
                     return User.AllSearch(user: user)
                 }

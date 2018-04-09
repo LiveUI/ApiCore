@@ -62,7 +62,7 @@ class TeamsController: Controller {
     static func boot(router: Router) throws {
         router.get("teams") { (req) -> Future<[Team]> in
             let me = try req.me.user()
-            return try me.teams.query(on: req).all().map({ teams in
+            return try me.teams.query(on: req).paginate(on: req).all().map({ teams in
                 return teams
             })
         }
@@ -89,7 +89,7 @@ class TeamsController: Controller {
                     }
                 }
             }
-        }
+        }   
         
         router.post("teams", "check") { (req) -> Future<Response> in
             return try req.content.decode(Team.Identifier.self).flatMap(to: Response.self) { identifierObject in
@@ -136,15 +136,15 @@ class TeamsController: Controller {
         router.get("teams", DbCoreIdentifier.parameter, "users") { (req) -> Future<[User]> in
             let id = try req.parameter(DbCoreIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: [User].self) { (team) -> Future<[User]> in
-                return try team.users.query(on: req).all()
+                return try team.users.query(on: req).paginate(on: req).all()
             }
         }
         
-        router.patch("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
-            // TODO: Make a partial update when it becomes available
-            let id = try req.parameter(DbCoreIdentifier.self)
-            return try req.me.verifiedTeam(id: id)
-        }
+//        router.patch("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
+//            // TODO: Make a partial update when it becomes available
+//            let id = try req.parameter(DbCoreIdentifier.self)
+//            return try req.me.verifiedTeam(id: id)
+//        }
         
         router.post("teams", DbCoreIdentifier.parameter, "link") { (req) -> Future<Response> in
             return try processLinking(request: req, action: .link)

@@ -109,8 +109,7 @@ public final class User: DbCoreModel {
         required public init(user: User) {
             id = user.id
             username = user.username
-            firstname = user.firstname
-            // TODO: Obscure lastname if needed!!!
+            firstname = String(user.firstname.first ?? "?") + "....."
             lastname = user.lastname
             registered = user.registered
             disabled = user.disabled
