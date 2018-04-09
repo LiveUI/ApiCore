@@ -20,7 +20,37 @@ public class UsersController: Controller {
     
     public static func boot(router: Router) throws {
         router.get("users") { (req) -> Future<[User.Display]> in
-            return try User.query(on: req).decode(User.Display.self).paginate(on: req).all()
+            if let search = req.query.search {
+                // TODO: Display only users in my team or within my reach as there are emails available here!!!!!!!!!!
+                return try User.query(on: req).decode(User.Display.self).group(.or) { or in
+                    // TODO: Make the search reusable!!
+                    try or.filter(\User.firstname ~~ search)
+                    try or.filter(\User.lastname ~~ search)
+                    try or.filter(\User.email ~~ search)
+                    }.paginate(on: req).all()
+            } else {
+                return try User.query(on: req).decode(User.Display.self).paginate(on: req).all()
+            }
+        }
+        
+        router.get("users", "global") { (req) -> Future<[User.AllSearch]> in
+            if let search = req.query.search {
+                return try User.query(on: req).group(.or) { or in
+                    try or.filter(\User.firstname ~~ search)
+                    try or.filter(\User.lastname ~~ search)
+                    try or.filter(\User.email ~~ search)
+                    }.paginate(on: req).all().map(to: [User.AllSearch].self) { (users) -> [User.AllSearch] in
+                        return users.compactMap { (user) -> User.AllSearch in
+                            return User.AllSearch(user: user)
+                        }
+                }
+            } else {
+                return try User.query(on: req).paginate(on: req).all().map(to: [User.AllSearch].self) { (users) -> [User.AllSearch] in
+                    return users.compactMap { (user) -> User.AllSearch in
+                        return User.AllSearch(user: user)
+                    }
+                }
+            }
         }
         
         router.post("users") { (req) -> Future<Response> in
@@ -45,21 +75,6 @@ public class UsersController: Controller {
                             return try user.asDisplay().asResponse(.created, to: req)
                         }
                     }
-                }
-            }
-        }
-        
-        router.get("users", "search") { (req) -> Future<[User.AllSearch]> in
-            // TODO: Add proper limiter/pagination!!
-            return try User.query(on: req).group(.or) { or in
-                if let search = req.query.search {
-                    try or.filter(\User.firstname ~~ search)
-                    try or.filter(\User.lastname ~~ search)
-                    try or.filter(\User.email ~~ search)
-                }
-                }.paginate(on: req).all().map(to: [User.AllSearch].self) { (users) -> [User.AllSearch] in
-                return users.compactMap { (user) -> User.AllSearch in
-                    return User.AllSearch(user: user)
                 }
             }
         }

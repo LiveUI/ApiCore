@@ -49,16 +49,12 @@ extension QueryContainer {
 extension QueryBuilder {
     
     public func paginate(on req: Request) throws -> Self {
-        var s = self
-        
-        // Limit & pagination
         if let limit = req.query.basic?.limit {
             let page = req.query.basic?.page ?? 0
             let lower = (page * limit)
-            s = s.range(lower: lower, upper: (lower + limit))
+            return range(lower: lower, upper: (lower + limit))
         }
-        
-        return s
+        return self
     }
-
+    
 }
