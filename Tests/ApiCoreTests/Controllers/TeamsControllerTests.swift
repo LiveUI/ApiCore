@@ -36,7 +36,6 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         ("testInvalidTeamNameCheck", testInvalidTeamNameCheck),
         ("testGetSingleTeam", testGetSingleTeam),
         ("testUpdateSingleTeam", testUpdateSingleTeam),
-        ("testPatchSingleTeam", testPatchSingleTeam),
         ("testDeleteSingleTeam", testDeleteSingleTeam),
         ("testDeleteAdminTeam", testDeleteAdminTeam),
         ("testUnableToDeleteOtherPeoplesTeam", testUnableToDeleteOtherPeoplesTeam),
@@ -388,25 +387,6 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         XCTAssertTrue(r.response.testable.has(statusCode: .ok), "Wrong status code")
     }
     
-    // PATCH
-    func testPatchSingleTeam() {
-        let testName = "team 1"
-        let postData = try! team1.asJson()
-        let req = HTTPRequest.testable.patch(uri: "/teams/\(team1.id!.uuidString)", data: postData, headers: [
-            "Content-Type": "application/json; charset=utf-8"
-            ], authorizedUser: user1, on: app
-        )
-        let r = app.testable.response(to: req)
-        
-        r.response.testable.debug()
-        
-        if let data = testTeam(res: r.response) {
-            XCTAssertEqual(data.name, testName, "Name of the team doesn't match")
-            XCTAssertEqual(data.identifier, testName.safeText, "Identifier of the team doesn't match")
-        }
-        XCTAssertTrue(r.response.testable.has(statusCode: .ok), "Wrong status code")
-    }
-    
     func testDeleteSingleTeam() {
         let count = app.testable.count(allFor: Team.self)
         XCTAssertEqual(count, 3)
@@ -426,7 +406,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
     }
     
     func testDeleteAdminTeam() {
-        let count = app.testable.count(allFor: Team.self)
+        var count = app.testable.count(allFor: Team.self)
         XCTAssertEqual(count, 3)
         
         let req = HTTPRequest.testable.delete(uri: "/teams/\(adminTeam.id!.uuidString)", authorizedUser: user1, on: app)
@@ -439,6 +419,9 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         let message = r.response.testable.content(as: ErrorResponse.self)!
         XCTAssertEqual(message.error, "team_error")
         XCTAssertEqual(message.description, "Can't delete admin team")
+        
+        count = app.testable.count(allFor: Team.self)
+        XCTAssertEqual(count, 3)
     }
     
     func testUnableToDeleteOtherPeoplesTeam() {

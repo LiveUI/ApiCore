@@ -116,7 +116,7 @@ Boost team
     }
     
     func testSearchUsersWithoutParams() {
-        let req = HTTPRequest.testable.get(uri: "/users/search", authorizedUser: user1, on: app)
+        let req = HTTPRequest.testable.get(uri: "/users/global", authorizedUser: user1, on: app)
         let r = app.testable.response(to: req)
         
         r.response.testable.debug()
