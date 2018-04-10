@@ -19,7 +19,7 @@ public final class User: DbCoreModel {
     
     public struct Registration: Content {
         
-        public struct Template: Codable {
+        public struct Template: Content {
             public var verification: String
             public var serverLink: String
             public var user: Registration
