@@ -45,6 +45,7 @@ public class ApiCore {
         DbCore.migrationConfig.add(model: Team.self, database: .db)
         DbCore.migrationConfig.add(model: User.self, database: .db)
         DbCore.migrationConfig.add(model: TeamUser.self, database: .db)
+        DbCore.migrationConfig.add(model: ErrorLog.self, database: .db)
         
         FluentDesign.defaultDatabase = .db
         ErrorLog.defaultDatabase = .db
