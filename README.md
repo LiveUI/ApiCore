@@ -31,6 +31,69 @@ JWT_SECRET        // Set secret for signing JWT auth tokens. Default is "secret"
 SERVER_URL        // Define server's URL, overrides `X-Forwarded-Proto` header
 ```
 
+### Integrationg ApiCore into a Vapor 3 app
+
+To use `ApiCore` in an app, your configure.swift file could look something like this:
+
+```swift
+import Foundation
+import Vapor
+import DbCore
+import MailCore
+import ApiCore
+
+
+public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ services: inout Services) throws {
+    print("Starting Boost")
+    Env.print()
+    
+    // Register routes
+    let router = EngineRouter.default()
+    try ApiCore.boot(router: router)
+    services.register(router, as: Router.self)
+    
+    // Database - Load database details from environmental variables
+    let db = DbCore.envConfig(defaultDatabase: "boost")
+    
+    // Emails - Configure mail client, please see https://github.com/LiveUI/MailCore for more details
+    guard let mailGunApi = Environment.get("MAILGUN_API"),  let mailGunDomain = Environment.get("MAILGUN_DOMAIN") else {
+        fatalError("Mailgun API key or domain is missing")
+    }
+    let mail = Mailer.Config.mailgun(key: mailGunApi, domain: mailGunDomain)
+    Mailer(config: mail, registerOn: &services)
+    
+    // Go!
+    try ApiCore.configure(databaseConfig: db, &config, &env, &services)
+}
+```
+
+and `main.swift` somehow like that:
+
+```swift
+import ApiCoreApp
+import Service
+import Vapor
+
+do {
+    var config = Config.default()
+    var env = try Environment.detect()
+    var services = Services.default()
+    
+    // Setup ApiCore configure
+    try ApiCoreApp.configure(&config, &env, &services)
+    
+    let app = try Application(
+        config: config,
+        environment: env,
+        services: services
+    )
+    
+    try app.run()
+} catch {
+    print("Top-level failure: \(error)")
+}
+```
+
 ## Usage
 
 TBD
