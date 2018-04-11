@@ -39,7 +39,7 @@
 		OBJ_1029 /* HTTPHeaders+Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* HTTPHeaders+Tools.swift */; };
 		OBJ_1030 /* Request+Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* Request+Auth.swift */; };
 		OBJ_1031 /* Request+Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* Request+Files.swift */; };
-		OBJ_1032 /* Request+URI.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* Request+URI.swift */; };
+		OBJ_1032 /* Request+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* Request+URL.swift */; };
 		OBJ_1033 /* Response+Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* Response+Tools.swift */; };
 		OBJ_1034 /* Router+Extended.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Router+Extended.swift */; };
 		OBJ_1035 /* String+Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* String+Crypto.swift */; };
@@ -8411,7 +8411,7 @@
 		OBJ_297 /* ID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ID.swift; sourceTree = "<group>"; };
 		OBJ_298 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		OBJ_299 /* SoftDeletable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftDeletable.swift; sourceTree = "<group>"; };
-		OBJ_30 /* Request+URI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Request+URI.swift"; sourceTree = "<group>"; };
+		OBJ_30 /* Request+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Request+URL.swift"; sourceTree = "<group>"; };
 		OBJ_300 /* Timestampable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestampable.swift; sourceTree = "<group>"; };
 		OBJ_302 /* Pivot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pivot.swift; sourceTree = "<group>"; };
 		OBJ_305 /* QueryBuilder+CRUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QueryBuilder+CRUD.swift"; sourceTree = "<group>"; };
@@ -10716,7 +10716,7 @@
 				OBJ_27 /* HTTPHeaders+Tools.swift */,
 				OBJ_28 /* Request+Auth.swift */,
 				OBJ_29 /* Request+Files.swift */,
-				OBJ_30 /* Request+URI.swift */,
+				OBJ_30 /* Request+URL.swift */,
 				OBJ_31 /* Response+Tools.swift */,
 				OBJ_32 /* Router+Extended.swift */,
 				OBJ_33 /* String+Crypto.swift */,
@@ -15155,7 +15155,7 @@
 				OBJ_1029 /* HTTPHeaders+Tools.swift in Sources */,
 				OBJ_1030 /* Request+Auth.swift in Sources */,
 				OBJ_1031 /* Request+Files.swift in Sources */,
-				OBJ_1032 /* Request+URI.swift in Sources */,
+				OBJ_1032 /* Request+URL.swift in Sources */,
 				OBJ_1033 /* Response+Tools.swift in Sources */,
 				OBJ_1034 /* Router+Extended.swift in Sources */,
 				OBJ_1035 /* String+Crypto.swift in Sources */,
