@@ -112,9 +112,7 @@
 		OBJ_1103 /* CNIOAtomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "swift-nio::CNIOAtomics::Product" /* CNIOAtomics.framework */; };
 		OBJ_1104 /* CNIODarwin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "swift-nio::CNIODarwin::Product" /* CNIODarwin.framework */; };
 		OBJ_1105 /* CNIOLinux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "swift-nio::CNIOLinux::Product" /* CNIOLinux.framework */; };
-		OBJ_1203 /* boot.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_78 /* boot.swift */; };
 		OBJ_1204 /* configure.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_79 /* configure.swift */; };
-		OBJ_1205 /* routes.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_80 /* routes.swift */; };
 		OBJ_1207 /* ApiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "ApiCore::ApiCore::Product" /* ApiCore.framework */; };
 		OBJ_1208 /* Leaf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "Leaf::Leaf::Product" /* Leaf.framework */; };
 		OBJ_1209 /* MailCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "MailCore::MailCore::Product" /* MailCore.framework */; };
@@ -8828,7 +8826,6 @@
 		OBJ_775 /* Extendable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extendable.swift; sourceTree = "<group>"; };
 		OBJ_776 /* ServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
 		OBJ_777 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = Package.swift; path = "/Projects/Web/LiveUI/ApiCore/.build/checkouts/service.git--3029908809087319447/Package.swift"; sourceTree = "<group>"; };
-		OBJ_78 /* boot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = boot.swift; sourceTree = "<group>"; };
 		OBJ_780 /* Debuggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debuggable.swift; sourceTree = "<group>"; };
 		OBJ_781 /* Demangler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demangler.swift; sourceTree = "<group>"; };
 		OBJ_782 /* SourceLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceLocation.swift; sourceTree = "<group>"; };
@@ -8847,7 +8844,6 @@
 		OBJ_796 /* libc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = libc.swift; sourceTree = "<group>"; };
 		OBJ_798 /* Async+NIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Async+NIO.swift"; sourceTree = "<group>"; };
 		OBJ_799 /* AsyncError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncError.swift; sourceTree = "<group>"; };
-		OBJ_80 /* routes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = routes.swift; sourceTree = "<group>"; };
 		OBJ_800 /* Collection+Future.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Future.swift"; sourceTree = "<group>"; };
 		OBJ_801 /* Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecated.swift; sourceTree = "<group>"; };
 		OBJ_802 /* Exports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exports.swift; sourceTree = "<group>"; };
@@ -12264,9 +12260,7 @@
 		OBJ_77 /* ApiCoreApp */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_78 /* boot.swift */,
 				OBJ_79 /* configure.swift */,
-				OBJ_80 /* routes.swift */,
 			);
 			name = ApiCoreApp;
 			path = Sources/ApiCoreApp;
@@ -15189,9 +15183,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_1203 /* boot.swift in Sources */,
 				OBJ_1204 /* configure.swift in Sources */,
-				OBJ_1205 /* routes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

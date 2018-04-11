@@ -11,13 +11,13 @@ public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ 
     
     // Register routes
     let router = EngineRouter.default()
-    try routes(router)
+    try ApiCore.boot(router: router)
     services.register(router, as: Router.self)
     
-    // Database
+    // Database - Load database details from environmental variables
     let db = DbCore.envConfig(defaultDatabase: "boost")
     
-    // Emails
+    // Emails - Configure mail client, please see https://github.com/LiveUI/MailCore for more details
     guard let mailGunApi = Environment.get("MAILGUN_API"),  let mailGunDomain = Environment.get("MAILGUN_DOMAIN") else {
         fatalError("Mailgun API key or domain is missing")
     }

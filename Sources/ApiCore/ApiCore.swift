@@ -73,7 +73,7 @@ public class ApiCore {
         middlewareConfig.use(ApiAuthMiddleware.self)
         services.register(ApiAuthMiddleware())
         
-        let jwtSecret = ProcessInfo.processInfo.environment["JWT_SECRET"] ?? "secret"
+        let jwtSecret = Environment.get("JWT_SECRET") ?? "secret"
         if env.isRelease && jwtSecret == "secret" {
             fatalError("You can't run in production mode with JWT_SECRET set to \"secret\"")
         }

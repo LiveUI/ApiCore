@@ -15,8 +15,6 @@ do {
         services: services
     )
     
-    try ApiCoreApp.boot(app)
-    
     try app.run()
 } catch {
     print("Top-level failure: \(error)")
