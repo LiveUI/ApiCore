@@ -126,8 +126,8 @@ Ondrej Rafaj (@rafiki270 on [Github](https://github.com/rafiki270), [Twitter](ht
 ## License
 
 ApiCore is distributed under an Apache 2 license and can be shared or used freely within the bounds of the license itself.
-All third party components used (like Vapor framework and all it’s components) in this software are MIT licensed only.
-List of all used software is listed in the repository. All Vapor components are available in Vapor dependencies folder.
+Most third party components used (like Vapor framework and all it’s components) in this software are MIT licensed.
+List of all used software is listed in the repository. All components are available in the dependencies folder.
 
 See the LICENSE file for more info.
 
