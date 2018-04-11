@@ -157,22 +157,22 @@ class TeamsController: Controller {
         router.delete("teams", DbCoreIdentifier.parameter) { (req) -> Future<Response> in
             // TODO: Reload JWT token if successful with new info
             // QUESTION: Should we make sure user has at least one team?
-            let id = try req.parameter(DbCoreIdentifier.self)
-                return try req.me.verifiedTeam(id: id).flatMap(to: Response.self, { (team) -> Future<Response> in
-                    if let canDelete = ApiCore.deleteTeamWarning {
-                        return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
-                            guard let error = error else {
-                                return try delete(team: team, request: req)
-                            }
-                            throw error
-                        })
-                    }
-                    else {
-                        return try delete(team: team, request: req)
-                    }
-                }).catchMap { (error) -> Response in
-                    throw ErrorsCore.HTTPError.notFound
+            let teamId = try req.parameter(DbCoreIdentifier.self)
+            return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self, { (team) -> Future<Response> in
+                if let canDelete = ApiCore.deleteTeamWarning {
+                    return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
+                        guard let error = error else {
+                            return try delete(team: team, request: req)
+                        }
+                        throw error
+                    })
                 }
+                else {
+                    return try delete(team: team, request: req)
+                }
+            }).catchMap { (error) -> Response in
+                throw ErrorsCore.HTTPError.notFound
+            }
         }
     }
     

@@ -11,16 +11,16 @@ import Vapor
 
 extension Request {
     
-    public func serverURL() -> URL? {
+    public func serverURL() -> URL {
         let stringUrl = Environment.get("SERVER_URL") ?? http.headers["X-Forwarded-Proto"].first ?? "http://localhost:8080"
-        return URL(string: stringUrl)
+        guard let url = URL(string: stringUrl) else {
+            fatalError("Invalid server URL: \(stringUrl)")
+        }
+        return url
     }
     
-    public func serverBaseUrl() -> URL? {
-        guard let url = serverURL() else {
-            return nil
-        }
-        return url.deletingPathExtension()
+    public func serverBaseUrl() -> URL {
+        return serverURL().deletingPathExtension()
     }
     
 }

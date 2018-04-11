@@ -111,8 +111,8 @@ extension Team {
 
 extension Team {
     
-    public static func exists(identifier: String, on connection: DatabaseConnectable) throws -> Future<Bool> {
-        return try Team.query(on: connection).filter(\Team.identifier == identifier).count().map(to: Bool.self, { (count) -> Bool in
+    public static func exists(identifier: String, on req: Request) throws -> Future<Bool> {
+        return try Team.query(on: req).filter(\Team.identifier == identifier).count().map(to: Bool.self, { (count) -> Bool in
             return count > 0
         })
     }

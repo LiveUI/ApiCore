@@ -75,15 +75,10 @@ public final class ApiAuthMiddleware: Middleware, Service {
                 return try req.response.notAuthorized().asFuture(on: req)
             }
             
-            return try next.respond(to: req).flatMap(to: Response.self) { res in
-                let promise = req.eventLoop.newPromise(Response.self)
-                
-                let authenticationCache = try req.make(AuthenticationCache.self)
-                authenticationCache[User.self] = user
-                
-                promise.succeed(result: res)
-                return promise.futureResult
-            }
+            let authenticationCache = try req.make(AuthenticationCache.self)
+            authenticationCache[User.self] = user
+            
+            return try next.respond(to: req)
         }
     }
     
