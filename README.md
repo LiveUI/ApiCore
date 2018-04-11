@@ -12,6 +12,8 @@
 
 Base for API's that require user & team management including forgotten passwords, etc
 
+> ***Warning!**: This system is only designed to work with **PostgreSQL**!*
+
 ## Install
 
 Just add following line package to your `Package.swift` file.
