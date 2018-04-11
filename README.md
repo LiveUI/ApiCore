@@ -20,10 +20,18 @@ Just add following line package to your `Package.swift` file.
 .package(url: "https://github.com/LiveUI/ApiCore.git", .branch("master"))
 ```
 
-## Use
+## Configuration
+
+There is a few ways to configure `ApiCore`. The easiest is through the Environmental variables.
+
+```ruby
+JWT_SECRET        // Set secret for signing JWT auth tokens. Default is "secret"
+SERVER_URL        // Define server's URL, overrides `X-Forwarded-Proto` header
+```
+
+## Usage
 
 TBD
-
 
 ## Support
 
