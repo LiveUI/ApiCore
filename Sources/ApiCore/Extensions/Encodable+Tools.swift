@@ -27,18 +27,7 @@ extension Encodable {
         }
         let jsonData = try encoder.encode(self)
         let jsonString = String(data: jsonData, encoding: .utf8)
-        print(jsonString ?? ":(")
         return jsonData
     }
-    
-}
-
-
-extension Content {
-    
-//    public func asJson(on req: Request) throws -> Data {
-//        let jsonData = try encode(for: req)
-//        return jsonData
-//    }
     
 }
