@@ -31,12 +31,12 @@ extension QueryContainer {
         return basic?.plain
     }
     
-    public var page: Int? {
+    public var page: Int {
         return basic?.page
     }
     
     public var limit: Int? {
-        return basic?.limit
+        return basic?.limit ?? 200
     }
     
     public var search: String? {
