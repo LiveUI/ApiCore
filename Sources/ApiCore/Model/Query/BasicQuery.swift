@@ -31,7 +31,7 @@ extension QueryContainer {
         return basic?.plain
     }
     
-    public var page: Int {
+    public var page: Int? {
         return basic?.page
     }
     
