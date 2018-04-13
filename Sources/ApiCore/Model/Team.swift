@@ -38,29 +38,14 @@ public final class Team: DbCoreModel {
         
     }
     
-    public var id: DbCoreIdentifier?
-    public var name: String
-    public var identifier: String
-    public var admin: Bool
-    
-    public init(id: DbCoreIdentifier? = nil, name: String, identifier: String, admin: Bool = false) {
-        self.name = name
-        self.identifier = identifier
-        self.admin = admin
-    }
-    
-}
-
-// MARK: - Migrations
-
-extension Team: Migration {
-    
     public struct New: Content {
         public var name: String
         public var identifier: String
+        public var color: String?
+        public var initials: String?
         
         public func asTeam() -> Team {
-            return Team(name: name, identifier: identifier)
+            return Team(name: name, identifier: identifier, color: color, initials: initials)
         }
     }
     
@@ -80,19 +65,19 @@ extension Team: Migration {
         }
     }
     
-    public static var idKey: WritableKeyPath<Team, DbCoreIdentifier?> = \Team.id
+    public var id: DbCoreIdentifier?
+    public var name: String
+    public var identifier: String
+    public var color: String?
+    public var initials: String
+    public var admin: Bool
     
-    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
-        return Database.create(self, on: connection) { (schema) in
-            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
-            schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.name.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.identifier.stringValue)
-            schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.admin.stringValue)
-        }
-    }
-    
-    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
-        return Database.delete(Team.self, on: connection)
+    public init(id: DbCoreIdentifier? = nil, name: String, identifier: String, color: String? = nil, initials: String? = nil, admin: Bool = false) {
+        self.name = name
+        self.identifier = identifier
+        self.color = color
+        self.initials = initials ?? name.initials
+        self.admin = admin
     }
     
 }
@@ -103,6 +88,29 @@ extension Team {
     
     public var users: Siblings<Team, User, TeamUser> {
         return siblings()
+    }
+    
+}
+
+// MARK: - Migrations
+
+extension Team: Migration {
+    
+    public static var idKey: WritableKeyPath<Team, DbCoreIdentifier?> = \Team.id
+    
+    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
+        return Database.create(self, on: connection) { (schema) in
+            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
+            schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.name.stringValue)
+            schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.identifier.stringValue)
+            schema.addField(type: DbCoreColumnType.varChar(6), name: CodingKeys.color.stringValue, isOptional: true)
+            schema.addField(type: DbCoreColumnType.varChar(2), name: CodingKeys.initials.stringValue)
+            schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.admin.stringValue)
+        }
+    }
+    
+    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
+        return Database.delete(Team.self, on: connection)
     }
     
 }

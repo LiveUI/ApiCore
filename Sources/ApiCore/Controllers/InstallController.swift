@@ -34,17 +34,6 @@ public class InstallController: Controller {
             return install(on: req)
         }
         
-//        router.get("demo") { req in
-//            return uninstall(on: req).flatMap(to: Response.self) { (_) -> Future<Response> in
-//                let objects = [
-//                    su.save(on: req)
-//                ]
-//                return objects.map(to: Response.self, on: req) { (Void) -> Response in
-//                    return try req.response.maintenanceFinished(message: "Demo install finished")
-//                }
-//            }
-//        }
-        
 //        router.get("uninstall") { (req)->Future<Response> in
 //            return req.withPooledConnection(to: .db) { (db) -> Future<Response> in
 //                return req.dbHelpers.showTables().flatMap(to: Response.self, { (tables) -> Future<Response> in

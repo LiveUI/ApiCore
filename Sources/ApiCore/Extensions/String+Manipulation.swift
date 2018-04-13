@@ -27,4 +27,17 @@ extension String {
         return text ?? "https://www.gravatar.com/avatar/unknown"
     }
     
+    public var initials: String {
+        if count == 0 {
+            return "??"
+        } else if count >= 1 && count <= 2 {
+            return capitalized
+        }
+        let capitals = filter { ("A"..."Z").contains($0) }
+        if capitals.count < 2 {
+            return capitalized.initials
+        }
+        return String(String(capitals).prefix(2)).capitalized
+    }
+    
 }
