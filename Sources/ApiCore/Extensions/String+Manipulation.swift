@@ -35,6 +35,13 @@ extension String {
         }
         let capitals = filter { ("A"..."Z").contains($0) }
         if capitals.count < 2 {
+            let capitalizedString = split(separator: " ").map { element -> String in
+                element.capitalized
+            }.joined(separator: " ")
+            let capitals = capitalizedString.filter { ("A"..."Z").contains($0) }
+            if capitals.count >= 2 {
+                return String(String(capitals).prefix(2)).uppercased()
+            }
             return uppercased().initials
         }
         return String(String(capitals).prefix(2)).uppercased()
