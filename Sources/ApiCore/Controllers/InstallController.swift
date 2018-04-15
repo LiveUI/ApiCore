@@ -34,31 +34,6 @@ public class InstallController: Controller {
             return install(on: req)
         }
         
-//        router.get("uninstall") { (req)->Future<Response> in
-//            return req.withPooledConnection(to: .db) { (db) -> Future<Response> in
-//                return req.dbHelpers.showTables().flatMap(to: Response.self, { (tables) -> Future<Response> in
-//                    var arr: [Future<Void>] = []
-//                    for table in tables {
-//                        arr.append(db.simpleQuery("DROP TABLE `\(table)`;").flatten())
-//                    }
-//                    return arr.map(to: Response.self, { () -> Response in
-//                        return try req.response.maintenanceFinished(message: "Un-install finished")
-//                    })
-//                })
-//            }
-//        }
-        
-//        router.get("reinstall") { (req)->Future<Response> in
-//            return uninstall(on: req).flatMap(to: Response.self) { (_) -> Future<Response> in
-//                let objects = [
-//                    install(on: req)
-//                ]
-//                return objects.map(to: Response.self, on: req) { (_)  -> Response in
-//                    return try req.response.maintenanceFinished(message: "Re-install finished")
-//                }
-//            }
-//        }
-        
         router.get("tables") { req in
             // TODO: Show table names and other info
             return FluentDesign.query(on: req).all()
@@ -75,12 +50,8 @@ extension InstallController {
     }
     
     private static var adminTeam: Team {
-        return Team(name: "Admin team", identifier: "admin-team")
+        return Team(name: "Admin team", identifier: "admin-team", admin: true)
     }
-    
-//    private static func uninstall(on req: Request) -> Future<Void> {
-//        return Future(Void())
-//    }
     
     private static func install(on req: Request) -> Future<Response> {
         return User.query(on: req).count().flatMap(to: Response.self) { count in

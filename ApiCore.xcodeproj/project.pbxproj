@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1578543020832CE200B592BB /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1578542F20832CE200B592BB /* Color.swift */; };
 		OBJ_1014 /* ApiCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* ApiCore.swift */; };
 		OBJ_1015 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Configuration.swift */; };
 		OBJ_1016 /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* AuthController.swift */; };
@@ -8215,6 +8216,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1578542F20832CE200B592BB /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		"ApiCore::ApiCore::Product" /* ApiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ApiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"ApiCore::ApiCoreApp::Product" /* ApiCoreApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ApiCoreApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"ApiCore::ApiCoreRun::Product" /* ApiCoreRun */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApiCoreRun; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -11107,6 +11109,7 @@
 				OBJ_44 /* RequestIdService.swift */,
 				OBJ_45 /* Result.swift */,
 				OBJ_46 /* Templates.swift */,
+				1578542F20832CE200B592BB /* Color.swift */,
 			);
 			path = Libs;
 			sourceTree = "<group>";
@@ -15156,6 +15159,7 @@
 				OBJ_1036 /* String+Manipulation.swift in Sources */,
 				OBJ_1037 /* AuthError.swift in Sources */,
 				OBJ_1038 /* AuthenticationCache.swift in Sources */,
+				1578543020832CE200B592BB /* Color.swift in Sources */,
 				OBJ_1039 /* Decodable+Helpers.swift in Sources */,
 				OBJ_1040 /* ContentError.swift in Sources */,
 				OBJ_1041 /* Env.swift in Sources */,

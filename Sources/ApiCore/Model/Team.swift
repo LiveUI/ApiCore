@@ -68,14 +68,14 @@ public final class Team: DbCoreModel {
     public var id: DbCoreIdentifier?
     public var name: String
     public var identifier: String
-    public var color: String?
+    public var color: String
     public var initials: String
     public var admin: Bool
     
     public init(id: DbCoreIdentifier? = nil, name: String, identifier: String, color: String? = nil, initials: String? = nil, admin: Bool = false) {
         self.name = name
         self.identifier = identifier
-        self.color = color
+        self.color = color ?? Color.randomColor().hexValue
         self.initials = initials ?? name.initials
         self.admin = admin
     }
@@ -103,7 +103,7 @@ extension Team: Migration {
             schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
             schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.name.stringValue)
             schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.identifier.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(6), name: CodingKeys.color.stringValue, isOptional: true)
+            schema.addField(type: DbCoreColumnType.varChar(6), name: CodingKeys.color.stringValue)
             schema.addField(type: DbCoreColumnType.varChar(2), name: CodingKeys.initials.stringValue)
             schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.admin.stringValue)
         }
