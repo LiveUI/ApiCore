@@ -30,14 +30,14 @@ extension String {
     public var initials: String {
         if count == 0 {
             return "??"
-        } else if count >= 1 && count <= 2 {
-            return capitalized
+        } else if count <= 2 {
+            return uppercased()
         }
         let capitals = filter { ("A"..."Z").contains($0) }
         if capitals.count < 2 {
-            return capitalized.initials
+            return uppercased().initials
         }
-        return String(String(capitals).prefix(2)).capitalized
+        return String(String(capitals).prefix(2)).uppercased()
     }
     
 }
