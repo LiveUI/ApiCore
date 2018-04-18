@@ -17,6 +17,11 @@ public typealias Tokens = [Token]
 
 public final class Token: DbCoreModel {
     
+    public enum TokenType: String, Codable, PostgreSQLType {
+        case Authentication
+        case PasswordRecovery
+    }
+    
     public enum TokenError: Error {
         case missingUserId
     }
@@ -26,12 +31,28 @@ public final class Token: DbCoreModel {
         public var user: User.Display
         public var token: String
         public var expires: Date
+        public var type: TokenType
         
         public init(token: Token, user: User) {
             self.id = token.id
             self.user = User.Display(user)
             self.token = token.token
             self.expires = token.expires
+            self.type = token.type
+        }
+    }
+    
+    public final class PublicNoUser: DbCoreModel {
+        public var id: DbCoreIdentifier?
+        public var token: String
+        public var expires: Date
+        public var type: TokenType
+        
+        public init(token: Token) {
+            self.id = token.id
+            self.token = token.token
+            self.expires = token.expires
+            self.type = token.type
         }
     }
     
@@ -51,15 +72,20 @@ public final class Token: DbCoreModel {
     public var userId: DbCoreIdentifier
     public var token: String
     public var expires: Date
+    public var type: TokenType
     
-    init(user: User) throws {
+    convenience init(user: User) throws {
+        try self.init(user: user, type: .Authentication)
+    }
+    
+    init(user: User, type: TokenType) throws {
         guard let userId = user.id else {
             throw TokenError.missingUserId
         }
-//        self.user = user
         self.userId = userId
         self.token = UUID().uuidString
         self.expires = Date().addMonth(n: 1)
+        self.type = type
     }
     
     enum CodingKeys: String, CodingKey {
@@ -67,10 +93,10 @@ public final class Token: DbCoreModel {
         case userId = "user_id"
         case token
         case expires
+        case type
     }
 
 }
-
 
 extension Token.Public {
     
@@ -90,6 +116,7 @@ extension Token: Migration {
             schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.userId.stringValue)
             schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.token.stringValue)
             schema.addField(type: DbCoreColumnType.datetime(), name: CodingKeys.expires.stringValue)
+            schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.type.stringValue)
         }
     }
     

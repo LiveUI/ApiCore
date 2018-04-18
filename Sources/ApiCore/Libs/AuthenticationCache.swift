@@ -41,8 +41,28 @@ struct JWTAuthPayload: JWTPayload {
     }
 }
 
+struct JWTPasswordResetPayload: JWTPayload {
+    
+    var exp: ExpirationClaim
+    var userId: UUID
+    var redirectUri: String
+
+    enum CodingKeys: String, CodingKey {
+        case exp
+        case userId = "user_id"
+        case redirectUri = "redirect_uri"
+    }
+    
+    func verify() throws {
+        try exp.verify()
+    }
+}
+
 
 final class JWTService: Service {
+    
+    let minute: TimeInterval = 60
+    let hour: TimeInterval = 3600
     
     var signer: JWTSigner
     
@@ -51,8 +71,21 @@ final class JWTService: Service {
     }
     
     func signUserToToken(user: User) throws -> String {
-        let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (60 * 15))) // 15 minutes
+        let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (15 * minute)))
         var jwt = JWT(payload: JWTAuthPayload(exp: exp, userId: user.id!))
+        
+        jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
+        let data = try signer.sign(&jwt)
+        
+        guard let jwtToken: String = String(data: data, encoding: .utf8) else {
+            throw AuthError.serverError
+        }
+        return jwtToken
+    }
+    
+    func signPasswordReset(user: User, redirectUri: String) throws -> String {
+        let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (36 * hour)))
+        var jwt = JWT(payload: JWTPasswordResetPayload(exp: exp, userId: user.id!, redirectUri: redirectUri))
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
         let data = try signer.sign(&jwt)
