@@ -11,7 +11,8 @@ import VaporTestTools
 import FluentTestTools
 import ApiCoreTestTools
 @testable import ApiCore
-
+import MailCore
+import MailCoreTestTools
 
 class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     
@@ -33,6 +34,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testInvalidGetTokenAuthRequest", testInvalidGetTokenAuthRequest),
         ("testValidPostTokenAuthRequest", testValidPostTokenAuthRequest),
         ("testInvalidPostTokenAuthRequest", testInvalidPostTokenAuthRequest),
+        ("testValidStartRecoveryRequest", testValidStartRecoveryRequest),
         ("testLinuxTests", testLinuxTests)
     ]
     
@@ -151,7 +153,42 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             // Should fail
         }
     }
-    
+
+    // MARK: Recovery tests
+
+    func testValidStartRecoveryRequest() {
+        let data = User.Auth.StartRecovery(email: "dev@liveui.io", targetUri: "https://example.com/target")
+        let req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        do {
+            let r = try app.testable.response(throwingTo: req)
+            XCTAssertEqual(r.response.http.status, HTTPStatus.ok)
+
+            let mailer = try! r.request.make(MailerService.self) as! MailerMock
+            XCTAssertEqual(mailer.receivedMessage!.from, "ondrej.rafaj@gmail.com", "Email has a wrong sender")
+            XCTAssertEqual(mailer.receivedMessage!.to, "dev@liveui.io", "Email has a wrong recipient")
+            XCTAssertEqual(mailer.receivedMessage!.subject, "polip si", "Email has a wrong subject")
+            XCTAssertEqual(mailer.receivedMessage!.text, """
+Hi Ondrej Rafaj
+Please confirm your email lemmy@liveui.io by clicking on this link http://www.example.com/#what-the-fuck
+HTML - huhuhu woe :)
+Boost team
+""", "Email has a wrong text")
+            XCTAssertEqual(mailer.receivedMessage!.html, """
+<h1>Hi Lemmy Kilmister</h1>
+<p>Please confirm your email lemmy@liveui.io by clicking on this <a href="http://www.example.com/#what-the-fuck">link</a></p>
+<p>HTML - huhuhu woe :)</p>
+<p>Boost team</p>
+""", "Email has a wrong html")
+
+            XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
+            XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+
+        } catch {
+            print(error)
+            XCTFail()
+        }
+    }
+
 }
 
 
