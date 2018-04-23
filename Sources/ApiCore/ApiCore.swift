@@ -18,7 +18,7 @@ import Leaf
 public class ApiCore {
     
     /// Configuration cache
-    private static var _configuration: Configuration?
+    static var _configuration: Configuration?
     
     /// Main system configuration
     public static var configuration: Configuration {

@@ -14,6 +14,8 @@ import ErrorsCore
 @testable import ApiCore
 
 
+typealias CoreUser = User
+
 
 final class ApiCoreTests : XCTestCase, UsersTestCase, LinuxTests {
     

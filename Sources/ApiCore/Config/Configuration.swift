@@ -21,13 +21,13 @@ public struct Configuration: Codable {
     public struct Server: Codable {
         
         /// Server name
-        let name: String
+        public internal(set) var name: String
         
         /// Server URL
-        let url: String?
+        public internal(set) var url: String?
         
         /// Max upload filesize (in Mb, default is 50)
-        let maxUploadFilesize: Int?
+        public internal(set) var maxUploadFilesize: Int?
         
         enum CodingKeys: String, CodingKey {
             case name
@@ -41,22 +41,22 @@ public struct Configuration: Codable {
     public struct Database: Codable {
         
         /// Database host
-        let host: String
+        public internal(set) var host: String
         
         /// Database port
-        let port: Int
+        public internal(set) var port: Int
         
         /// Database user
-        let user: String
+        public internal(set) var user: String
         
         /// Database password
-        let password: String
+        public internal(set) var password: String
         
         /// Database name
-        let database: String
+        public internal(set) var database: String
         
         /// Enable query logging
-        let logging: Bool
+        public internal(set) var logging: Bool
         
     }
     
@@ -70,21 +70,21 @@ public struct Configuration: Codable {
         }
         
         /// Mailgun configuration
-        let mailgun: MailGun
+        public internal(set) var mailgun: MailGun
         
     }
     
     /// Server info
-    let server: Server
+    public internal(set) var server: Server
     
     /// Word to use in JWT encoding / decoding
-    let jwtSecret: String
+    public internal(set) var jwtSecret: String
     
     /// Database information
-    let database: Database
+    public internal(set) var database: Database
     
     /// Email information
-    let mail: Mail
+    public internal(set) var mail: Mail
     
     enum CodingKeys: String, CodingKey {
         case server
