@@ -26,7 +26,6 @@ extension Encodable {
             fatalError("macOS SDK < 10.12 detected, no ISO-8601 JSON support")
         }
         let jsonData = try encoder.encode(self)
-        let jsonString = String(data: jsonData, encoding: .utf8)
         return jsonData
     }
     

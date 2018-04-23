@@ -56,7 +56,6 @@ public final class Token: DbCoreModel {
         guard let userId = user.id else {
             throw TokenError.missingUserId
         }
-//        self.user = user
         self.userId = userId
         self.token = UUID().uuidString
         self.expires = Date().addMonth(n: 1)

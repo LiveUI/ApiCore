@@ -1,0 +1,21 @@
+{
+	"server": {
+		"name": "Booster!",
+		"url": "http://localhost:8080"
+	},
+	"jwt_secret": "secret",
+	"database": {
+		"host": "localhost",
+		"port": 5432,
+		"user": "boost",
+		"password": "aaaaaa",
+		"database": "boost",
+		"logging": true
+	},
+	"mail": {
+		"mailgun": {
+			"domain": "sandbox-domain.mailgun.org",
+			"key": "secret-key"
+		}
+	}
+}
