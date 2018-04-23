@@ -14,9 +14,13 @@ import MailCore
 import Leaf
 
 
+/// Main ApiCore class
 public class ApiCore {
     
+    /// Configuration cache
     private static var _configuration: Configuration?
+    
+    /// Main system configuration
     public static var configuration: Configuration {
         get {
             if _configuration == nil {
@@ -44,12 +48,16 @@ public class ApiCore {
         }
     }
     
+    /// Enable detailed request debugging
     public static var debugRequests: Bool = false
     
     public typealias DeleteTeamWarning = (_ team: Team) -> Future<Error?>
     public typealias DeleteUserWarning = (_ user: User) -> Future<Error?>
     
+    /// Fire a warning before team get's deleted (to cascade in submodules, etc ...)
     public static var deleteTeamWarning: DeleteTeamWarning?
+    
+    /// Fire a warning before user get's deleted (to cascade in submodules, etc ...)
     public static var deleteUserWarning: DeleteUserWarning?
     
     /// Shared middleware config
@@ -69,6 +77,7 @@ public class ApiCore {
         LogsController.self
     ]
     
+    /// MAin configure method for ApiCore
     public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
         // Migrate models / tables
         DbCore.migrationConfig.add(model: Token.self, database: .db)
@@ -81,7 +90,21 @@ public class ApiCore {
         FluentDesign.defaultDatabase = .db
         
         // Configuration
-        try configure2(&config, &env, &services)
+        // Load configuration
+        let c = configuration
+        
+        // Database - Load database details
+        let databaseConfig = DbCore.config(hostname: c.database.host, user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port)
+        
+        // Setup mailing
+        // TODO: Support SendGrid and SMTP!!!
+        let mail = Mailer.Config.mailgun(key: c.mail.mailgun.key, domain: c.mail.mailgun.domain)
+        try Mailer(config: mail, registerOn: &services)
+        
+        // Forward configure to the DbCore
+        try DbCore.configure(databaseConfig: databaseConfig, &config, &env, &services)
+        
+        // Check JWT secret's security
         if env.isRelease && configuration.jwtSecret == "secret" {
             fatalError("You can't run in production mode with JWT_SECRET set to \"secret\"")
         }
@@ -95,9 +118,6 @@ public class ApiCore {
         
         // UUID service
         services.register(RequestIdService.self)
-        
-        // Configure DbCore
-//        try DbCore.configure(databaseConfig: databaseConfig, &config, &env, &services)
         
         // Errors
         middlewareConfig.use(ErrorLoggingMiddleware.self)
@@ -136,31 +156,11 @@ public class ApiCore {
         Templates.installMissing()
     }
     
+    /// Boot routes for all registered controllers
     public static func boot(router: Router) throws {
         for c in controllers {
             try c.boot(router: router)
         }
-    }
-    
-}
-
-
-extension ApiCore {
-    
-    static func configure2(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-        // Load configuration
-        let c = configuration
-        
-        // Database - Load database details
-        let databaseConfig = DbCore.config(hostname: c.database.host, user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port)
-        
-        // Setup mailing
-        // TODO: Support SendGrid and SMTP!!!
-        let mail = Mailer.Config.mailgun(key: c.mail.mailgun.key, domain: c.mail.mailgun.domain)
-        try Mailer(config: mail, registerOn: &services)
-        
-        // Forward configure to the DbCore
-        try DbCore.configure(databaseConfig: databaseConfig, &config, &env, &services)
     }
     
 }
