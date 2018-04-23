@@ -16,6 +16,7 @@ import ErrorsCore
 public class AuthController: Controller {
     
     public static func boot(router: Router) throws {
+        // Authenticate with username and password in an Authorization header
         router.get("auth") { (req)->Future<Response> in
             guard let token = req.http.headers.authorizationToken, let decoded = token.base64Decoded else {
                 throw AuthError.authenticationFailed
@@ -27,6 +28,7 @@ public class AuthController: Controller {
             return try login(request: req, login: loginData)
         }
         
+        // Authenticate with username and password in a POST json
         router.post("auth") { (req)->Future<Response> in
             do {
                 return try req.content.decode(User.Auth.Login.self).flatMap(to: Response.self) { loginData in
@@ -36,7 +38,7 @@ public class AuthController: Controller {
                 throw AuthError.authenticationFailed
             }
         }
-
+        
         router.get("token") { (req)->Future<Response> in
             guard let tokenString = req.http.headers.authorizationToken else {
                 throw AuthError.authenticationFailed

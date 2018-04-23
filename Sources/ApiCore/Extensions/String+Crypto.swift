@@ -14,10 +14,7 @@ extension String {
     
     public func passwordHash(_ req: Request) throws -> String {
         if req.environment == .production {
-            let result: Data = try BCrypt.hash(self)
-            guard let hashedString = String(bytes: result, encoding: .utf8) else {
-                fatalError("Should never happen!")
-            }
+            let hashedString = try BCrypt.hash(self)
             return hashedString
         } else {
             return self

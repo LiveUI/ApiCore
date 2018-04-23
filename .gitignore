@@ -12,6 +12,4 @@ DerivedData/
 .DS_Store
 *_Info.plist
 
-/ApiCore.xcodeproj/GeneratedModuleMap
-/ApiCore.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
-/ApiCore.xcodeproj/xcshareddata/xcschemes/xcschememanagement.plist
+*.xcodeproj

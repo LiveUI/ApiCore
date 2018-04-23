@@ -68,7 +68,7 @@ class TeamsController: Controller {
         }
         
         router.get("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
-            let id = try req.parameter(DbCoreIdentifier.self)
+            let id = try req.parameters.next(DbCoreIdentifier.self)
             return try req.me.verifiedTeam(id: id)
         }
         
@@ -103,7 +103,7 @@ class TeamsController: Controller {
         }
         
         router.put("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
-            let id = try req.parameter(DbCoreIdentifier.self)
+            let id = try req.parameters.next(DbCoreIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: Team.self, { team in
                 return try req.content.decode(Team.New.self).flatMap(to: Team.self) { newTeam in
                     team.name = newTeam.name
@@ -134,7 +134,7 @@ class TeamsController: Controller {
         }
         
         router.get("teams", DbCoreIdentifier.parameter, "users") { (req) -> Future<[User]> in
-            let id = try req.parameter(DbCoreIdentifier.self)
+            let id = try req.parameters.next(DbCoreIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: [User].self) { (team) -> Future<[User]> in
                 return try team.users.query(on: req).paginate(on: req).all()
             }
@@ -142,7 +142,7 @@ class TeamsController: Controller {
         
 //        router.patch("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
 //            // TODO: Make a partial update when it becomes available
-//            let id = try req.parameter(DbCoreIdentifier.self)
+//            let id = try req.parameters.next(DbCoreIdentifier.self)
 //            return try req.me.verifiedTeam(id: id)
 //        }
         
@@ -157,7 +157,7 @@ class TeamsController: Controller {
         router.delete("teams", DbCoreIdentifier.parameter) { (req) -> Future<Response> in
             // TODO: Reload JWT token if successful with new info
             // QUESTION: Should we make sure user has at least one team?
-            let teamId = try req.parameter(DbCoreIdentifier.self)
+            let teamId = try req.parameters.next(DbCoreIdentifier.self)
             return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self, { (team) -> Future<Response> in
                 if let canDelete = ApiCore.deleteTeamWarning {
                     return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
@@ -192,7 +192,7 @@ extension TeamsController {
     }
     
     private static func processLinking(request req: Request, action: TeamsController.LinkAction) throws -> Future<Response> {
-        let teamId = try req.parameter(DbCoreIdentifier.self)
+        let teamId = try req.parameters.next(DbCoreIdentifier.self)
         return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self) { team in
             return try team.users.query(on: req).all().flatMap(to: Response.self) { teamUsers in
                 return try req.content.decode(User.Id.self).flatMap(to: Response.self) { userId in

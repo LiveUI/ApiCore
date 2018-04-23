@@ -10,8 +10,8 @@ import Vapor
 
 extension Router {
     
-    @discardableResult public func options<T>(_ path: DynamicPathComponentRepresentable..., use closure: @escaping RouteResponder<T>.Closure) -> Route<Responder> where T: ResponseEncodable {
-        return self.on(.OPTIONS, at: path.makeDynamicPathComponents(), use: closure)
+    @discardableResult public func options<T>(_ path: PathComponent..., use closure: @escaping RouteResponder<T>.Closure) -> Route<Responder> where T: ResponseEncodable {
+        return self.on(.OPTIONS, at: path, use: closure)
     }
     
 }
