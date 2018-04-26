@@ -42,7 +42,7 @@ extension TestableProperty where TestableType: Application {
         return Paths()
     }
     
-    public static func newApiCoreTestApp(databaseConfig: DatabaseConfig? = nil, _ configClosure: AppConfigClosure? = nil, _ routerClosure: AppRouterClosure? = nil) -> Application {
+    public static func newApiCoreTestApp(databaseConfig: DatabasesConfig? = nil, _ configClosure: AppConfigClosure? = nil, _ routerClosure: AppRouterClosure? = nil) -> Application {
         let app = new({ (config, env, services) in
             // Reset static configs
             DbCore.migrationConfig = MigrationConfig()

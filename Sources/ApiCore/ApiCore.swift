@@ -77,7 +77,7 @@ public class ApiCore {
         LogsController.self
     ]
     
-    /// MAin configure method for ApiCore
+    /// Main configure method for ApiCore
     public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
         // Migrate models / tables
         DbCore.migrationConfig.add(model: Token.self, database: .db)
@@ -94,7 +94,7 @@ public class ApiCore {
         let c = configuration
         
         // Database - Load database details
-        let databaseConfig = DbCore.config(hostname: c.database.host, user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port)
+        let databaseConfig = DbCore.config(hostname: c.database.host ?? "localhost", user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port ?? 5432)
         
         // Setup mailing
         // TODO: Support SendGrid and SMTP!!!
@@ -106,13 +106,14 @@ public class ApiCore {
         
         // Check JWT secret's security
         if env.isRelease && configuration.jwtSecret == "secret" {
-            fatalError("You can't run in production mode with JWT_SECRET set to \"secret\"")
+            fatalError("You shouldn't be running around in a production mode with Configuration.jwt_secret set to \"secret\" as it is not very ... well, secret")
         }
         
         // System
         middlewareConfig.use(DateMiddleware.self)
         services.register(DateMiddleware())
         middlewareConfig.use(FileMiddleware.self)
+        // TODO: CHANGE!!!!!!!!!!!
         services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
         try services.register(LeafProvider())
         

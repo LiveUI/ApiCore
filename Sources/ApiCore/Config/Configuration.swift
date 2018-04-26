@@ -40,11 +40,11 @@ public struct Configuration: Codable {
     /// Database info
     public struct Database: Codable {
         
-        /// Database host
-        public internal(set) var host: String
+        /// Database host, default `localhost`
+        public internal(set) var host: String?
         
-        /// Database port
-        public internal(set) var port: Int
+        /// Database port, default 12324
+        public internal(set) var port: Int?
         
         /// Database user
         public internal(set) var user: String
