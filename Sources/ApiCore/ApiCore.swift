@@ -110,8 +110,6 @@ public class ApiCore {
         }
         
         // System
-        middlewareConfig.use(DateMiddleware.self)
-        services.register(DateMiddleware())
         middlewareConfig.use(FileMiddleware.self)
         // TODO: CHANGE!!!!!!!!!!!
         services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
