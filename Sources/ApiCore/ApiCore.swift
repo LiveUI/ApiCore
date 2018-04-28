@@ -80,11 +80,11 @@ public class ApiCore {
     /// Main configure method for ApiCore
     public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
         // Migrate models / tables
-        DbCore.migrationConfig.add(model: Token.self, database: .db)
-        DbCore.migrationConfig.add(model: Team.self, database: .db)
-        DbCore.migrationConfig.add(model: User.self, database: .db)
-        DbCore.migrationConfig.add(model: TeamUser.self, database: .db)
-        DbCore.migrationConfig.add(model: ErrorLog.self, database: .db)
+        DbCore.add(model: Token.self, database: .db)
+        DbCore.add(model: Team.self, database: .db)
+        DbCore.add(model: User.self, database: .db)
+        DbCore.add(model: TeamUser.self, database: .db)
+        DbCore.add(model: ErrorLog.self, database: .db)
         
         // Set database on tables that don't have migration
         FluentDesign.defaultDatabase = .db

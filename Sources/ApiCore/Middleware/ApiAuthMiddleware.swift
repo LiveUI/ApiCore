@@ -38,9 +38,9 @@ public final class ApiAuthMiddleware: Middleware, Service {
     ]
     
     public static var debugUri: [String] = [
-        "/install",
         "/demo",
-        "/tables",
+        "/install",
+        "/database",
         "/reinstall",
         "/uninstall"
     ]
