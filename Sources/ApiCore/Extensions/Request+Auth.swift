@@ -42,8 +42,9 @@ public struct Me {
     }
     
     public func verifiedTeam(id teamId: DbCoreIdentifier) throws -> Future<Team> {
-        return try teams().map(to: Team.self) { teams in
-            guard let team = teams.filter({ $0.id == teamId }).first else {
+        let me = try user()
+        return try me.teams.query(on: self.request).filter(\Team.id == teamId).first().map(to: Team.self) { team in
+            guard let team = team else {
                 throw ErrorsCore.HTTPError.notFound
             }
             return team
