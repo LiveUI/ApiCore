@@ -41,6 +41,12 @@ let package = Package(
             "JWT",
             "MailCore",
             "Leaf",
+            "FileCore"
+            ]
+        ),
+        .target(name: "FileCore", dependencies: [
+            "Vapor",
+            "ErrorsCore",
             "S3"
             ]
         ),
