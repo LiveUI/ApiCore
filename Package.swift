@@ -13,6 +13,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.2"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc.2"),
         .package(url: "https://github.com/vapor/leaf.git", from: "3.0.0-rc.2"),
+        .package(url: "https://github.com/LiveUI/S3.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/DbCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/MailCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/ErrorsCore.git", .branch("master")),
@@ -39,7 +40,8 @@ let package = Package(
             "DbCore",
             "JWT",
             "MailCore",
-            "Leaf"
+            "Leaf",
+            "S3"
             ]
         ),
         .target(

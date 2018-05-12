@@ -65,8 +65,13 @@ public struct Configuration: Codable {
         
         /// Mailgun configuration
         public struct MailGun: Codable {
-            let domain: String
-            let key: String
+            
+            /// Mailgun domain
+            public internal(set) var domain: String
+            
+            /// Mailgun API key
+            public internal(set) var key: String
+            
         }
         
         /// Mailgun configuration
