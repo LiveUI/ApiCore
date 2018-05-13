@@ -10,21 +10,6 @@ import Vapor
 import DbCore
 import JWT
 
-//
-//final class UserPayload: JWTPayload {
-//
-//    func verify() throws {
-//
-//    }
-//
-//    let userId: DbCoreIdentifier
-//
-//    init(_ userId: DbCoreIdentifier) {
-//        self.userId = userId
-//    }
-//
-//}
-
 
 struct JWTAuthPayload: JWTPayload {
     

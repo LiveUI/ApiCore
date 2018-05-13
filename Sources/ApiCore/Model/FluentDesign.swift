@@ -13,19 +13,32 @@ import DbCore
 import ErrorsCore
 
 
+/// FluentDesign array type typealias
 public typealias FluentDesigns = [FluentDesign]
 
 
+/// FluentDesigns object
 public final class FluentDesign: DbCoreModel {
     
+    /// Table (entity) name override
     public static let entity: String = "fluent"
     
+    /// Object Id
     public var id: DbCoreIdentifier?
+    
+    /// Name
     public var name: String
+    
+    /// Batch
     public var batch: Int
+    
+    /// Created date
     public var createdAt: Date
+    
+    /// Updated date
     public var updatedAt: Date
     
+    /// Initializer
     public init(id: DbCoreIdentifier? = nil, name: String, batch: Int, createdAt: Date = Date(), updatedAt: Date = Date()) {
         self.id = id
         self.name = name
@@ -35,15 +48,3 @@ public final class FluentDesign: DbCoreModel {
     }
     
 }
-
-// MARK: - Migrations
-
-extension FluentDesign: Migration {
-    
-    public static var idKey: WritableKeyPath<FluentDesign, DbCoreIdentifier?> = \FluentDesign.id
-    
-}
-
-// MARK: - Queries
-
-extension FluentDesign { }

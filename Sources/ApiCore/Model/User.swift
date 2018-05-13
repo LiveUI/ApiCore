@@ -12,37 +12,65 @@ import FluentPostgreSQL
 import DbCore
 
 
+/// Users array type typealias
 public typealias Users = [User]
 
 
+/// User object
 public final class User: DbCoreModel {
     
+    /// Registration object
     public struct Registration: Content {
         
+        /// Template object
         public struct Template: Content {
+            
+            /// Verification
             public var verification: String
+            
+            /// Server link
             public var serverLink: String
+            
+            /// User registration
             public var user: Registration
         }
         
+        /// Username
         public var username: String
+        
+        /// First name
         public var firstname: String
+        
+        /// Last name
         public var lastname: String
+        
+        /// Email
         public var email: String
+        
+        /// Password
         public var password: String
         
+        /// Convert to user
         public func newUser(on req: Request) throws -> User {
             let user = try User(username: username, firstname: firstname, lastname: lastname, email: email, verification: UUID().uuidString, password: password.passwordHash(req), disabled: false, su: false)
             return user
         }
+        
     }
     
+    /// Auth
     public struct Auth {
         
+        /// Login object
         public struct Login: Content {
+            
+            /// Email
             public let email: String
+            
+            /// Password
             public let password: String
             
+            /// Initializer (optional)
             public init?(email: String, password: String) {
                 guard email.count > 0, password.count > 0 else {
                     return nil
@@ -50,10 +78,15 @@ public final class User: DbCoreModel {
                 self.email = email
                 self.password = password
             }
+            
         }
         
+        /// Token object
         public struct Token: Content {
+            
+            /// Token
             public let token: String
+            
         }
         
         public struct StartRecovery: Content {
@@ -68,17 +101,34 @@ public final class User: DbCoreModel {
         
     }
     
+    /// User displayable object
     public final class Display: Content {
         
+        /// Object Id
         public var id: DbCoreIdentifier?
+        
+        // Username / nickname
         public var username: String
+        
+        /// First name
         public var firstname: String
+        
+        /// Last name
         public var lastname: String
+        
+        /// Email
         public var email: String
+        
+        /// Date registered
         public var registered: Date
+        
+        /// User disabled
         public var disabled: Bool
+        
+        /// Super user
         public var su: Bool
         
+        /// Initializer
         public init(username: String, firstname: String, lastname: String, email: String, disabled: Bool = true, su: Bool = false) {
             self.username = username
             self.firstname = firstname
@@ -89,6 +139,7 @@ public final class User: DbCoreModel {
             self.su = su
         }
         
+        /// Initializer
         public init(_ user: User) {
             self.id = user.id
             self.username = user.username
@@ -102,17 +153,35 @@ public final class User: DbCoreModel {
         
     }
     
+    /// Public displayable object
+    /// Should be displayed when accessing users you shouldn't see otherwise (so keep it private!)
     public final class AllSearch: Content {
         
+        /// Object Id
         public var id: DbCoreIdentifier?
+        
+        // Username / nickname
         public var username: String
+        
+        /// First name
         public var firstname: String
+        
+        /// Last name
         public var lastname: String
+        
+        /// Avatar image (gravatar)
         public var avatar: String
+        
+        /// Date registered
         public var registered: Date
+        
+        /// User disabled
         public var disabled: Bool
+        
+        /// Super user
         public var su: Bool
         
+        /// Initializer
         required public init(user: User) {
             id = user.id
             username = user.username
@@ -128,26 +197,56 @@ public final class User: DbCoreModel {
         
     }
     
+    /// Id object
     public struct Id: Content {
+        
+        /// Id
         public var id: DbCoreIdentifier?
         
+        /// Initializer
         public init(id: DbCoreIdentifier) {
             self.id = id
         }
     }
     
+    /// Object Id
     public var id: DbCoreIdentifier?
+    
+    // Username / nickname
     public var username: String
+    
+    /// First name
     public var firstname: String
+    
+    /// Last name
     public var lastname: String
+    
+    /// Email
     public var email: String
+    
+    /// User expires on
+    public var expires: Date?
+    
+    /// Verification
     public var verification: String?
+    
+    /// Password
     public var password: String?
+    
+    /// Token
+    public var token: String?
+    
+    /// Date registered
     public var registered: Date
+    
+    /// User disabled
     public var disabled: Bool
+    
+    /// Super user
     public var su: Bool
     
-    public init(username: String, firstname: String, lastname: String, email: String, verification: String? = nil, password: String? = nil, disabled: Bool = true, su: Bool = false) {
+    /// Initializer
+    public init(username: String, firstname: String, lastname: String, email: String, verification: String? = nil, password: String? = nil, token: String? = nil, disabled: Bool = true, su: Bool = false) {
         self.username = username
         self.firstname = firstname
         self.lastname = lastname
@@ -161,29 +260,13 @@ public final class User: DbCoreModel {
     
 }
 
-
-extension User.Display {
-    
-    public static var idKey: WritableKeyPath<User.Display, DbCoreIdentifier?> = \User.Display.id
-    
-}
-
 // MARK: - Relationships
 
 extension User {
     
+    /// Teams relation
     public var teams: Siblings<User, Team, TeamUser> {
         return siblings()
-    }
-    
-}
-
-// MARK: - Queries
-
-extension User {
-    
-    public static func with(id: DbCoreIdentifier, on connectable: DatabaseConnectable) throws -> Future<User?> {
-        return try User.query(on: connectable).filter(\User.id == id).first()
     }
     
 }
@@ -192,8 +275,7 @@ extension User {
 
 extension User: Migration {
     
-    public static var idKey: WritableKeyPath<User, DbCoreIdentifier?> = \User.id
-    
+    /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
@@ -209,6 +291,7 @@ extension User: Migration {
         }
     }
     
+    /// Migration reverse
     public static func revert(on connection: DbCoreConnection) -> Future<Void> {
         return Database.delete(User.self, on: connection)
     }
@@ -218,6 +301,7 @@ extension User: Migration {
 
 extension User {
     
+    /// Convert to displayable object
     public func asDisplay() -> User.Display {
         return User.Display(self)
     }

@@ -119,7 +119,7 @@ extension AuthController {
             guard let token = token else {
                 throw AuthError.authenticationFailed
             }
-            return try User.with(id: token.userId, on: req).flatMap(to: Response.self) { user in
+            return try User.find(token.userId, on: req).flatMap(to: Response.self) { user in
                 guard let user = user else {
                     throw AuthError.authenticationFailed
                 }

@@ -10,29 +10,65 @@ import Vapor
 import Fluent
 import FluentPostgreSQL
 import DbCore
+import ErrorsCore
 
 
+/// Tokens array type typealias
 public typealias Tokens = [Token]
 
 
+/// Token object
 public final class Token: DbCoreModel {
     
+    /// Token type
     public enum TokenType: String, Codable, PostgreSQLType {
+        
+        /// Authentication
         case Authentication
+        
+        /// Password recovery
         case PasswordRecovery
+
     }
     
-    public enum TokenError: Error {
+    /// Error
+    public enum Error: FrontendError {
+        
+        /// User Id is missing
         case missingUserId
+        
+        public var status: HTTPStatus {
+            return .preconditionFailed
+        }
+        
+        public var identifier: String {
+            return "token.missing_user_id"
+        }
+        
+        public var reason: String {
+            return "User ID is missing"
+        }
+        
     }
     
+    /// Displayable full public object
+    /// for security reasons, the original object should never be displayed
     public final class PublicFull: DbCoreModel {
+        
+        /// Object id
         public var id: DbCoreIdentifier?
+        
+        /// User
         public var user: User.Display
+        
+        /// Token
         public var token: String
+        
+        /// Token expiry date
         public var expires: Date
         public var type: TokenType
         
+        /// Initializer
         public init(token: Token, user: User) {
             self.id = token.id
             self.user = User.Display(user)
@@ -56,11 +92,19 @@ public final class Token: DbCoreModel {
         }
     }
     
+    /// Displayable public object
+    /// for security reasons, the original object should never be displayed
     public final class Public: DbCoreModel {
+        /// Object id
         public var id: DbCoreIdentifier?
+        
+        /// User
         public var user: User.Display
+        
+        /// Token expiry date
         public var expires: Date
         
+        /// Initializer
         public init(token: Token, user: User) {
             self.id = token.id
             self.user = User.Display(user)
@@ -68,19 +112,28 @@ public final class Token: DbCoreModel {
         }
     }
     
+    /// Object id
     public var id: DbCoreIdentifier?
+    
+    /// User Id
     public var userId: DbCoreIdentifier
+    
+    /// Token
     public var token: String
+    
+    /// Token expiry date
     public var expires: Date
     public var type: TokenType
     
+    /// Initializer
     convenience init(user: User) throws {
         try self.init(user: user, type: .Authentication)
     }
     
+    /// Initializer
     init(user: User, type: TokenType) throws {
         guard let userId = user.id else {
-            throw TokenError.missingUserId
+            throw Error.missingUserId
         }
         self.userId = userId
         self.token = UUID().uuidString
@@ -98,18 +151,11 @@ public final class Token: DbCoreModel {
 
 }
 
-extension Token.Public {
-    
-    public static var idKey: WritableKeyPath<Token.Public, DbCoreIdentifier?> = \Token.Public.id
-    
-}
-
 // MARK: - Migrations
 
 extension Token: Migration {
     
-    public static var idKey: WritableKeyPath<Token, DbCoreIdentifier?> = \Token.id
-    
+    /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
@@ -120,6 +166,7 @@ extension Token: Migration {
         }
     }
     
+    /// Migration reverse
     public static func revert(on connection: DbCoreConnection) -> Future<Void> {
         return Database.delete(Token.self, on: connection)
     }

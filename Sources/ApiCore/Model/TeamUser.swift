@@ -13,27 +13,34 @@ import Vapor
 
 public final class TeamUser: ModifiablePivot, DbCoreModel {
     
+    /// Left JOIN table
     public typealias Left = Team
+    
+    /// Right JOIN table
     public typealias Right = User
     
+    /// Left JOIN Id key
     public static var leftIDKey: WritableKeyPath<TeamUser, DbCoreIdentifier> {
         return \.teamId
     }
     
+    /// Right JOIN Id key
     public static var rightIDKey: WritableKeyPath<TeamUser, DbCoreIdentifier> {
         return \.userId
     }
     
-    public static var idKey: WritableKeyPath<TeamUser, DbCoreIdentifier?> {
-        return \.id
-    }
-    
+    /// Object Id
     public var id: DbCoreIdentifier?
+    
+    /// Team Id
     public var teamId: DbCoreIdentifier
+    
+    /// User Id
     public var userId: DbCoreIdentifier
     
     // MARK: Initialization
     
+    /// Initialization
     public init(_ left: TeamUser.Left, _ right: TeamUser.Right) throws {
         teamId = try left.requireID()
         userId = try right.requireID()
@@ -45,6 +52,7 @@ public final class TeamUser: ModifiablePivot, DbCoreModel {
 
 extension TeamUser: Migration {
     
+    /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             try schema.field(for: \TeamUser.id)
@@ -53,6 +61,7 @@ extension TeamUser: Migration {
         }
     }
     
+    /// Migration reverse (DROP TABLE)
     public static func revert(on connection: DbCoreConnection) -> Future<Void> {
         return Database.delete(TeamUser.self, on: connection)
     }

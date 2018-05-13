@@ -91,7 +91,7 @@ class TeamsController: Controller {
             return try req.content.decode(Team.New.self).flatMap(to: Response.self) { newTeam in
                 return try Team.exists(identifier: newTeam.identifier, on: req).flatMap(to: Response.self) { identifierExists in
                     if identifierExists {
-                        throw Team.TeamError.identifierAlreadyExists
+                        throw Team.Error.identifierAlreadyExists
                     }
                     return newTeam.asTeam().save(on: req).flatMap(to: Response.self) { team in
                         guard team.id != nil else {
@@ -110,7 +110,7 @@ class TeamsController: Controller {
             return try req.content.decode(Team.Identifier.self).flatMap(to: Response.self) { identifierObject in
                 return try Team.exists(identifier: identifierObject.identifier, on: req).map(to: Response.self) { identifierExists in
                     if identifierExists {
-                        throw Team.TeamError.identifierAlreadyExists
+                        throw Team.Error.identifierAlreadyExists
                     }
                     return try req.response.success(status: .ok, code: "ok", description: "Identifier available")
                 }
@@ -135,7 +135,7 @@ class TeamsController: Controller {
                     
                     return try Team.exists(identifier: newTeam.identifier, on: req).flatMap(to: Team.self) { identifierExists in
                         if identifierExists {
-                            throw Team.TeamError.identifierAlreadyExists
+                            throw Team.Error.identifierAlreadyExists
                         }
                         
                         team.identifier = newTeam.identifier

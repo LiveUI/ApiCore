@@ -1,6 +1,6 @@
 //
 //  Color.swift
-//  ApiCore
+//  ImageCore
 //
 //  Created by Ondrej Rafaj on 15/04/2018.
 //
@@ -8,15 +8,22 @@
 import Foundation
 
 
+/// Color
 public class Color {
     
-    let r: Int
-    let g: Int
-    let b: Int
+    /// Red
+    public let r: Int
+    
+    /// Green
+    public let g: Int
+    
+    /// Blue
+    public let b: Int
     
     
     // MARK: Initialization
     
+    /// Initializer
     public init(r: Int, g: Int, b: Int) {
         self.r = r
         self.g = g
@@ -25,30 +32,36 @@ public class Color {
     
     // MARK: Public interface
     
+    /// Value of the color in hex (FF0000)
     public var hexValue: String {
         return Color.convert(r: r, g: g, b: b)
     }
     
+    /// Is the color dark?
     public var isDark: Bool {
         let RGB = floatComponents()
         return (0.2126 * RGB[0] + 0.7152 * RGB[1] + 0.0722 * RGB[2]) < 0.5
     }
     
+    /// Is the color B/W
     public var isBlackOrWhite: Bool {
         let RGB = floatComponents()
         return (RGB[0] > 0.91 && RGB[1] > 0.91 && RGB[2] > 0.91) || (RGB[0] < 0.09 && RGB[1] < 0.09 && RGB[2] < 0.09)
     }
     
+    /// Is the color black
     public var isBlack: Bool {
         let RGB = floatComponents()
         return (RGB[0] < 0.09 && RGB[1] < 0.09 && RGB[2] < 0.09)
     }
     
+    /// Is the color white
     public var isWhite: Bool {
         let RGB = floatComponents()
         return (RGB[0] > 0.91 && RGB[1] > 0.91 && RGB[2] > 0.91)
     }
     
+    /// Is the color distinct from another color
     public func isDistinct(from color: Color) -> Bool {
         let bg = floatComponents()
         let fg = color.floatComponents()
@@ -67,6 +80,7 @@ public class Color {
         return result
     }
     
+    /// Is color contrasting with nother color
     public func isContrasting(with color: Color) -> Bool {
         let bg = floatComponents()
         let fg = color.floatComponents()
@@ -82,21 +96,25 @@ public class Color {
     
     // MARK: Private interface
     
+    /// Float components
     internal func floatComponents() -> [Double] {
         return [r.floatColorValue, g.floatColorValue, b.floatColorValue]
     }
     
+    /// Random value
     internal static var random: Double {
         return Double(arc4random()) / Double(UInt32.max)
     }
     
     // MARK: Static helpers
     
+    /// Convert color to hex
     public static func convert(r: Int, g: Int, b: Int) -> String {
         let hexValue = String(format:"%02X", r) + String(format:"%02X", g) + String(format:"%02X", b)
         return hexValue
     }
     
+    /// Get random color
     public static func randomColor() -> Color {
         return Color(r: .random, g: .random, b: .random)
     }
@@ -106,10 +124,12 @@ public class Color {
 
 extension Int {
     
+    /// Float color value
     internal var floatColorValue: Double {
         return Double(self) / 255.0
     }
     
+    /// Random value
     internal static var random: Int {
         return Int((Double(arc4random()) / Double(UInt32.max)) * 256.0)
     }

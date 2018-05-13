@@ -53,8 +53,7 @@ public class GenericController: Controller {
                 }
                 return req.http.body.consumeData(max: 2_000_000, on: req).flatMap({ data in
                     guard data.isWebImage(), let ext = data.imageFileExtension, let mime = data.imageFileMediaType() else {
-//                        throw ImageError.invalidImageFormat
-                        throw ErrorsCore.GenericError.impossibleSituation
+                        throw ImageError.invalidImageFormat
                     }
                     let fm = try req.makeFileCore()
                     return try fm.save(file: data, to: "Server/image.\(ext)", mime: mime, on: req).map({ _ in
