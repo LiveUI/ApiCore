@@ -50,7 +50,7 @@ class S3LibClient: FileManagement, Service {
     /// Move file
     public func move(file path: String, to destination: String, on container: Container) throws -> EventLoopFuture<Void> {
         // TODO: Implement move on S3 library first!
-        fatalError()
+        throw Error.notImplemented
     }
     
     /// Retrieve file

@@ -16,6 +16,9 @@ public class FileCoreManager: FileCore, Service {
     /// FileCoreManager errors
     public enum Error: FrontendError {
         
+        /// Not implemented
+        case notImplemented
+        
         /// File not found
         case fileNotFound(String)
         
@@ -36,12 +39,29 @@ public class FileCoreManager: FileCore, Service {
         
         /// Error code
         public var code: String {
-            return "file_core"
+            switch self {
+            case .notImplemented:
+                return "filecore.not_implemented"
+            case .fileNotFound(_):
+                return "filecore.not_found"
+            case .failedWriting(_, _):
+                return "filecore.failed_write"
+            case .failedReading(_, _):
+                return "filecore.failed_read"
+            case .failedRemoving(_, _):
+                return "filecore.failed_delete"
+            case .failedCopy(_, _, _):
+                return "filecore.failed_copy"
+            case .failedMove(_, _, _):
+                return "filecore.failed_move"
+            }
         }
         
         /// Error description
         public var description: String {
             switch self {
+            case .notImplemented:
+                return "Function not implemented"
             case .fileNotFound(let path):
                 return "File not found at path: \(path)"
             case .failedWriting(let path, let error):
