@@ -1,11 +1,12 @@
 //
-//  Location.swift
+//  Configuration.swift
 //  ApiCore
 //
 //  Created by Ondrej Rafaj on 12/05/2018.
 //
 
 import Foundation
+import S3
 
 
 /// Filesystem configurations
@@ -14,8 +15,8 @@ public enum Configuration {
     /// Local filesystem
     case local(LocalConfig)
     
-    /// S3
-    case s3(S3Config)
+    /// S3 (config, bucket)
+    case s3(S3Signer.Config, String)
     
 }
 
@@ -32,11 +33,11 @@ extension Configuration {
         }
     }
     
-    /// Get S3 configuration if available
-    public func s3Config() -> S3Config? {
+    /// Get S3 configuration and bucket if available
+    public func s3Config() -> (config: S3Signer.Config, bucket: String)? {
         switch self {
-        case .s3(let config):
-            return config
+        case .s3(let config, let bucket):
+            return (config: config, bucket: bucket)
         default:
             return nil
         }

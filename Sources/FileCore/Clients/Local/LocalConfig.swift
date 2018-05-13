@@ -12,6 +12,14 @@ import Foundation
 public struct LocalConfig {
     
     /// Root folder for storing files
-    let root: String
+    public let root: String
+    
+    /// Initializer
+    ///
+    /// - parameters:
+    ///     - root: Root folder to store all files
+    init(root: String) {
+        self.root = root
+    }
     
 }

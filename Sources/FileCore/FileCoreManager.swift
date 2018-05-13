@@ -66,29 +66,51 @@ public class FileCoreManager: FileCore, Service {
     let client: FileManagement
     
     /// Save file
+    ///
+    /// - parameters:
+    ///     - file: File data
+    ///     - to: Path to the file
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Void>
     public func save(file data: Data, to path: String, on container: Container) throws -> EventLoopFuture<Void> {
         return try client.save(file: data, to: path, on: container)
     }
     
     /// Retrieve file
+    ///
+    /// - parameters:
+    ///     - file: Path to the file
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Data>
     public func get(file path: String, on container: Container) throws -> EventLoopFuture<Data> {
         return try client.get(file: path, on: container)
     }
     
     /// Delete file
+    ///
+    /// - parameters:
+    ///     - file: Path to the file
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Void>
     public func delete(file path: String, on container: Container) throws -> EventLoopFuture<Void> {
         return try client.delete(file: path, on: container)
     }
     
     /// Initializer
-    public required init(_ config: Configuration) {
+    ///
+    /// - parameters:
+    ///     - config: FileCoreManager configuration
+    public required init(_ config: Configuration) throws {
         self.config = config
         
         switch config {
         case .local(let config):
             client = LocalClient(config)
-        case .s3(let config):
-            client = S3Client(config)
+        case .s3(let config, let bucket):
+            client = try S3LibClient(config, bucket: bucket)
         }
     }
     
