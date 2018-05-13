@@ -8,10 +8,13 @@
 import Foundation
 
 
+/// BAsic registration template
 public class RegistrationTemplate: Template {
     
+    /// Name of the template
     public static  var name: String = "registration"
     
+    /// Text data
     public static  var string: String = """
 Hi #(user.firstname) #(user.lastname)
 Please confirm your email #(user.email) by clicking on this link http://www.example.com/#what-the-fuck
@@ -19,6 +22,7 @@ HTML - huhuhu woe :)
 Boost team
 """
     
+    /// HTML data
     public static  var html: String? = """
 <h1>Hi #(user.firstname) #(user.lastname)</h1>
 <p>Please confirm your email #(user.email) by clicking on this <a href="http://www.example.com/#what-the-fuck">link</a></p>

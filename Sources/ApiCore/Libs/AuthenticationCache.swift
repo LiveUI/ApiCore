@@ -11,9 +11,13 @@ import DbCore
 import JWT
 
 
+/// JWT payload object
 struct JWTAuthPayload: JWTPayload {
     
+    /// Expiration
     var exp: ExpirationClaim
+    
+    /// User Id
     var userId: UUID
     
     enum CodingKeys: String, CodingKey {
@@ -21,6 +25,7 @@ struct JWTAuthPayload: JWTPayload {
         case userId = "user_id"
     }
     
+    /// Verify
     func verify() throws {
         try exp.verify()
     }
@@ -44,17 +49,24 @@ struct JWTPasswordResetPayload: JWTPayload {
 }
 
 
+/// JWT service
 final class JWTService: Service {
     
+    /// Seconds in one minute
     let minute: TimeInterval = 60
+
+    /// Seconds in an hour
     let hour: TimeInterval = 3600
     
+    /// Signer
     var signer: JWTSigner
     
+    /// Initializer
     init(secret: String) {
         signer = JWTSigner.hs512(key: Data(secret.utf8))
     }
     
+    /// Sign user to token
     func signUserToToken(user: User) throws -> String {
         let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (15 * minute)))
         var jwt = JWT(payload: JWTAuthPayload(exp: exp, userId: user.id!))
@@ -84,6 +96,7 @@ final class JWTService: Service {
 }
 
 
+/// Authentication cache service
 final class AuthenticationCache: Service {
     
     /// The internal storage.

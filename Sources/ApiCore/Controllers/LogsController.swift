@@ -12,9 +12,11 @@ import FluentPostgreSQL
 
 public class LogsController: Controller {
     
+    /// Setup routes
     public static func boot(router: Router) throws {
         router.get("errors") { (req) -> Future<[ErrorLog]> in
             return try ErrorLog.query(on: req).sort(\ErrorLog.added, .descending).all()
         }
     }
+    
 }

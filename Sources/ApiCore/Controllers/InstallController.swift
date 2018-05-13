@@ -14,22 +14,29 @@ import Fluent
 
 public class InstallController: Controller {
     
-    public enum InstallError: FrontendError {
+    /// Error
+    public enum Error: FrontendError {
+        
+        /// Data exists
         case dataExists
         
+        /// Error code
         public var identifier: String {
             return "install_failed.data_exists"
         }
         
+        /// Reason to fail
         public var reason: String {
             return "Data already exists"
         }
         
+        /// Error HTTP code
         public var status: HTTPStatus {
             return .preconditionFailed
         }
     }
     
+    /// Setup routes
     public static func boot(router: Router) throws {
         router.get("install") { (req)->Future<Response> in
             return try install(on: req)
@@ -58,14 +65,17 @@ public class InstallController: Controller {
 
 extension InstallController {
     
+    /// New super user
     private static var su: User {
         return User(username: "admin", firstname: "Super", lastname: "Admin", email: "admin@liveui.io", password: "admin", disabled: false, su: true)
     }
     
+    /// New admin team
     private static var adminTeam: Team {
         return Team(name: "Admin team", identifier: "admin-team", admin: true)
     }
     
+    /// Uninstall all data and drop all tables
     private static func uninstall(on req: Request) throws -> Future<Response> {
         var futures: [Future<Void>] = []
         return req.requestPooledConnection(to: .db).flatMap(to: Response.self) { connection in
@@ -80,12 +90,13 @@ extension InstallController {
         }
     }
     
+    /// Install all tables and data if neccessary
     private static func install(on req: Request) throws -> Future<Response> {
         let migrations = FluentProvider.init()
         return try migrations.didBoot(req).flatMap(to: Response.self) { _ in
             return User.query(on: req).count().flatMap(to: Response.self) { count in
                 if count > 0 {
-                    throw InstallError.dataExists
+                    throw Error.dataExists
                 }
                 return su.save(on: req).flatMap(to: Response.self) { user in
                     return adminTeam.save(on: req).flatMap(to: Response.self) { team in

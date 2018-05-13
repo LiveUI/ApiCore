@@ -9,6 +9,10 @@ import Foundation
 import Vapor
 
 
+/// Controller protocol
 public protocol Controller {
+    
+    /// Boot controller and register all it's routes
     static func boot(router: Router) throws
+    
 }

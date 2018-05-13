@@ -10,36 +10,46 @@ import ErrorsCore
 import Vapor
 
 
+/// Templates
 public class Templates {
     
+    /// Template error
     public enum Error: FrontendError {
+        
+        /// Template is not available
         case templateUnavailable
         
+        /// Error code
         public var identifier: String {
             return "template.template_not_available"
         }
         
+        /// Reason to fail
         public var reason: String {
             return "Template not available"
         }
         
+        /// HTTP status code
         public var status: HTTPStatus {
             return .notImplemented
         }
         
     }
     
+    /// Template data selector
     public enum Which {
         case string
         case html
     }
     
+    /// Available templates
     static var templates: [Template.Type] = [
         RegistrationTemplate.self
     ]
     
     // MARK: Public interface
     
+    /// Install missing templates
     public static func installMissing() {
         for template in templates {
             if !exists(template, type: .string) {
@@ -51,6 +61,8 @@ public class Templates {
         }
     }
     
+    /// Reset existing templates
+    /// *(Changes will be lost)*
     public static func resetTemplates() {
         for template in templates {
             create(template, type: .string)
@@ -60,10 +72,12 @@ public class Templates {
     
     // MARK: Private interface
     
+    /// Does template exist?
     private static func exists(_ template: Template.Type, type: Which) -> Bool {
         return FileManager.default.fileExists(atPath: (type == .string ? template.stringPath.path : template.htmlPath.path))
     }
     
+    /// Create a template
     private static func create(_ template: Template.Type, type: Which) {
         do {
             if type == .string {

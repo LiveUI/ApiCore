@@ -11,6 +11,7 @@ import Leaf
 import Fluent
 
 
+/// Template protocol
 public protocol Template {
     static var name: String { get }
     static var string: String { get }
@@ -20,6 +21,7 @@ public protocol Template {
 
 extension Template {
     
+    /// Path to the template
     private static var path: URL {
         let config = DirectoryConfig.detect()
         let url: URL = URL(fileURLWithPath: config.workDir).appendingPathComponent("Resources/Templates")
@@ -33,6 +35,7 @@ extension Template {
         return url
     }
     
+    /// Text template
     public static var stringPath: URL {
         var url = path
         url.appendPathComponent(name)
@@ -41,6 +44,7 @@ extension Template {
         return url
     }
     
+    /// HTML template
     public static var htmlPath: URL {
         var url = path
         url.appendPathComponent(name)
@@ -49,6 +53,7 @@ extension Template {
         return url
     }
     
+    /// Parse model onto a template
     public static func parsed<M>(_ type: Templates.Which, model: M? = nil, on req: Request) throws -> Future<String> where M: Content {
         guard let content = type == .string ? string : html, let data = content.data(using: .utf8) else {
             throw Templates.Error.templateUnavailable
@@ -69,8 +74,10 @@ extension Template {
         }
     }
     
+    /// Parsed return typealias
     public typealias ParsedDoubleType = (string: String, html: String?)
     
+    /// Parse model onto a template
     public static func parsed<M>(model: M? = nil, on req: Request) throws -> Future<ParsedDoubleType> where M: Content {
         if html == nil {
             return try parsed(.string, model: model, on: req).map(to: ParsedDoubleType.self) { string in

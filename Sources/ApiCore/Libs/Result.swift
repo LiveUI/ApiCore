@@ -8,11 +8,19 @@
 import Foundation
 
 
+/// Generic result object
 public enum Result<T> {
+    
+    /// Complete
     case complete
+    
+    /// Success with generic result
     case success(T)
+    
+    /// Error
     case error(Error)
     
+    /// Did result succeed?
     public var success: Bool {
         switch self {
         case .error(_):
@@ -22,6 +30,7 @@ public enum Result<T> {
         }
     }
     
+    /// Error if available
     public var error: Error? {
         switch self {
         case .error(let error):
@@ -31,6 +40,7 @@ public enum Result<T> {
         }
     }
     
+    /// Generic object if successful
     public var object: T? {
         switch self {
         case .success(let object):

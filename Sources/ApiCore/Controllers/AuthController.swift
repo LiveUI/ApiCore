@@ -17,6 +17,7 @@ import JWT
 
 public class AuthController: Controller {
     
+    /// Setup routes
     public static func boot(router: Router) throws {
         // Authenticate with username and password in an Authorization header
         router.get("auth") { (req)->Future<Response> in
@@ -41,6 +42,7 @@ public class AuthController: Controller {
             }
         }
         
+        /// Create new JWT token using permanent token (Headers)
         router.get("token") { (req)->Future<Response> in
             guard let tokenString = req.http.headers.authorizationToken else {
                 throw AuthError.authenticationFailed
@@ -48,6 +50,7 @@ public class AuthController: Controller {
             return try token(request: req, token: tokenString)
         }
         
+        /// Create new JWT token using permanent token (POST)
         router.post("token") { (req) -> Future<Response> in
             return try req.content.decode(User.Auth.Token.self).flatMap(to: Response.self) { (loginData) -> Future<Response> in
                 return try token(request: req, token: loginData.token)
@@ -114,6 +117,7 @@ public class AuthController: Controller {
 
 extension AuthController {
     
+    /// Renew token helper
     static func token(request req: Request, token: String) throws -> Future<Response> {
         return try Token.query(on: req).filter(\Token.token == token.passwordHash(req)).first().flatMap(to: Response.self) { token in
             guard let token = token else {
@@ -132,6 +136,7 @@ extension AuthController {
         }
     }
     
+    /// Login helper
     static func login(request req: Request, login: User.Auth.Login) throws -> Future<Response> {
         guard !login.email.isEmpty, !login.password.isEmpty else {
             throw AuthError.authenticationFailed

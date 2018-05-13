@@ -15,21 +15,25 @@ import ErrorsCore
 import JWT
 
 
+/// API authentication  middleware
 public final class ApiAuthMiddleware: Middleware, Service {
     
+    /// Security types
     enum Security: String {
         case unsecured = "Unsecured"
         case secured = "Secured"
         case maintenance = "Maintenance"
     }
     
+    /// GET URL's allowed to run without authorization
     public static var allowedGetUri: [String] = [
         "/auth",
         "/token",
         "/ping",
         "/teapot",
-        ]
+    ]
     
+    /// POST URL's allowed to run without authorization
     public static var allowedPostUri: [String] = [
         "/users",
         "/auth",
@@ -39,6 +43,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         "/teams/check"
     ]
     
+    /// URL's allowed to run only in debug/developement mode
     public static var debugUri: [String] = [
         "/demo",
         "/install",
@@ -47,6 +52,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         "/uninstall"
     ]
     
+    /// Respond to method of the middleware
     public func respond(to req: Request, chainingTo next: Responder) throws -> Future<Response> {
         debug(request: req)
         
@@ -84,6 +90,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         }
     }
     
+    /// Get JWT payload
     private func jwtPayload(request req: Request) throws -> JWTAuthPayload {
         // Get JWT token
         guard let token = req.http.headers.authorizationToken else {
@@ -99,6 +106,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         return userPayload
     }
     
+    /// Debug
     private func debug(request req: Request) {
         if ApiCore.debugRequests {
             req.http.body.consumeData(max: 500, on: req).addAwaiter { (d) in
@@ -116,6 +124,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         }
     }
     
+    /// Is request allowed un-authenticated?
     private func allowed(request req: Request) -> Bool {
         if req.http.method == .GET {
             return ApiAuthMiddleware.allowedGetUri.contains(req.http.url.path)
@@ -127,12 +136,14 @@ public final class ApiAuthMiddleware: Middleware, Service {
         return false
     }
     
+    /// Print URL
     private func printUrl(req: Request, type: Security) {
         if req.environment != .production {
             print("\(type.rawValue): [\(req.http.method)] \(req.http.url.path)")
         }
     }
     
+    /// Public initializer
     public init() { }
     
 }

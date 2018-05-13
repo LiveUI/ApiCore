@@ -224,9 +224,6 @@ public final class User: DbCoreModel {
     /// Email
     public var email: String
     
-    /// User expires on
-    public var expires: Date?
-    
     /// Verification
     public var verification: String?
     

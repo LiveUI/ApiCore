@@ -10,14 +10,35 @@ import Vapor
 import FluentPostgreSQL
 import FluentSQL
 import MailCore
+import ErrorsCore
 
 
 public class UsersController: Controller {
     
-    enum Problem: Error {
+    /// Errors
+    enum Error: FrontendError {
+        
+        /// Verification code is missing
         case verificationCodeMissing
+        
+        /// HTTP error status code
+        var status: HTTPStatus {
+            return .preconditionFailed
+        }
+        
+        /// Error code
+        var identifier: String {
+            return "users_controller.verification_code_missing"
+        }
+        
+        /// Reason for failure
+        var reason: String {
+            return "Verification code is missing"
+        }
+        
     }
     
+    /// Setup routes
     public static func boot(router: Router) throws {
         router.get("users") { (req) -> Future<[User.Display]> in
             if let search = req.query.search {
@@ -57,7 +78,7 @@ public class UsersController: Controller {
             return try req.content.decode(User.Registration.self).flatMap(to: Response.self) { user in
                 let newUser = try user.newUser(on: req)
                 guard let verification = newUser.verification else {
-                    throw Problem.verificationCodeMissing
+                    throw Error.verificationCodeMissing
                 }
                 let templateModel = User.Registration.Template(
                     verification: verification,
