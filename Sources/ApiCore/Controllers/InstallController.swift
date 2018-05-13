@@ -17,11 +17,11 @@ public class InstallController: Controller {
     public enum InstallError: FrontendError {
         case dataExists
         
-        public var code: String {
-            return "install_failed"
+        public var identifier: String {
+            return "install_failed.data_exists"
         }
         
-        public var description: String {
+        public var reason: String {
             return "Data already exists"
         }
         

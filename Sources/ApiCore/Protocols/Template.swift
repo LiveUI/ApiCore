@@ -51,7 +51,7 @@ extension Template {
     
     public static func parsed<M>(_ type: Templates.Which, model: M? = nil, on req: Request) throws -> Future<String> where M: Content {
         guard let content = type == .string ? string : html, let data = content.data(using: .utf8) else {
-            throw Templates.Problem.templateUnavailable
+            throw Templates.Error.templateUnavailable
         }
         
         let leaf = try req.make(LeafRenderer.self)
@@ -63,7 +63,7 @@ extension Template {
         }
         return output.map(to: String.self) { view in
             guard let string = String.init(data: view.data, encoding: .utf8) else {
-                throw Templates.Problem.templateUnavailable
+                throw Templates.Error.templateUnavailable
             }
             return string
         }

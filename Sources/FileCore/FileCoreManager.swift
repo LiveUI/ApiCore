@@ -38,7 +38,7 @@ public class FileCoreManager: FileCore, Service {
         case failedRemoving(String, Swift.Error)
         
         /// Error code
-        public var code: String {
+        public var identifier: String {
             switch self {
             case .notImplemented:
                 return "filecore.not_implemented"
@@ -58,7 +58,7 @@ public class FileCoreManager: FileCore, Service {
         }
         
         /// Error description
-        public var description: String {
+        public var reason: String {
             switch self {
             case .notImplemented:
                 return "Function not implemented"

@@ -13,9 +13,11 @@ import DbCore
 import ErrorsCore
 
 
+/// Teams controller
 class TeamsController: Controller {
     
-    enum TeamError: FrontendError {
+    /// Error
+    enum Error: FrontendError {
         case userNotFound
         case cantAddYourself
         case userAlreadyMember
@@ -23,11 +25,24 @@ class TeamsController: Controller {
         case youAreTheLastUser
         case unableToDeleteAdminTeam
         
-        var code: String {
-            return "team_error"
+        var identifier: String {
+            switch self {
+            case .userNotFound:
+                return "team_error.user_not_found"
+            case .cantAddYourself:
+                return "team_error.cant_add_yourself"
+            case .userAlreadyMember:
+                return "team_error.user_already_member"
+            case .userNotMember:
+                return "team_error.user_not_member"
+            case .youAreTheLastUser:
+                return "team_error.you_are_last_user"
+            case .unableToDeleteAdminTeam:
+                return "team_error.unable_delete_admin_team"
+            }
         }
         
-        var description: String {
+        var reason: String {
             switch self {
             case .userNotFound:
                 return "User not found"
@@ -48,7 +63,7 @@ class TeamsController: Controller {
             switch self {
             case .userNotFound:
                 return .notFound
-            case .cantAddYourself, .userAlreadyMember, .userNotMember, .youAreTheLastUser, .unableToDeleteAdminTeam:
+            default:
                 return .conflict
             }
         }
@@ -140,12 +155,6 @@ class TeamsController: Controller {
             }
         }
         
-//        router.patch("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
-//            // TODO: Make a partial update when it becomes available
-//            let id = try req.parameters.next(DbCoreIdentifier.self)
-//            return try req.me.verifiedTeam(id: id)
-//        }
-        
         router.post("teams", DbCoreIdentifier.parameter, "link") { (req) -> Future<Response> in
             return try processLinking(request: req, action: .link)
         }
@@ -183,7 +192,7 @@ extension TeamsController {
     
     private static func delete(team: Team, request req: Request) throws -> Future<Response> {
         if team.admin {
-            throw TeamError.unableToDeleteAdminTeam
+            throw Error.unableToDeleteAdminTeam
         }
         // TODO: Cascade through all team data (that is not shared with other teams, possibly dleete users too?) !!!!!!
         return team.delete(on: req).map(to: Response.self, { (_) -> Response in
@@ -199,18 +208,18 @@ extension TeamsController {
                     return try User.query(on: req).filter(\User.id == userId.id).first().flatMap(to: Response.self) { user in
                         let me = try req.me.user()
                         guard let user = user else {
-                            throw TeamError.userNotFound
+                            throw Error.userNotFound
                         }
                         if user.id == me.id && action == .unlink && teamUsers.count <= 1 {
-                            throw TeamError.youAreTheLastUser
+                            throw Error.youAreTheLastUser
                         }
                         if teamUsers.contains(user) {
                             if action == .link {
-                                throw TeamError.userAlreadyMember
+                                throw Error.userAlreadyMember
                             }
                         } else {
                             if action == .unlink {
-                                throw TeamError.userNotMember
+                                throw Error.userNotMember
                             }
                         }
                         

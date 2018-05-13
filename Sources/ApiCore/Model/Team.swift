@@ -21,15 +21,15 @@ public final class Team: DbCoreModel {
     public enum TeamError: FrontendError {
         case identifierAlreadyExists
         
-        public var code: String {
-            return "app_error"
+        public var identifier: String {
+            return "app_error.identifier_already_exists"
         }
         
         public var status: HTTPStatus {
             return .conflict
         }
         
-        public var description: String {
+        public var reason: String {
             switch self {
             case .identifierAlreadyExists:
                 return "Identifier already exists"

@@ -50,6 +50,11 @@ let package = Package(
             "S3"
             ]
         ),
+        .target(name: "ImageCore", dependencies: [
+            "Vapor",
+            "ErrorsCore"
+            ]
+        ),
         .target(
             name: "ApiCoreTestTools",
             dependencies: [

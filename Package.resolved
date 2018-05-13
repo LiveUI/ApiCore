@@ -78,7 +78,7 @@
         "repositoryURL": "https://github.com/LiveUI/DbCore.git",
         "state": {
           "branch": "master",
-          "revision": "bc5915fd38582eb29474bb0686ece295fb9474aa",
+          "revision": "adc120e5d6887e36a4a97831e4a807f1791cebb5",
           "version": null
         }
       },
@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/LiveUI/ErrorsCore.git",
         "state": {
           "branch": "master",
-          "revision": "ac96d417f82dbc4db3925f8e64fb1aecf11abc6c",
+          "revision": "12646d70132cfff5b39b88702254f9771280a4c3",
           "version": null
         }
       },
@@ -159,7 +159,7 @@
         "repositoryURL": "https://github.com/LiveUI/MailCore.git",
         "state": {
           "branch": "master",
-          "revision": "72d45d7a76ea12682b44e94c991cbcd8fbed2256",
+          "revision": "eaeca69f1ca0309b4bed26101a387ae17ef7d8a4",
           "version": null
         }
       },

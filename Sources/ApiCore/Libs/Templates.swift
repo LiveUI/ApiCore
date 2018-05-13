@@ -12,14 +12,14 @@ import Vapor
 
 public class Templates {
     
-    public enum Problem: FrontendError {
+    public enum Error: FrontendError {
         case templateUnavailable
         
-        public var code: String {
-            return "template"
+        public var identifier: String {
+            return "template.template_not_available"
         }
         
-        public var description: String {
+        public var reason: String {
             return "Template not available"
         }
         

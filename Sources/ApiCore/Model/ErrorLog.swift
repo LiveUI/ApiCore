@@ -31,7 +31,7 @@ public final class ErrorLog: DbCoreModel {
         self.added = Date()
         
         if let e = error as? FrontendError {
-            self.error = "(\(e.code)) \(e.description)"
+            self.error = "(\(e.identifier)) - \(e.reason)"
         }
         else {
             self.error = error.localizedDescription
