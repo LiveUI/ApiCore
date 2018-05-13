@@ -12,15 +12,36 @@ import Vapor
 /// Basic file management protocol
 public protocol FileManagement {
     
-    /// Save file
+    /// Save file from data
     ///
     /// - parameters:
     ///     - file: File data
-    ///     - to: Path to the file
+    ///     - to: Destination path
+    ///     - mime: File media type
     ///     - on: Container to execure the operation on
     /// - returns:
     ///     - Future<Void>
-    func save(file: Data, to path: String, on: Container) throws -> Future<Void>
+    func save(file: Data, to path: String, mime: MediaType, on: Container) throws -> Future<Void>
+    
+    /// Copy file from local file system
+    ///
+    /// - parameters:
+    ///     - file: Local file path
+    ///     - to: Destination path
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Void>
+    func copy(file: String, to path: String, on: Container) throws -> Future<Void>
+    
+    /// Move file from local file system
+    ///
+    /// - parameters:
+    ///     - file: Local file path
+    ///     - to: Destination path
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Void>
+    func move(file: String, to path: String, on: Container) throws -> Future<Void>
     
     /// Retrieve file
     ///
@@ -39,5 +60,19 @@ public protocol FileManagement {
     /// - returns:
     ///     - Future<Void>
     func delete(file: String, on: Container) throws -> Future<Void>
+    
+}
+
+// MARK: - Private helpers
+
+extension FileManagement {
+    
+    func load(localFile url: URL) throws -> Data? {
+        if FileManager.default.fileExists(atPath: url.path) {
+            let data = try Data(contentsOf: url)
+            return data
+        }
+        return nil
+    }
     
 }

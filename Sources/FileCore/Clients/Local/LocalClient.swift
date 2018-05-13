@@ -13,13 +13,14 @@ import ErrorsCore
 /// Local filesystem client
 public class LocalClient: FileManagement, Service {
     
+    /// Error alias
     typealias Error = FileCoreManager.Error
     
     /// Configuration
     let config: LocalConfig
     
     /// Save file
-    public func save(file: Data, to path: String, on container: Container) throws -> EventLoopFuture<Void> {
+    public func save(file: Data, to path: String, mime: MediaType, on container: Container) throws -> EventLoopFuture<Void> {
         let url = self.path(file: path)
         let promise = container.eventLoop.newPromise(Void.self)
         Async.dispatchQueue.async {
@@ -28,6 +29,34 @@ public class LocalClient: FileManagement, Service {
                 promise.succeed()
             } catch {
                 promise.fail(error: Error.failedWriting(url.path, error))
+            }
+        }
+        return promise.futureResult
+    }
+    
+    /// Save file without turning content into data
+    public func copy(file path: String, to destination: String, on container: Container) throws -> Future<Void> {
+        let promise = container.eventLoop.newPromise(Void.self)
+        Async.dispatchQueue.async {
+            do {
+                try FileManager.default.copyItem(at: URL(fileURLWithPath: path), to: URL(fileURLWithPath: destination))
+                promise.succeed()
+            } catch {
+                promise.fail(error: Error.failedCopy(path, destination, error))
+            }
+        }
+        return promise.futureResult
+    }
+    
+    /// Move file
+    public func move(file path: String, to destination: String, on container: Container) throws -> EventLoopFuture<Void> {
+        let promise = container.eventLoop.newPromise(Void.self)
+        Async.dispatchQueue.async {
+            do {
+                try FileManager.default.moveItem(at: URL(fileURLWithPath: path), to: URL(fileURLWithPath: destination))
+                promise.succeed()
+            } catch {
+                promise.fail(error: Error.failedMove(path, destination, error))
             }
         }
         return promise.futureResult

@@ -22,6 +22,12 @@ public class FileCoreManager: FileCore, Service {
         /// Error writing file
         case failedWriting(String, Swift.Error)
         
+        /// Error copying file
+        case failedCopy(String, String, Swift.Error)
+        
+        /// Error moving file
+        case failedMove(String, String, Swift.Error)
+        
         /// Error reading file
         case failedReading(String, Swift.Error)
         
@@ -44,6 +50,10 @@ public class FileCoreManager: FileCore, Service {
                 return "Failed reading file at \(path) with error \(error.localizedDescription)"
             case .failedRemoving(let path, let error):
                 return "Failed deleting file at \(path) with error \(error.localizedDescription)"
+            case .failedCopy(let from, let to, let error):
+                return "Failed to copy file from \(from) to \(to) with error \(error.localizedDescription)"
+            case .failedMove(let from, let to, let error):
+                return "Failed to move file from \(from) to \(to) with error \(error.localizedDescription)"
             }
         }
         
@@ -65,7 +75,7 @@ public class FileCoreManager: FileCore, Service {
     /// Client for current configuration
     let client: FileManagement
     
-    /// Save file
+    /// Save file from data
     ///
     /// - parameters:
     ///     - file: File data
@@ -73,8 +83,32 @@ public class FileCoreManager: FileCore, Service {
     ///     - on: Container to execure the operation on
     /// - returns:
     ///     - Future<Void>
-    public func save(file data: Data, to path: String, on container: Container) throws -> EventLoopFuture<Void> {
-        return try client.save(file: data, to: path, on: container)
+    public func save(file data: Data, to path: String, mime: MediaType, on container: Container) throws -> EventLoopFuture<Void> {
+        return try client.save(file: data, to: path, mime: mime, on: container)
+    }
+    
+    /// Copy file from local file system
+    ///
+    /// - parameters:
+    ///     - file: Local file path
+    ///     - to: Destination path
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Void>
+    public func copy(file: String, to path: String, on container: Container) throws -> Future<Void> {
+        return try client.copy(file: file, to: path, on: container)
+    }
+    
+    /// Move file from local file system
+    ///
+    /// - parameters:
+    ///     - file: Local file path
+    ///     - to: Destination path
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Void>
+    public func move(file: String, to path: String, on container: Container) throws -> Future<Void> {
+        return try client.move(file: file, to: path, on: container)
     }
     
     /// Retrieve file
