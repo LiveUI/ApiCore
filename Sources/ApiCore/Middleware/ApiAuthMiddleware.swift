@@ -33,6 +33,8 @@ public final class ApiAuthMiddleware: Middleware, Service {
     public static var allowedPostUri: [String] = [
         "/users",
         "/auth",
+        "/auth/start-recovery",
+        "/auth/finish-recovery",
         "/token",
         "/teams/check"
     ]

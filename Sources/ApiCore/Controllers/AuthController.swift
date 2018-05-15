@@ -11,7 +11,9 @@ import FluentPostgreSQL
 import DbCore
 import Crypto
 import ErrorsCore
-
+import Random
+import MailCore
+import JWT
 
 public class AuthController: Controller {
     
@@ -50,6 +52,60 @@ public class AuthController: Controller {
             return try req.content.decode(User.Auth.Token.self).flatMap(to: Response.self) { (loginData) -> Future<Response> in
                 return try token(request: req, token: loginData.token)
             }
+        }
+        
+        router.post("auth", "start-recovery") { (req) -> Future<Response> in
+            print("start recovery")
+            // read user email from request
+            // read redirect url from request
+            return try req.content.decode(User.Auth.StartRecovery.self).flatMap(to: Response.self) { (recoveryData) -> Future<Response> in
+                // fetch the user by email
+                return try User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { (optionalUser) -> Future<Response> in
+                    guard let user = optionalUser else {
+                        return try req.response.notFound().asFuture(on: req)
+                    }
+
+                    let jwtService = try req.make(JWTService.self)
+                    let jwtToken = try jwtService.signPasswordReset(user: user, redirectUri: recoveryData.targetUri)
+
+                    // TODO send email
+                    let templateModel = User.Auth.RecoveryTemplate(
+                        recoveryJwt: jwtToken,
+                        user: user
+                    )
+                    return try PasswordRecoveryTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
+                        let from = "ondrej.rafaj@gmail.com"
+                        let subject = "password recovery"
+                        let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: template.string, html: template.html)
+                        return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
+                            switch mailResult {
+                            case .success:
+                                return try req.response.success(code: "email sent").asFuture(on: req)
+                            case .failure(let error):
+                                return try req.response.internalServerError(message: error.localizedDescription).asFuture(on: req)
+                            default:
+                                return try req.response.internalServerError(message: "failed to send email").asFuture(on: req)
+                            }
+                        }
+                    }
+                
+                }
+            }
+        }
+        
+        router.post("auth/finish-recovery") { (req) -> Future<Response> in
+            let jwtService: JWTService = try req.make()
+            guard let token = req.query.jwt else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            // Get user payload
+            guard let resetPayload = try? JWT<JWTPasswordResetPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            try resetPayload.exp.verify()
+            return try req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
         }
     }
     

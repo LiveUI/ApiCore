@@ -16,6 +16,7 @@ public struct BasicQuery: Codable {
     public let page: Int?
     public let limit: Int?
     public let search: String?
+    public let jwt: String?
     
 }
 
@@ -41,6 +42,10 @@ extension QueryContainer {
     
     public var search: String? {
         return basic?.search
+    }
+    
+    public var jwt: String? {
+        return basic?.jwt
     }
     
 }

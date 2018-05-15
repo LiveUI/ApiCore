@@ -32,7 +32,7 @@ public final class User: DbCoreModel {
         public var password: String
         
         public func newUser(on req: Request) throws -> User {
-            let user = try User(username: username, firstname: firstname, lastname: lastname, email: email, verification: UUID().uuidString, password: password.passwordHash(req), token: nil, expires: nil, disabled: false, su: false)
+            let user = try User(username: username, firstname: firstname, lastname: lastname, email: email, verification: UUID().uuidString, password: password.passwordHash(req), disabled: false, su: false)
             return user
         }
     }
@@ -56,6 +56,16 @@ public final class User: DbCoreModel {
             public let token: String
         }
         
+        public struct StartRecovery: Content {
+            public let email: String
+            public let targetUri: String
+        }
+        
+        public struct RecoveryTemplate: Content {
+            public let recoveryJwt: String
+            public var user: User
+        }
+        
     }
     
     public final class Display: Content {
@@ -65,17 +75,15 @@ public final class User: DbCoreModel {
         public var firstname: String
         public var lastname: String
         public var email: String
-        public var expires: Date?
         public var registered: Date
         public var disabled: Bool
         public var su: Bool
         
-        public init(username: String, firstname: String, lastname: String, email: String, expires: Date? = nil, disabled: Bool = true, su: Bool = false) {
+        public init(username: String, firstname: String, lastname: String, email: String, disabled: Bool = true, su: Bool = false) {
             self.username = username
             self.firstname = firstname
             self.lastname = lastname
             self.email = email
-            self.expires = expires
             self.registered = Date()
             self.disabled = disabled
             self.su = su
@@ -87,7 +95,6 @@ public final class User: DbCoreModel {
             self.firstname = user.firstname
             self.lastname = user.lastname
             self.email = user.email
-            self.expires = user.expires
             self.registered = user.registered
             self.disabled = user.disabled
             self.su = user.su
@@ -136,21 +143,17 @@ public final class User: DbCoreModel {
     public var email: String
     public var verification: String?
     public var password: String?
-    public var token: String?
-    public var expires: Date?
     public var registered: Date
     public var disabled: Bool
     public var su: Bool
     
-    public init(username: String, firstname: String, lastname: String, email: String, verification: String? = nil, password: String? = nil, token: String? = nil, expires: Date? = nil, disabled: Bool = true, su: Bool = false) {
+    public init(username: String, firstname: String, lastname: String, email: String, verification: String? = nil, password: String? = nil, disabled: Bool = true, su: Bool = false) {
         self.username = username
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
         self.verification = verification
         self.password = password
-        self.token = token
-        self.expires = expires
         self.registered = Date()
         self.disabled = disabled
         self.su = su
@@ -200,8 +203,6 @@ extension User: Migration {
             schema.addField(type: DbCoreColumnType.varChar(141), name: CodingKeys.email.stringValue)
             schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.verification.stringValue, isOptional: true)
             schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.password.stringValue, isOptional: true)
-            schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.token.stringValue, isOptional: true)
-            schema.addField(type: DbCoreColumnType.datetime(), name: CodingKeys.expires.stringValue, isOptional: true)
             schema.addField(type: DbCoreColumnType.datetime(), name: CodingKeys.registered.stringValue)
             schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.disabled.stringValue)
             schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.su.stringValue)
