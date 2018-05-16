@@ -7,10 +7,11 @@
 
 import Foundation
 import Vapor
+import S3Signer
 
 
 /// Configuration object
-public struct Configuration: Codable {
+public final class Configuration: Codable {
     
     /// Config Error
     public enum Error: Swift.Error {
@@ -18,7 +19,7 @@ public struct Configuration: Codable {
     }
     
     /// Sertver info
-    public struct Server: Codable {
+    public final class Server: Codable {
         
         /// Server name
         public internal(set) var name: String
@@ -35,10 +36,17 @@ public struct Configuration: Codable {
             case maxUploadFilesize = "max_upload"
         }
         
+        /// Initializer
+        init(name: String, url: String?, maxUploadFilesize: Int?) {
+            self.name = name
+            self.url = url
+            self.maxUploadFilesize = maxUploadFilesize
+        }
+        
     }
     
     /// Database info
-    public struct Database: Codable {
+    public final class Database: Codable {
         
         /// Database host, default `localhost`
         public internal(set) var host: String?
@@ -58,13 +66,23 @@ public struct Configuration: Codable {
         /// Enable query logging
         public internal(set) var logging: Bool
         
+        /// Initializer
+        init(host: String?, port: Int?, user: String, password: String, database: String, logging: Bool) {
+            self.host = host
+            self.port = port
+            self.user = user
+            self.password = password
+            self.database = database
+            self.logging = logging
+        }
+        
     }
     
     /// Email configuration
-    public struct Mail: Codable {
+    public final class Mail: Codable {
         
         /// Mailgun configuration
-        public struct MailGun: Codable {
+        public final class MailGun: Codable {
             
             /// Mailgun domain
             public internal(set) var domain: String
@@ -72,10 +90,93 @@ public struct Configuration: Codable {
             /// Mailgun API key
             public internal(set) var key: String
             
+            /// Initializer
+            init(domain: String, key: String) {
+                self.domain = domain
+                self.key = key
+            }
+            
         }
         
         /// Mailgun configuration
         public internal(set) var mailgun: MailGun
+        
+        /// Initializer
+        init(mailgun: MailGun) {
+            self.mailgun = mailgun
+        }
+        
+    }
+    
+    /// Storage configuration
+    public final class Storage: Codable {
+        
+        /// Local filesystem configuration
+        public final class Local: Codable {
+            
+            /// Root storage folder path
+            public internal(set) var root: String
+            
+            /// Initializer
+            init(root: String) {
+                self.root = root
+            }
+            
+        }
+        
+        /// S3 configuration
+        public final class S3: Codable {
+            
+            /// Enable S3
+            public internal(set) var enabled: Bool
+            
+            /// Default bucket
+            public internal(set) var bucket: String
+            
+            /// AWS Access Key
+            public internal(set) var accessKey: String
+            
+            /// AWS Secret Key
+            public internal(set) var secretKey: String
+            
+            /// The region where S3 bucket is located.
+            public internal(set) var region: Region
+            
+            /// AWS Security Token. Used to validate temporary credentials, such as those from an EC2 Instance's IAM role
+            public internal(set) var securityToken : String?
+            
+            /// Initializer
+            init(enabled: Bool, bucket: String, accessKey: String, secretKey: String, region: Region, securityToken: String?) {
+                self.enabled = enabled
+                self.bucket = bucket
+                self.accessKey = accessKey
+                self.secretKey = secretKey
+                self.region = region
+                self.securityToken = securityToken
+            }
+            
+            enum CodingKeys: String, CodingKey {
+                case enabled
+                case bucket
+                case accessKey = "access_key"
+                case secretKey = "secret_key"
+                case region
+                case securityToken = "security_token"
+            }
+            
+        }
+        
+        /// Local filestorage configuration
+        public internal(set) var local: Local
+        
+        /// S3 configuration
+        public internal(set) var s3: S3
+        
+        /// Initializer
+        init(local: Local, s3: S3) {
+            self.local = local
+            self.s3 = s3
+        }
         
     }
     
@@ -91,11 +192,15 @@ public struct Configuration: Codable {
     /// Email information
     public internal(set) var mail: Mail
     
+    /// Storage information
+    public internal(set) var storage: Storage
+    
     enum CodingKeys: String, CodingKey {
         case server
         case jwtSecret = "jwt_secret"
         case database
         case mail
+        case storage
     }
     
 }
@@ -127,6 +232,90 @@ extension Configuration {
     /// Load configuration from a Data string representation
     public static func load(fromData data: Data) throws -> Configuration {
         return try JSONDecoder().decode(Configuration.self, from: data)
+    }
+    
+    /// Update from environmental variables
+    public func loadEnv() {
+        // Root
+        load("apicore.jwt_secret", to: &jwtSecret)
+
+        // Mail
+        load("apicore.mail.mailgun.domain", to: &mail.mailgun.domain)
+        load("apicore.mail.mailgun.key", to: &mail.mailgun.key)
+
+        // Database
+        load("apicore.database.host", to: &database.host)
+        load("apicore.database.user", to: &database.user)
+        load("apicore.database.password", to: &database.password)
+        load("apicore.database.port", to: &database.port)
+        load("apicore.database.database", to: &database.database)
+        load("apicore.database.logging", to: &database.logging)
+
+        // Server
+        load("apicore.server.name", to: &server.name)
+        load("apicore.server.url", to: &server.url)
+        load("apicore.server.max_upload_filesize", to: &server.maxUploadFilesize)
+
+        // Storage (Local)
+        load("apicore.storage.local.root", to: &storage.local.root)
+
+        // Storage (S3)
+        load("apicore.storage.s3.enabled", to: &storage.s3.enabled)
+        load("apicore.storage.s3.bucket", to: &storage.s3.bucket)
+        load("apicore.storage.s3.access_key", to: &storage.s3.accessKey)
+        load("apicore.storage.s3.secret_key", to: &storage.s3.secretKey)
+        if let value = self.property(key: "apicore.storage.s3.region"), let converted = Region(rawValue: value) {
+            storage.s3.region = converted
+        }
+        load("apicore.storage.s3.security_token", to: &storage.s3.securityToken)
+    }
+    
+    /// Load String property from env
+    func load(_ key: String, to property: inout String) {
+        if let value = self.property(key: key) {
+            property = value
+        }
+    }
+    
+    /// Load optional String property from env
+    func load(_ key: String, to property: inout String?) {
+        if let value: String = self.property(key: key) {
+            property = value
+        }
+    }
+    
+    /// Load Int property from env
+    func load(_ key: String, to property: inout Int) {
+        if let value = self.property(key: key), let converted = Int(value) {
+            property = converted
+        }
+    }
+    
+    /// Load optional Int property from env
+    func load(_ key: String, to property: inout Int?) {
+        if let value = self.property(key: key), let converted = Int(value) {
+            property = converted
+        }
+    }
+    
+    /// Load Bool property from env
+    func load(_ key: String, to property: inout Bool) {
+        if let value = self.property(key: key), let converted = value.bool {
+            property = converted
+        }
+    }
+    
+    /// Load optional Bool property from env
+    func load(_ key: String, to property: inout Bool?) {
+        if let value = self.property(key: key), let converted = value.bool {
+            property = converted
+        }
+    }
+    
+    /// Read property
+    func property(key: String) -> String? {
+        let value = (Environment.get(key) ?? Environment.get(key.uppercased()) ?? Environment.get(key.snake_cased()) ?? Environment.get(key.snake_cased().uppercased()))
+        return value
     }
     
 }

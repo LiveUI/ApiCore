@@ -33,7 +33,7 @@ public final class ErrorLog: DbCoreModel {
     public var error: String
     
     /// Initializer
-    public init(id: DbCoreIdentifier? = nil, request req: Request, error: Error) {
+    public init(id: DbCoreIdentifier? = nil, request req: Request, error: Swift.Error) {
         let query = req.http.url.query != nil ? "?\(req.http.url.query!)" : ""
         self.uri = "\(req.http.url.path)\(query)"
         self.added = Date()

@@ -103,7 +103,7 @@ extension InstallController {
                         var futures = [
                             team.users.attach(user, on: req).flatten()
                         ]
-                        try ApiCore.installFutures.forEach({ closure in
+                        try ApiCoreBase.installFutures.forEach({ closure in
                             futures.append(try closure(req))
                         })
                         return futures.map(to: Response.self, on: req) { _ in

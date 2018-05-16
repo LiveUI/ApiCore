@@ -34,7 +34,7 @@ public struct Gravatar {
     }
     
     /// Generate gravatar link from an email
-    public static func link(fromEmail email: String, size: CGFloat? = nil) throws -> String {
+    public static func link(fromEmail email: String, size: Float? = nil) throws -> String {
         guard let md5 = email.md5 else {
             throw Error.unableToCreateMD5FromEmail
         }

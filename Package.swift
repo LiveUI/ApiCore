@@ -5,6 +5,8 @@ let package = Package(
     name: "ApiCore",
     products: [
         .library(name: "ApiCore", targets: ["ApiCore"]),
+        .library(name: "FileCore", targets: ["FileCore"]),
+        .library(name: "ImageCore", targets: ["ImageCore"]),
         .library(name: "ApiCoreTestTools", targets: ["ApiCoreTestTools"])
     ],
     dependencies: [
@@ -13,6 +15,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.2"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc.2"),
         .package(url: "https://github.com/vapor/leaf.git", from: "3.0.0-rc.2"),
+        .package(url: "https://github.com/twostraws/SwiftGD.git", from: "2.0.0"),
         .package(url: "https://github.com/LiveUI/S3.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/DbCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/MailCore.git", .branch("master")),
@@ -53,7 +56,8 @@ let package = Package(
         ),
         .target(name: "ImageCore", dependencies: [
             "Vapor",
-            "ErrorsCore"
+            "ErrorsCore",
+            "SwiftGD"
             ]
         ),
         .target(

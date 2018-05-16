@@ -16,6 +16,11 @@ extension String {
         return text
     }
     
+    public func snake_cased() -> String {
+        let text = split(separator: ".").joined(separator: "_")
+        return text
+    }
+    
     public var maskedName: String {
         var text = components(separatedBy: CharacterSet.alphanumerics.inverted).joined(separator: "-").lowercased()
         text = text.components(separatedBy: CharacterSet(charactersIn: "-")).filter { !$0.isEmpty }.joined(separator: "-")

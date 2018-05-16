@@ -18,7 +18,7 @@ public struct LocalConfig {
     ///
     /// - parameters:
     ///     - root: Root folder to store all files
-    init(root: String) {
+    public init(root: String) {
         self.root = root
     }
     

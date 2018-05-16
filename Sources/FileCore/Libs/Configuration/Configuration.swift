@@ -9,19 +9,7 @@ import Foundation
 import S3
 
 
-/// Filesystem configurations
-public enum Configuration {
-    
-    /// Local filesystem
-    case local(LocalConfig)
-    
-    /// S3 (config, bucket)
-    case s3(S3Signer.Config, String)
-    
-}
-
-
-extension Configuration {
+extension FileCoreManager.Configuration {
     
     /// Get local filesystem configuration if available
     public func localConfig() -> LocalConfig? {

@@ -12,10 +12,11 @@ import DbCore
 import ErrorsCore
 import MailCore
 import Leaf
+import FileCore
 
 
 /// Main ApiCore class
-public class ApiCore {
+public class ApiCoreBase {
     
     /// Configuration cache
     static var _configuration: Configuration?
@@ -27,10 +28,12 @@ public class ApiCore {
                 do {
                     guard let path = Environment.get("CONFIG_PATH") else {
                         let conf = try Configuration.load(fromFile: "config.default.json")
+                        conf.loadEnv()
                         _configuration = conf
                         return conf
                     }
                     let conf = try Configuration.load(fromFile: path)
+                    conf.loadEnv()
                     _configuration = conf
                     return conf
                 } catch {
@@ -51,8 +54,8 @@ public class ApiCore {
     /// Enable detailed request debugging
     public static var debugRequests: Bool = false
     
-    public typealias DeleteTeamWarning = (_ team: Team) -> Future<Error?>
-    public typealias DeleteUserWarning = (_ user: User) -> Future<Error?>
+    public typealias DeleteTeamWarning = (_ team: Team) -> Future<Swift.Error?>
+    public typealias DeleteUserWarning = (_ user: User) -> Future<Swift.Error?>
     
     /// Fire a warning before team get's deleted (to cascade in submodules, etc ...)
     public static var deleteTeamWarning: DeleteTeamWarning?
@@ -74,7 +77,8 @@ public class ApiCore {
         AuthController.self,
         UsersController.self,
         TeamsController.self,
-        LogsController.self
+        LogsController.self,
+        ServerController.self
     ]
     
     /// Main configure method for ApiCore
@@ -111,9 +115,24 @@ public class ApiCore {
         
         // System
         middlewareConfig.use(FileMiddleware.self)
-        // TODO: CHANGE!!!!!!!!!!!
+        // TODO: CHANGE THE HARDCODED STUFF!!!!!!!!!!!
         services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
         try services.register(LeafProvider())
+        
+        // Filesystem
+        // TODO: Refactor following into converting helpers to cleanup this method!
+        if configuration.storage.s3.enabled {
+            try services.register(fileCoreManager: .s3(
+                S3Signer.Config(accessKey: configuration.storage.s3.accessKey,
+                                secretKey: configuration.storage.s3.secretKey,
+                                region: configuration.storage.s3.region,
+                                securityToken: configuration.storage.s3.securityToken
+                ),
+                configuration.storage.s3.bucket
+            ))
+        } else {
+            try services.register(fileCoreManager: .local(LocalConfig(root: configuration.storage.local.root)))
+        }
         
         // UUID service
         services.register(RequestIdService.self)

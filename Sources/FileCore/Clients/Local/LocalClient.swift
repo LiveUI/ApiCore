@@ -25,6 +25,9 @@ public class LocalClient: FileManagement, Service {
         let promise = container.eventLoop.newPromise(Void.self)
         Async.dispatchQueue.async {
             do {
+                // TODO: Check if destination is a folder and throw if so!!
+                let parent = url.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: nil)
                 try file.write(to: url)
                 promise.succeed()
             } catch {
@@ -39,7 +42,11 @@ public class LocalClient: FileManagement, Service {
         let promise = container.eventLoop.newPromise(Void.self)
         Async.dispatchQueue.async {
             do {
-                try FileManager.default.copyItem(at: URL(fileURLWithPath: path), to: URL(fileURLWithPath: destination))
+                // TODO: Check if destination is a folder append the filename to it if so!!
+                let destinationUrl = URL(fileURLWithPath: destination)
+                let parent = destinationUrl.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.copyItem(at: URL(fileURLWithPath: path), to: destinationUrl)
                 promise.succeed()
             } catch {
                 promise.fail(error: Error.failedCopy(path, destination, error))
@@ -53,7 +60,11 @@ public class LocalClient: FileManagement, Service {
         let promise = container.eventLoop.newPromise(Void.self)
         Async.dispatchQueue.async {
             do {
-                try FileManager.default.moveItem(at: URL(fileURLWithPath: path), to: URL(fileURLWithPath: destination))
+                // TODO: Check if destination is a folder append the filename to it if so!!
+                let destinationUrl = URL(fileURLWithPath: destination)
+                let parent = destinationUrl.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.moveItem(at: URL(fileURLWithPath: path), to: destinationUrl)
                 promise.succeed()
             } catch {
                 promise.fail(error: Error.failedMove(path, destination, error))

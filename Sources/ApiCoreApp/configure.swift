@@ -11,9 +11,9 @@ public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ 
     
     // Register routes
     let router = EngineRouter.default()
-    try ApiCore.boot(router: router)
+    try ApiCoreBase.boot(router: router)
     services.register(router, as: Router.self)
     
     // Go!
-    try ApiCore.configure(&config, &env, &services)
+    try ApiCoreBase.configure(&config, &env, &services)
 }

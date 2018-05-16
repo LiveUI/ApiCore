@@ -8,10 +8,22 @@
 import Foundation
 import Vapor
 import ErrorsCore
+@_exported import S3Signer
 
 
 /// Filesystem manager
 public class FileCoreManager: FileCore, Service {
+    
+    /// Filesystem configurations
+    public enum Configuration {
+        
+        /// Local filesystem
+        case local(LocalConfig)
+        
+        /// S3 (config, bucket)
+        case s3(S3Signer.Config, String)
+        
+    }
     
     /// FileCoreManager errors
     public enum Error: FrontendError {

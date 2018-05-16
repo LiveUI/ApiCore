@@ -108,7 +108,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
     
     /// Debug
     private func debug(request req: Request) {
-        if ApiCore.debugRequests {
+        if ApiCoreBase.debugRequests {
             req.http.body.consumeData(max: 500, on: req).addAwaiter { (d) in
                 print("Debugging response:")
                 print("HTTP [\(req.http.version.major).\(req.http.version.minor)] with status code [\(req.http)]")

@@ -168,7 +168,7 @@ class TeamsController: Controller {
             // QUESTION: Should we make sure user has at least one team?
             let teamId = try req.parameters.next(DbCoreIdentifier.self)
             return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self, { (team) -> Future<Response> in
-                if let canDelete = ApiCore.deleteTeamWarning {
+                if let canDelete = ApiCoreBase.deleteTeamWarning {
                     return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
                         guard let error = error else {
                             return try delete(team: team, request: req)

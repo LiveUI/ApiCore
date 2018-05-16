@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "Cgd",
+        "repositoryURL": "https://github.com/twostraws/Cgd.git",
+        "state": {
+          "branch": null,
+          "revision": "2e370814715c3557bb1cbdcd96e610ce29e83e45",
+          "version": "0.2.0"
+        }
+      },
+      {
         "package": "CommonCrypto",
         "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
         "state": {
@@ -87,7 +96,7 @@
         "repositoryURL": "https://github.com/LiveUI/ErrorsCore.git",
         "state": {
           "branch": "master",
-          "revision": "12646d70132cfff5b39b88702254f9771280a4c3",
+          "revision": "21e3fec29e9d92a28841b9bfcaca3b5cc8febc3d",
           "version": null
         }
       },
@@ -123,8 +132,8 @@
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {
           "branch": null,
-          "revision": "9246340ae4c5310627099349fc74785267b55607",
-          "version": "3.0.5"
+          "revision": "5e766f72d81ef5fe8805d704efdffd17e4906134",
+          "version": "3.0.6"
         }
       },
       {
@@ -177,8 +186,8 @@
         "repositoryURL": "https://github.com/vapor/postgresql.git",
         "state": {
           "branch": null,
-          "revision": "bcbf90c9f40ab57e3800a2fd96dd77371c32e46a",
-          "version": "1.0.0-rc.2.2"
+          "revision": "4988607c3b2369248c6cfcd34274241a8632cd69",
+          "version": "1.0.0-rc.2.2.1"
         }
       },
       {
@@ -195,7 +204,7 @@
         "repositoryURL": "https://github.com/LiveUI/S3.git",
         "state": {
           "branch": "master",
-          "revision": "5364051364fe9cd23ee88c014f1fdd56a74d78ce",
+          "revision": "ee5d075a524e0efa7b451b6ebc67a203697ca71f",
           "version": null
         }
       },
@@ -272,6 +281,15 @@
         }
       },
       {
+        "package": "SwiftGD",
+        "repositoryURL": "https://github.com/twostraws/SwiftGD.git",
+        "state": {
+          "branch": null,
+          "revision": "b038d13ef40ce6d11aa3599181e45f099814a053",
+          "version": "2.2.0"
+        }
+      },
+      {
         "package": "TemplateKit",
         "repositoryURL": "https://github.com/vapor/template-kit.git",
         "state": {
@@ -303,8 +321,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "8c73eebf7c41c7d8bf83ff87f550e0f97d6aadc4",
-          "version": "3.0.2"
+          "revision": "39b4d3fa36e58c6f7415c9da6c65a703bec34cea",
+          "version": "3.0.3"
         }
       },
       {
@@ -338,9 +356,9 @@
         "package": "XMLCoding",
         "repositoryURL": "https://github.com/LiveUI/XMLCoding.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "94e881b6897007f4cf8f09c00037e72b57b17cb2",
-          "version": null
+          "version": "0.1.0"
         }
       }
     ]

@@ -12,7 +12,7 @@ import Vapor
 extension Request {
     
     public func serverURL() -> URL {
-        let stringUrl = ApiCore.configuration.server.url ?? http.headers["X-Forwarded-Proto"].first ?? "http://localhost:8080"
+        let stringUrl = ApiCoreBase.configuration.server.url ?? http.headers["X-Forwarded-Proto"].first ?? "http://localhost:8080"
         guard let url = URL(string: stringUrl) else {
             fatalError("Invalid server URL: \(stringUrl)")
         }
