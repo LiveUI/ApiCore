@@ -1,5 +1,5 @@
 //
-//  ApiCore.swift
+//  ApiCoreBase.swift
 //  ApiCore
 //
 //  Created by Ondrej Rafaj on 09/12/2017.
@@ -64,7 +64,7 @@ public class ApiCoreBase {
     public static var deleteUserWarning: DeleteUserWarning?
     
     /// Shared middleware config
-    public static var middlewareConfig = MiddlewareConfig()
+    public internal(set) static var middlewareConfig = MiddlewareConfig()
     
     /// Add futures to be executed during an installation process
     public typealias InstallFutureClosure = (_ req: Request) throws -> Future<Void>

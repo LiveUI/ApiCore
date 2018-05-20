@@ -46,12 +46,12 @@ extension TestableProperty where TestableType: Application {
         let app = new({ (config, env, services) in
             // Reset static configs
             DbCore.migrationConfig = MigrationConfig()
-            ApiCore.middlewareConfig = MiddlewareConfig()
+            ApiCoreBase.middlewareConfig = MiddlewareConfig()
             
-            _ = ApiCore.configuration
-            ApiCore._configuration?.database.user = "test"
-            ApiCore._configuration?.database.database = "boost-test"
-            try! ApiCore.configure(&config, &env, &services)
+            _ = ApiCoreBase.configuration
+            ApiCoreBase._configuration?.database.user = "test"
+            ApiCoreBase._configuration?.database.database = "boost-test"
+            try! ApiCoreBase.configure(&config, &env, &services)
             
             // Set mailer mock
             MailerMock(services: &services)
@@ -59,7 +59,7 @@ extension TestableProperty where TestableType: Application {
             configClosure?(&config, &env, &services)
         }) { (router) in
             routerClosure?(router)
-            try! ApiCore.boot(router: router)
+            try! ApiCoreBase.boot(router: router)
         }
         
         return app

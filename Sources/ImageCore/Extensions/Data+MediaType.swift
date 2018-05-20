@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import Vapor
+@_exported import Vapor
+@_exported import SwiftGD
 
 
 extension Data {

@@ -31,10 +31,16 @@ struct JWTAuthPayload: JWTPayload {
     }
 }
 
+/// Password reset payload
 struct JWTPasswordResetPayload: JWTPayload {
     
+    /// Expiration
     var exp: ExpirationClaim
+    
+    /// User Id
     var userId: UUID
+    
+    /// Redirection URL
     var redirectUri: String
 
     enum CodingKeys: String, CodingKey {
@@ -43,6 +49,7 @@ struct JWTPasswordResetPayload: JWTPayload {
         case redirectUri = "redirect_uri"
     }
     
+    /// Verify
     func verify() throws {
         try exp.verify()
     }
@@ -80,6 +87,7 @@ final class JWTService: Service {
         return jwtToken
     }
     
+    /// Sign password reset
     func signPasswordReset(user: User, redirectUri: String) throws -> String {
         let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (36 * hour)))
         var jwt = JWT(payload: JWTPasswordResetPayload(exp: exp, userId: user.id!, redirectUri: redirectUri))

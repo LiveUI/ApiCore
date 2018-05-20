@@ -152,8 +152,8 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "app_error")
-        XCTAssertEqual(data.description, "Identifier already exists")
+        XCTAssertEqual(data.error, "app_error.identifier_already_exists")
+        XCTAssertEqual(data.description, "Team identifier already exists")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
         XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
@@ -202,7 +202,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "team_error")
+        XCTAssertEqual(data.error, "team_error.user_already_member")
         XCTAssertEqual(data.description, "User is already a member of the team")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
@@ -227,7 +227,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "team_error")
+        XCTAssertEqual(data.error, "team_error.user_not_found")
         XCTAssertEqual(data.description, "User not found")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .notFound), "Wrong status code")
@@ -281,7 +281,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "team_error")
+        XCTAssertEqual(data.error, "team_error.you_are_last_user")
         XCTAssertEqual(data.description, "You are the last user in this team; Please delete the team instead")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
@@ -306,7 +306,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "team_error")
+        XCTAssertEqual(data.error, "team_error.user_not_found")
         XCTAssertEqual(data.description, "User not found")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .notFound), "Wrong status code")
@@ -331,7 +331,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "team_error")
+        XCTAssertEqual(data.error, "team_error.user_not_member")
         XCTAssertEqual(data.description, "User is not a member of the team")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
@@ -417,7 +417,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
         
         let message = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(message.error, "team_error")
+        XCTAssertEqual(message.error, "httperror.not_found")
         XCTAssertEqual(message.description, "Can't delete admin team")
         
         count = app.testable.count(allFor: Team.self)

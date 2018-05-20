@@ -18,13 +18,27 @@ class TeamsController: Controller {
     
     /// Error
     enum Error: FrontendError {
+        
+        /// User has not been found
         case userNotFound
+        
+        /// You can not add yourself to an unrelated team
         case cantAddYourself
+        
+        /// User is already a member of the requested team
         case userAlreadyMember
+        
+        /// User is not a member of the requested team
         case userNotMember
+        
+        /// You are the last user of the requested team
+        /// Please delete the team instead
         case youAreTheLastUser
+        
+        /// Admion team cannot be deleted
         case unableToDeleteAdminTeam
         
+        /// Erro code
         var identifier: String {
             switch self {
             case .userNotFound:
@@ -42,6 +56,7 @@ class TeamsController: Controller {
             }
         }
         
+        /// Error reason
         var reason: String {
             switch self {
             case .userNotFound:
@@ -59,6 +74,7 @@ class TeamsController: Controller {
             }
         }
         
+        /// Error HTTP status code
         var status: HTTPStatus {
             switch self {
             case .userNotFound:
@@ -69,11 +85,13 @@ class TeamsController: Controller {
         }
     }
     
+    /// User-to-team link/unlink action
     enum LinkAction {
         case link
         case unlink
     }
     
+    /// Setup routes
     static func boot(router: Router) throws {
         router.get("teams") { (req) -> Future<[Team]> in
             let me = try req.me.user()
@@ -190,6 +208,7 @@ class TeamsController: Controller {
 
 extension TeamsController {
     
+    /// Delete team
     private static func delete(team: Team, request req: Request) throws -> Future<Response> {
         if team.admin {
             throw Error.unableToDeleteAdminTeam
@@ -200,6 +219,7 @@ extension TeamsController {
         })
     }
     
+    /// Process linking from a request
     private static func processLinking(request req: Request, action: TeamsController.LinkAction) throws -> Future<Response> {
         let teamId = try req.parameters.next(DbCoreIdentifier.self)
         return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self) { team in

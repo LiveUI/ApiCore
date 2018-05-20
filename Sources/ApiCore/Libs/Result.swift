@@ -18,7 +18,7 @@ public enum Result<T> {
     case success(T)
     
     /// Error
-    case error(Error)
+    case error(Swift.Error)
     
     /// Did result succeed?
     public var success: Bool {
@@ -31,7 +31,7 @@ public enum Result<T> {
     }
     
     /// Error if available
-    public var error: Error? {
+    public var error: Swift.Error? {
         switch self {
         case .error(let error):
             return error

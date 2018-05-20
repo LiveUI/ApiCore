@@ -42,7 +42,7 @@ public class AuthController: Controller {
             }
         }
         
-        /// Create new JWT token using permanent token (Headers)
+        // Create new JWT token using permanent token (Headers)
         router.get("token") { (req)->Future<Response> in
             guard let tokenString = req.http.headers.authorizationToken else {
                 throw AuthError.authenticationFailed
@@ -50,19 +50,20 @@ public class AuthController: Controller {
             return try token(request: req, token: tokenString)
         }
         
-        /// Create new JWT token using permanent token (POST)
+        // Create new JWT token using permanent token (POST)
         router.post("token") { (req) -> Future<Response> in
             return try req.content.decode(User.Auth.Token.self).flatMap(to: Response.self) { (loginData) -> Future<Response> in
                 return try token(request: req, token: loginData.token)
             }
         }
         
+        // Forgotten password
         router.post("auth", "start-recovery") { (req) -> Future<Response> in
             print("start recovery")
-            // read user email from request
-            // read redirect url from request
+            // Read user email from request
+            // Read redirect url from request
             return try req.content.decode(User.Auth.StartRecovery.self).flatMap(to: Response.self) { (recoveryData) -> Future<Response> in
-                // fetch the user by email
+                // Fetch the user by email
                 return try User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { (optionalUser) -> Future<Response> in
                     guard let user = optionalUser else {
                         return try req.response.notFound().asFuture(on: req)
@@ -71,23 +72,24 @@ public class AuthController: Controller {
                     let jwtService = try req.make(JWTService.self)
                     let jwtToken = try jwtService.signPasswordReset(user: user, redirectUri: recoveryData.targetUri)
 
-                    // TODO send email
+                    // TODO: send email
                     let templateModel = User.Auth.RecoveryTemplate(
                         recoveryJwt: jwtToken,
                         user: user
                     )
                     return try PasswordRecoveryTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
                         let from = "ondrej.rafaj@gmail.com"
-                        let subject = "password recovery"
+                        let subject = "Password recovery"
                         let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: template.string, html: template.html)
                         return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
+                            // TODO: Throw an error instead?
                             switch mailResult {
                             case .success:
-                                return try req.response.success(code: "email sent").asFuture(on: req)
+                                return try req.response.success(code: "Password recovery email has been sent").asFuture(on: req)
                             case .failure(let error):
                                 return try req.response.internalServerError(message: error.localizedDescription).asFuture(on: req)
                             default:
-                                return try req.response.internalServerError(message: "failed to send email").asFuture(on: req)
+                                return try req.response.internalServerError(message: "Failed to send password recovery email").asFuture(on: req)
                             }
                         }
                     }
@@ -108,7 +110,7 @@ public class AuthController: Controller {
             }
             
             try resetPayload.exp.verify()
-            return try req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
+            return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
         }
     }
     

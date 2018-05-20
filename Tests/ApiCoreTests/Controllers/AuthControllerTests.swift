@@ -182,7 +182,6 @@ Boost team
 
             XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
             XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
-
         } catch {
             print(error)
             XCTFail()

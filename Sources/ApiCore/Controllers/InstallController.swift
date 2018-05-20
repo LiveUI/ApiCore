@@ -92,23 +92,35 @@ extension InstallController {
     
     /// Install all tables and data if neccessary
     private static func install(on req: Request) throws -> Future<Response> {
+        return try install(files: req).flatMap({
+            return try install(migrations: req).map({
+                return try req.response.maintenanceFinished(message: "Installation finished, login as admin@liveui.io/admin")
+            })
+        })
+    }
+    
+    /// Install base files
+    private static func install(files req: Request) throws -> Future<Void> {
+        return try Logo.install(on: req)
+    }
+    
+    /// Install basic database data
+    private static func install(migrations req: Request) throws -> Future<Void> {
         let migrations = FluentProvider.init()
-        return try migrations.didBoot(req).flatMap(to: Response.self) { _ in
-            return User.query(on: req).count().flatMap(to: Response.self) { count in
+        return try migrations.didBoot(req).flatMap(to: Void.self) { _ in
+            return User.query(on: req).count().flatMap(to: Void.self) { count in
                 if count > 0 {
                     throw Error.dataExists
                 }
-                return su.save(on: req).flatMap(to: Response.self) { user in
-                    return adminTeam.save(on: req).flatMap(to: Response.self) { team in
+                return su.save(on: req).flatMap(to: Void.self) { user in
+                    return adminTeam.save(on: req).flatMap(to: Void.self) { team in
                         var futures = [
                             team.users.attach(user, on: req).flatten()
                         ]
                         try ApiCoreBase.installFutures.forEach({ closure in
                             futures.append(try closure(req))
                         })
-                        return futures.map(to: Response.self, on: req) { _ in
-                            return try req.response.maintenanceFinished(message: "Installation finished, login as admin@liveui.io/admin")
-                        }
+                        return futures.flatten(on: req)
                     }
                 }
             }
