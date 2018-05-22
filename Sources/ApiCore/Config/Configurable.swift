@@ -16,49 +16,49 @@ public protocol Configurable: Codable { }
 extension Configurable {
     
     /// Load String property from env
-    func load(_ key: String, to property: inout String) {
+    public func load(_ key: String, to property: inout String) {
         if let value = self.property(key: key) {
             property = value
         }
     }
     
     /// Load optional String property from env
-    func load(_ key: String, to property: inout String?) {
+    public func load(_ key: String, to property: inout String?) {
         if let value: String = self.property(key: key) {
             property = value
         }
     }
     
     /// Load Int property from env
-    func load(_ key: String, to property: inout Int) {
+    public func load(_ key: String, to property: inout Int) {
         if let value = self.property(key: key), let converted = Int(value) {
             property = converted
         }
     }
     
     /// Load optional Int property from env
-    func load(_ key: String, to property: inout Int?) {
+    public func load(_ key: String, to property: inout Int?) {
         if let value = self.property(key: key), let converted = Int(value) {
             property = converted
         }
     }
     
     /// Load Bool property from env
-    func load(_ key: String, to property: inout Bool) {
+    public func load(_ key: String, to property: inout Bool) {
         if let value = self.property(key: key), let converted = value.bool {
             property = converted
         }
     }
     
     /// Load optional Bool property from env
-    func load(_ key: String, to property: inout Bool?) {
+    public func load(_ key: String, to property: inout Bool?) {
         if let value = self.property(key: key), let converted = value.bool {
             property = converted
         }
     }
     
     /// Read property
-    func property(key: String) -> String? {
+    public func property(key: String) -> String? {
         let value = (Environment.get(key) ?? Environment.get(key.uppercased()) ?? Environment.get(key.snake_cased()) ?? Environment.get(key.snake_cased().uppercased()))
         return value
     }
