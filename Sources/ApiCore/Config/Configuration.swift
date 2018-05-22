@@ -11,7 +11,7 @@ import S3Signer
 
 
 /// Configuration object
-public final class Configuration: Codable {
+public final class Configuration: Configurable {
     
     /// Config Error
     public enum Error: Swift.Error {
@@ -203,36 +203,19 @@ public final class Configuration: Codable {
         case storage
     }
     
+    /// Initialization
+    public init(server: Server, jwtSecret: String, database: Database, mail: Mail, storage: Storage) {
+        self.server = server
+        self.jwtSecret = jwtSecret
+        self.database = database
+        self.mail = mail
+        self.storage = storage
+    }
+    
 }
 
 
 extension Configuration {
-    
-    /// Load configuration from a file. If a relative path is given, source root will be used as a starting point
-    public static func load(fromFile path: String) throws -> Configuration {
-        let url: URL
-        if path.prefix(1) == "/" {
-            url = URL(fileURLWithPath: path)
-        } else {
-            let config = DirectoryConfig.detect()
-            url = URL(fileURLWithPath: config.workDir).appendingPathComponent(path)
-        }
-        let data = try Data(contentsOf: url)
-        return try load(fromData: data)
-    }
-    
-    /// Load configuration from a JSON string representation
-    public static func load(fromString string: String) throws -> Configuration {
-        guard let data = string.data(using: .utf8) else {
-            throw Error.invalidConfigurationData
-        }
-        return try load(fromData: data)
-    }
-    
-    /// Load configuration from a Data string representation
-    public static func load(fromData data: Data) throws -> Configuration {
-        return try JSONDecoder().decode(Configuration.self, from: data)
-    }
     
     /// Update from environmental variables
     public func loadEnv() {
@@ -268,54 +251,6 @@ extension Configuration {
             storage.s3.region = converted
         }
         load("apicore.storage.s3.security_token", to: &storage.s3.securityToken)
-    }
-    
-    /// Load String property from env
-    func load(_ key: String, to property: inout String) {
-        if let value = self.property(key: key) {
-            property = value
-        }
-    }
-    
-    /// Load optional String property from env
-    func load(_ key: String, to property: inout String?) {
-        if let value: String = self.property(key: key) {
-            property = value
-        }
-    }
-    
-    /// Load Int property from env
-    func load(_ key: String, to property: inout Int) {
-        if let value = self.property(key: key), let converted = Int(value) {
-            property = converted
-        }
-    }
-    
-    /// Load optional Int property from env
-    func load(_ key: String, to property: inout Int?) {
-        if let value = self.property(key: key), let converted = Int(value) {
-            property = converted
-        }
-    }
-    
-    /// Load Bool property from env
-    func load(_ key: String, to property: inout Bool) {
-        if let value = self.property(key: key), let converted = value.bool {
-            property = converted
-        }
-    }
-    
-    /// Load optional Bool property from env
-    func load(_ key: String, to property: inout Bool?) {
-        if let value = self.property(key: key), let converted = value.bool {
-            property = converted
-        }
-    }
-    
-    /// Read property
-    func property(key: String) -> String? {
-        let value = (Environment.get(key) ?? Environment.get(key.uppercased()) ?? Environment.get(key.snake_cased()) ?? Environment.get(key.snake_cased().uppercased()))
-        return value
     }
     
 }
