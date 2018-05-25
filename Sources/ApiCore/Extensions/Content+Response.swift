@@ -11,6 +11,7 @@ import Vapor
 
 extension Content {
     
+    /// Convert Content to a response
     public func asResponse(_ status: HTTPStatus, to req: Request) throws -> Future<Response> {
         return try encode(for: req).map(to: Response.self) {
             $0.http.status = status

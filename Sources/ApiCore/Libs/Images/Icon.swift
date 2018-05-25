@@ -10,7 +10,7 @@ import Foundation
 
 
 /// Icon size
-public enum IconSize: Int {
+public enum IconSize: Int, Codable {
     
     /// 64x64 px
     case at1x = 64
@@ -32,5 +32,14 @@ public enum IconSize: Int {
     public var size: Size {
         return Size(width: rawValue, height: rawValue)
     }
+    
+    /// All values
+    public static let all: [IconSize] = [
+        .at1x,
+        .at2x,
+        .at3x,
+        .regular,
+        .large
+    ]
     
 }

@@ -11,7 +11,8 @@ import Vapor
 
 extension Request {
     
-    public func makeFileCore() throws -> FileCore {
+    /// Make file core instance
+    public func makeFileCore() throws -> CoreManager {
         return try make()
     }
     

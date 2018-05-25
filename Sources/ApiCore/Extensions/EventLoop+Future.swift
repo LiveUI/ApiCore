@@ -12,6 +12,7 @@ import NIO
 
 extension EventLoop {
     
+    /// New succeeded Void future
     public func newSucceededVoidFuture() -> Future<Void> {
         return newSucceededFuture(result: Void())
     }

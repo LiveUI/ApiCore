@@ -11,6 +11,7 @@ import Vapor
 
 extension Request {
     
+    /// Server's public URL
     public func serverURL() -> URL {
         let stringUrl = ApiCoreBase.configuration.server.url ?? http.headers["X-Forwarded-Proto"].first ?? "http://localhost:8080"
         guard let url = URL(string: stringUrl) else {
@@ -19,6 +20,7 @@ extension Request {
         return url
     }
     
+    /// Server's public base URL
     public func serverBaseUrl() -> URL {
         return serverURL().deletingPathExtension()
     }

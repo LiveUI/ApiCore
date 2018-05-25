@@ -11,6 +11,8 @@ import Vapor
 
 extension HTTPHeaders {
     
+    /// Return value of an authorization header
+    /// Stripping any prefix like Token or Bearer
     public var authorizationToken: String? {
         guard let token = self[HTTPHeaderName.authorization].first else {
             return nil

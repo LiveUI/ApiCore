@@ -27,19 +27,33 @@ public final class ApiAuthMiddleware: Middleware, Service {
     
     /// GET URL's allowed to run without authorization
     public static var allowedGetUri: [String] = [
+        // Authentication
         "/auth",
         "/token",
+        
+        // Helpers
         "/ping",
         "/teapot",
+        
+        /// Server info
+        "/info",
+        "/server/image/64",
+        "/server/image/128",
+        "/server/image/192",
+        "/server/image/256",
+        "/server/image/512",
     ]
     
     /// POST URL's allowed to run without authorization
     public static var allowedPostUri: [String] = [
-        "/users",
+        // Authentication
         "/auth",
         "/auth/start-recovery",
         "/auth/finish-recovery",
         "/token",
+        
+        // User management
+        "/users",
         "/teams/check"
     ]
     

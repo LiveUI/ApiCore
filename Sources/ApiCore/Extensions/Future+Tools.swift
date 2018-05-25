@@ -11,6 +11,7 @@ import Vapor
 
 extension Future {
     
+    /// Flatten any Future into Future<Void>
     public func flatten() -> Future<Void> {
         return map(to: Void.self) { (_) -> Void in
             return Void()

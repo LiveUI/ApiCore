@@ -12,7 +12,7 @@ import ErrorsCore
 
 
 /// Filesystem manager
-public class FileCoreManager: FileCore, Service {
+public class FileCoreManager: CoreManager, Service {
     
     /// Filesystem configurations
     public enum Configuration {

@@ -10,6 +10,7 @@ import Vapor
 
 extension Router {
     
+    /// OPTIONS request
     @discardableResult public func options<T>(_ path: PathComponentsRepresentable..., use closure: @escaping (Request) throws -> T) -> Route<Responder> where T: ResponseEncodable {
         return self.on(.OPTIONS, at: path, use: closure)
     }

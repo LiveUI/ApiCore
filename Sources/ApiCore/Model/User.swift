@@ -230,9 +230,6 @@ public final class User: DbCoreModel {
     /// Password
     public var password: String?
     
-    /// Token
-    public var token: String?
-    
     /// Date registered
     public var registered: Date
     

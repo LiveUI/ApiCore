@@ -11,6 +11,7 @@ import Vapor
 
 extension Data {
     
+    /// Convert Data to a Response
     public func asResponse(_ status: HTTPStatus, contentType: String = "application/json; charset=utf-8", to req: Request) throws -> Future<Response> {
         let response = try req.response.basic(status: status)
         response.http.headers.replaceOrAdd(name: .contentType, value: contentType)

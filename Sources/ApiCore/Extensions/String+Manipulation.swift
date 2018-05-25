@@ -10,28 +10,33 @@ import Foundation
 
 extension String {
     
+    /// Convert to safe text (convert-to-safe-text)
     public var safeText: String {
         var text = components(separatedBy: CharacterSet.alphanumerics.inverted).joined(separator: "-").lowercased()
         text = text.components(separatedBy: CharacterSet(charactersIn: "-")).filter { !$0.isEmpty }.joined(separator: "-")
         return text
     }
     
+    /// Snake case from dotted syntax
     public func snake_cased() -> String {
         let text = split(separator: ".").joined(separator: "_")
         return text
     }
     
+    /// Masked name
     public var maskedName: String {
         var text = components(separatedBy: CharacterSet.alphanumerics.inverted).joined(separator: "-").lowercased()
         text = text.components(separatedBy: CharacterSet(charactersIn: "-")).filter { !$0.isEmpty }.joined(separator: "-")
         return text
     }
     
+    /// Gravatar URL from an email
     public var imageUrlFromMail: String {
         let text = try? Gravatar.link(fromEmail: self)
         return text ?? "https://www.gravatar.com/avatar/unknown"
     }
     
+    /// Name inititials (two letters) from a string
     public var initials: String {
         if count == 0 {
             return "??"

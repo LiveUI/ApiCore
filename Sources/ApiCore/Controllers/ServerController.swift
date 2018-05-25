@@ -17,6 +17,20 @@ public class ServerController: Controller {
     
     /// Setup routes
     public static func boot(router: Router) throws {
+        // Get server info
+        router.get("info") { req -> Info in
+            let fm = try req.makeFileCore()
+            let info = Info(
+                name: ApiCoreBase.configuration.server.name,
+                url: req.serverURL().absoluteString,
+                icons: IconSize.all.sorted(by: { $0.rawValue < $1.rawValue }).map({
+                    let url = fm.url(for: "server/image/\($0.rawValue)", on: req)
+                    return Info.Icon(size: $0, url: url)
+                })
+            )
+            return info
+        }
+        
         // Upload a server image (admin only)
         router.post("server", "image") { req -> Future<Response> in
             return try req.me.isSystemAdmin().flatMap(to: Response.self) { isAdmin in

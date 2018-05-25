@@ -1,5 +1,5 @@
 //
-//  FileCore.swift
+//  CoreManager.swift
 //  ApiCore
 //
 //  Created by Ondrej Rafaj on 12/05/2018.
@@ -10,4 +10,4 @@ import Vapor
 
 
 /// FileCore main protocol
-public protocol FileCore: FileManagement { }
+public protocol CoreManager: FileManagement { }

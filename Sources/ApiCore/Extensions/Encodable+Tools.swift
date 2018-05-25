@@ -11,6 +11,7 @@ import Vapor
 
 extension Encodable {
     
+    /// Convert to a PLIST 2.0 formatted Data
     public func asPropertyList() throws -> Data {
         let jsonData = try JSONEncoder().encode(self)
         let data = try JSONSerialization.jsonObject(with: jsonData, options: [])
@@ -18,6 +19,7 @@ extension Encodable {
         return plistData
     }
     
+    /// Convert to JSON Data
     public func asJson() throws -> Data {
         let encoder = JSONEncoder()
         if #available(macOS 10.12, *) {
