@@ -122,12 +122,14 @@ public class ApiCoreBase {
         // Filesystem
         // TODO: Refactor following into converting helpers to cleanup this method!
         if configuration.storage.s3.enabled {
+            let config = S3Signer.Config(accessKey: configuration.storage.s3.accessKey,
+                                         secretKey: configuration.storage.s3.secretKey,
+                                         region: configuration.storage.s3.region,
+                                         securityToken: configuration.storage.s3.securityToken
+            )
+            try services.register(s3: config, defaultBucket: configuration.storage.s3.bucket)
             try services.register(fileCoreManager: .s3(
-                S3Signer.Config(accessKey: configuration.storage.s3.accessKey,
-                                secretKey: configuration.storage.s3.secretKey,
-                                region: configuration.storage.s3.region,
-                                securityToken: configuration.storage.s3.securityToken
-                ),
+                config,
                 configuration.storage.s3.bucket
             ))
         } else {

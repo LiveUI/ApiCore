@@ -1038,11 +1038,11 @@ extension Logo {
         
         // Save all images
         let fm = try req.makeFileCore()
-        return try fm.save(file: at1xData, to: "Server/logo/image-\(IconSize.at1x.rawValue)", mime: mime, on: req).flatMap({ _ in
-            return try fm.save(file: at2xData, to: "Server/logo/image-\(IconSize.at2x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                return try fm.save(file: at3xData, to: "Server/logo/image-\(IconSize.at3x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                    return try fm.save(file: regData, to: "Server/logo/image-\(IconSize.regular.rawValue)", mime: mime, on: req).flatMap({ _ in
-                        return try fm.save(file: largeData, to: "Server/logo/image-\(IconSize.large.rawValue)", mime: mime, on: req)
+        return try fm.save(file: at1xData, to: "server/image/\(IconSize.at1x.rawValue)", mime: mime, on: req).flatMap({ _ in
+            return try fm.save(file: at2xData, to: "server/image/\(IconSize.at2x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                return try fm.save(file: at3xData, to: "server/image/\(IconSize.at3x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                    return try fm.save(file: regData, to: "server/image/\(IconSize.regular.rawValue)", mime: mime, on: req).flatMap({ _ in
+                        return try fm.save(file: largeData, to: "server/image/\(IconSize.large.rawValue)", mime: mime, on: req)
                     })
                 })
             })

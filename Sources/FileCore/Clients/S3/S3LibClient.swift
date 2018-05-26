@@ -24,7 +24,7 @@ class S3LibClient: FileManagement, Service {
     
     /// Save file
     public func save(file data: Data, to path: String, mime: MediaType, on container: Container) throws -> EventLoopFuture<Void> {
-        let file = File.Upload.init(data: data, destination: path, access: .privateAccess, mime: mime.description)
+        let file = File.Upload.init(data: data, destination: path, access: .publicRead, mime: mime.description)
         return try s3.put(file: file, on: container).map(to: Void.self) { response in
             return Void()
         }.catchMap({ error in

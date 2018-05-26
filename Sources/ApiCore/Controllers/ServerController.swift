@@ -23,8 +23,8 @@ public class ServerController: Controller {
             let info = Info(
                 name: ApiCoreBase.configuration.server.name,
                 url: req.serverURL().absoluteString,
-                icons: IconSize.all.sorted(by: { $0.rawValue < $1.rawValue }).map({
-                    let url = fm.url(for: "server/image/\($0.rawValue)", on: req)
+                icons: try IconSize.all.sorted(by: { $0.rawValue < $1.rawValue }).map({
+                    let url = try fm.url(for: "server/image/\($0.rawValue)", on: req)
                     return Info.Icon(size: $0, url: url)
                 })
             )
@@ -58,7 +58,7 @@ public class ServerController: Controller {
                 throw Logo.Error.invalidSize
             }
             let fm = try req.makeFileCore()
-            return try fm.get(file: "Server/logo/image-\(size.rawValue)", on: req).map(to: Response.self) { data in
+            return try fm.get(file: "server/image/\(size.rawValue)", on: req).map(to: Response.self) { data in
                 let response = try req.response.image(data)
                 return response
             }
@@ -67,7 +67,7 @@ public class ServerController: Controller {
         // Retrieve a server image (large)
         router.get("server", "image") { req -> Future<Response> in
             let fm = try req.makeFileCore()
-            return try fm.get(file: "Server/logo/image-\(IconSize.large.rawValue)", on: req).map(to: Response.self) { data in
+            return try fm.get(file: "server/image/\(IconSize.large.rawValue)", on: req).map(to: Response.self) { data in
                 let response = try req.response.image(data)
                 return response
             }
@@ -76,7 +76,7 @@ public class ServerController: Controller {
         // Remove server images (all sizes)
         router.delete("server", "image") { req -> Future<Response> in
             let fm = try req.makeFileCore()
-            return try fm.delete(file: "Server/logo", on: req).map(to: Response.self) { data in
+            return try fm.delete(file: "server/image", on: req).map(to: Response.self) { data in
                 return try req.response.noContent()
             }
         }

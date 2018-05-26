@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
         "state": {
           "branch": null,
-          "revision": "c7847a9b002de2589d113a199ddb01f1d8b4ac89",
-          "version": "1.0.6"
+          "revision": "53346774ab678dd36278bf3ec9f657eeced53e63",
+          "version": "1.0.7"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
         "state": {
           "branch": null,
-          "revision": "f5c64deabd74c0842842020f7e9c048733829f6d",
-          "version": "1.0.6"
+          "revision": "a25467c5054df8585c88591fdf6853443daaa574",
+          "version": "1.0.7"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/vapor/core.git",
         "state": {
           "branch": null,
-          "revision": "a909eccc41941faac6fb9e511cdb9a5cb30a05de",
-          "version": "3.1.7"
+          "revision": "3b72f2cc3fb21d505fbe97215418951a8e4a2871",
+          "version": "3.2.1"
         }
       },
       {
@@ -186,8 +186,8 @@
         "repositoryURL": "https://github.com/vapor/postgresql.git",
         "state": {
           "branch": null,
-          "revision": "4988607c3b2369248c6cfcd34274241a8632cd69",
-          "version": "1.0.0-rc.2.2.1"
+          "revision": "9721627e9dfa103cc41abd8e4a7e3a937fa6cb63",
+          "version": "1.0.0-rc.2.2.2"
         }
       },
       {
@@ -204,7 +204,7 @@
         "repositoryURL": "https://github.com/LiveUI/S3.git",
         "state": {
           "branch": "master",
-          "revision": "ee5d075a524e0efa7b451b6ebc67a203697ca71f",
+          "revision": "d6dff77425dd76a1dc2d50c0e304703608486c20",
           "version": null
         }
       },
@@ -240,8 +240,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "bad7c297427b5efedb96c4044f9e57b42881e9ea",
-          "version": "1.7.0"
+          "revision": "77dc77b9b5cdddfb3c385c5ee6cb74153d284967",
+          "version": "1.7.2"
         }
       },
       {
@@ -249,8 +249,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
         "state": {
           "branch": null,
-          "revision": "38955a5f806a952daf2b16fbfe9aa529749cf1dd",
-          "version": "1.1.0"
+          "revision": "0adc938bc8de3d3829b842f9767d81c7480b8403",
+          "version": "1.1.1"
         }
       },
       {
@@ -357,8 +357,8 @@
         "repositoryURL": "https://github.com/LiveUI/XMLCoding.git",
         "state": {
           "branch": null,
-          "revision": "94e881b6897007f4cf8f09c00037e72b57b17cb2",
-          "version": "0.1.0"
+          "revision": "344c27d8f5c5fef2fae27e1f046847776afaaf77",
+          "version": "0.1.1"
         }
       }
     ]
