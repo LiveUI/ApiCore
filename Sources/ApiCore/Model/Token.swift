@@ -21,13 +21,13 @@ public typealias Tokens = [Token]
 public final class Token: DbCoreModel {
     
     /// Token type
-    public enum TokenType: String, Codable {
+    public enum TokenType: String, Codable, CaseIterable, ReflectionDecodable {
         
         /// Authentication
-        case Authentication
+        case Authentication = "auth"
         
         /// Password recovery
-        case PasswordRecovery
+        case PasswordRecovery = "pare"
 
     }
     
@@ -162,7 +162,7 @@ extension Token: Migration {
             schema.field(for: \.userId, type: .uuid, .notNull)
             schema.field(for: \.token, type: .varchar(64), .notNull)
             schema.field(for: \.expires, type: .timestamp, .notNull)
-            schema.field(for: \.type, type: .varchar(64), .notNull)
+            schema.field(for: \.type, type: .varchar(4), .notNull)
         }
     }
     
