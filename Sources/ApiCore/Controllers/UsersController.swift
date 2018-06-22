@@ -45,9 +45,9 @@ public class UsersController: Controller {
                 // TODO: Display only users in my team or within my reach as there are emails available here!!!!!!!!!!
                 return try User.query(on: req).decode(User.Display.self).group(.or) { or in
                     // TODO: Make the search reusable!!
-                    try or.filter(\User.firstname ~~ search)
-                    try or.filter(\User.lastname ~~ search)
-                    try or.filter(\User.email ~~ search)
+                    or.filter(\User.firstname ~~ search)
+                    or.filter(\User.lastname ~~ search)
+                    or.filter(\User.email ~~ search)
                     }.paginate(on: req).all()
             } else {
                 return try User.query(on: req).decode(User.Display.self).paginate(on: req).all()
@@ -57,9 +57,9 @@ public class UsersController: Controller {
         router.get("users", "global") { (req) -> Future<[User.AllSearch]> in
             if let search = req.query.search {
                 return try User.query(on: req).group(.or) { or in
-                    try or.filter(\User.firstname ~~ search)
-                    try or.filter(\User.lastname ~~ search)
-                    try or.filter(\User.email ~~ search)
+                    or.filter(\User.firstname ~~ search)
+                    or.filter(\User.lastname ~~ search)
+                    or.filter(\User.email ~~ search)
                     }.paginate(on: req).all().map(to: [User.AllSearch].self) { (users) -> [User.AllSearch] in
                         return users.compactMap { (user) -> User.AllSearch in
                             return User.AllSearch(user: user)

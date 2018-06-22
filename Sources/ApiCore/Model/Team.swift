@@ -142,12 +142,12 @@ extension Team: Migration {
     /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
-            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
-            schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.name.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(40), name: CodingKeys.identifier.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(6), name: CodingKeys.color.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(2), name: CodingKeys.initials.stringValue)
-            schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.admin.stringValue)
+            schema.field(for: \.id, isIdentifier: true)
+            schema.field(for: \.name, type: .varchar(40), .notNull)
+            schema.field(for: \.identifier, type: .varchar(40), .notNull)
+            schema.field(for: \.color, type: .varchar(6), .notNull)
+            schema.field(for: \.initials, type: .varchar(2), .notNull)
+            schema.field(for: \.admin, type: .bool, .notNull)
         }
     }
     
@@ -164,7 +164,7 @@ extension Team {
     
     /// Does team exist? That is the question!
     public static func exists(identifier: String, on req: Request) throws -> Future<Bool> {
-        return try Team.query(on: req).filter(\Team.identifier == identifier).count().map(to: Bool.self, { (count) -> Bool in
+        return Team.query(on: req).filter(\Team.identifier == identifier).count().map(to: Bool.self, { (count) -> Bool in
             return count > 0
         })
     }

@@ -272,16 +272,16 @@ extension User: Migration {
     /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
-            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
-            schema.addField(type: DbCoreColumnType.varChar(80), name: CodingKeys.username.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(80), name: CodingKeys.firstname.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(140), name: CodingKeys.lastname.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(141), name: CodingKeys.email.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.verification.stringValue, isOptional: true)
-            schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.password.stringValue, isOptional: true)
-            schema.addField(type: DbCoreColumnType.datetime(), name: CodingKeys.registered.stringValue)
-            schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.disabled.stringValue)
-            schema.addField(type: DbCoreColumnType.bool(), name: CodingKeys.su.stringValue)
+            schema.field(for: \.id, isIdentifier: true)
+            schema.field(for: \.username, type: .varchar(80), .notNull)
+            schema.field(for: \.firstname, type: .varchar(80), .notNull)
+            schema.field(for: \.lastname, type: .varchar(140), .notNull)
+            schema.field(for: \.email, type: .varchar(141), .notNull)
+            schema.field(for: \.verification, type: .varchar(64))
+            schema.field(for: \.password, type: .varchar(64))
+            schema.field(for: \.registered, type: .timestamp, .notNull)
+            schema.field(for: \.disabled, type: .bool, .notNull)
+            schema.field(for: \.su, type: .bool, .notNull)
         }
     }
     

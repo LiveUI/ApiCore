@@ -21,7 +21,7 @@ public typealias Tokens = [Token]
 public final class Token: DbCoreModel {
     
     /// Token type
-    public enum TokenType: String, Codable, PostgreSQLType {
+    public enum TokenType: String, Codable {
         
         /// Authentication
         case Authentication
@@ -158,11 +158,11 @@ extension Token: Migration {
     /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
-            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
-            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.userId.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.token.stringValue)
-            schema.addField(type: DbCoreColumnType.datetime(), name: CodingKeys.expires.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(64), name: CodingKeys.type.stringValue)
+            schema.field(for: \.id, isIdentifier: true)
+            schema.field(for: \.userId, type: .uuid, .notNull)
+            schema.field(for: \.token, type: .varchar(64), .notNull)
+            schema.field(for: \.expires, type: .timestamp, .notNull)
+            schema.field(for: \.type, type: .varchar(64), .notNull)
         }
     }
     

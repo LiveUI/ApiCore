@@ -55,9 +55,9 @@ extension TeamUser: Migration {
     /// Migration preparations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
-            try schema.field(for: \TeamUser.id)
-            try schema.field(for: \TeamUser.teamId)
-            try schema.field(for: \TeamUser.userId)
+            schema.field(for: \TeamUser.id)
+            schema.field(for: \TeamUser.teamId, type: .uuid, .notNull)
+            schema.field(for: \TeamUser.userId, type: .uuid, .notNull)
         }
     }
     

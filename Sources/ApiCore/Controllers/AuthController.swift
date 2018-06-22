@@ -64,7 +64,7 @@ public class AuthController: Controller {
             // Read redirect url from request
             return try req.content.decode(User.Auth.StartRecovery.self).flatMap(to: Response.self) { (recoveryData) -> Future<Response> in
                 // Fetch the user by email
-                return try User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { (optionalUser) -> Future<Response> in
+                return User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { (optionalUser) -> Future<Response> in
                     guard let user = optionalUser else {
                         return try req.response.notFound().asFuture(on: req)
                     }
@@ -125,7 +125,7 @@ extension AuthController {
             guard let token = token else {
                 throw AuthError.authenticationFailed
             }
-            return try User.find(token.userId, on: req).flatMap(to: Response.self) { user in
+            return User.find(token.userId, on: req).flatMap(to: Response.self) { user in
                 guard let user = user else {
                     throw AuthError.authenticationFailed
                 }

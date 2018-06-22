@@ -92,7 +92,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
             return try req.response.notAuthorized().asFuture(on: req)
         }
         
-        return try User.find(userPayload.userId, on: req).flatMap(to: Response.self) { user in
+        return User.find(userPayload.userId, on: req).flatMap(to: Response.self) { user in
             guard let user = user else {
                 return try req.response.notAuthorized().asFuture(on: req)
             }

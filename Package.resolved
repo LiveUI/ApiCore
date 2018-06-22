@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
-          "revision": "fae7286fbe20182a05d20e131f9861061a6aae77",
-          "version": "1.0.2"
+          "revision": "4503221a71d49c6075b5042f5ff2d858acbe74a8",
+          "version": "1.0.4"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
         "state": {
           "branch": null,
-          "revision": "53346774ab678dd36278bf3ec9f657eeced53e63",
-          "version": "1.0.7"
+          "revision": "a4370251998438d60335151141968546e2330379",
+          "version": "1.0.8"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
         "state": {
           "branch": null,
-          "revision": "a25467c5054df8585c88591fdf6853443daaa574",
-          "version": "1.0.7"
+          "revision": "6225376e53ca2cf59477bca9bb48f4f5acf7a1c1",
+          "version": "1.0.8"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/vapor/core.git",
         "state": {
           "branch": null,
-          "revision": "3b72f2cc3fb21d505fbe97215418951a8e4a2871",
-          "version": "3.2.1"
+          "revision": "7f56a09995bf3c8df562be456bdcda405d9d0678",
+          "version": "3.4.1"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/vapor/crypto.git",
         "state": {
           "branch": null,
-          "revision": "1b8c2ba5a42f1adf2aa812204678d8b16466fa59",
-          "version": "3.1.2"
+          "revision": "4b85405430df1892ee3aa1554bdb477e96cf46ad",
+          "version": "3.2.0"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/vapor/database-kit.git",
         "state": {
           "branch": null,
-          "revision": "0db303439e5ef8b6df50a2b6c4029edddee90cb0",
-          "version": "1.0.1"
+          "revision": "acdd4d3384ec0122dcfcca8d23d9054a2860ffba",
+          "version": "1.2.0"
         }
       },
       {
@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/LiveUI/DbCore.git",
         "state": {
           "branch": "master",
-          "revision": "adc120e5d6887e36a4a97831e4a807f1791cebb5",
+          "revision": "c3f0e75bf5032aaed1ea7cdc2ca1c2ac3150b1e4",
           "version": null
         }
       },
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/vapor/fluent.git",
         "state": {
           "branch": null,
-          "revision": "8f22ef2dfeb278179a2d6e91769a5c1ceccf31ef",
-          "version": "3.0.0-rc.2.4.1"
+          "revision": "058b4579aea61dd05012f121fa9fa9042488c57b",
+          "version": "3.0.0-rc.4.0.2"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/vapor/fluent-postgresql.git",
         "state": {
           "branch": null,
-          "revision": "8324bf0fc1437701f8963fb340c199c66079c90e",
-          "version": "1.0.0-rc.2.3"
+          "revision": "2a5b8d147d6937d3cca0951864fcf000590e099e",
+          "version": "1.0.0-rc.4.0.2"
         }
       },
       {
@@ -132,8 +132,8 @@
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {
           "branch": null,
-          "revision": "5e766f72d81ef5fe8805d704efdffd17e4906134",
-          "version": "3.0.6"
+          "revision": "8123ea00e9858b369cd168d0303d33e7d3804d19",
+          "version": "3.0.7"
         }
       },
       {
@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/vapor/jwt.git",
         "state": {
           "branch": null,
-          "revision": "6acca0abfe335ce7585d678cd721e8a0e3c7a053",
-          "version": "3.0.0-rc.2.1.1"
+          "revision": "de0dc5bbba60250c24c5c4b4d2505d7a71dd03ae",
+          "version": "3.0.0-rc.2.1.2"
         }
       },
       {
@@ -168,7 +168,7 @@
         "repositoryURL": "https://github.com/LiveUI/MailCore.git",
         "state": {
           "branch": "master",
-          "revision": "eaeca69f1ca0309b4bed26101a387ae17ef7d8a4",
+          "revision": "6dc6924ef69d70094c3bea0fca8c354e5183c9c4",
           "version": null
         }
       },
@@ -186,8 +186,8 @@
         "repositoryURL": "https://github.com/vapor/postgresql.git",
         "state": {
           "branch": null,
-          "revision": "9721627e9dfa103cc41abd8e4a7e3a937fa6cb63",
-          "version": "1.0.0-rc.2.2.2"
+          "revision": "f44de16c544c603e777f58d4df4008fd9f03ff89",
+          "version": "1.0.0-rc.4.1"
         }
       },
       {
@@ -210,11 +210,11 @@
       },
       {
         "package": "SendGrid",
-        "repositoryURL": "https://github.com/vapor-community/sendgrid-provider.git",
+        "repositoryURL": "https://github.com/rafiki270/sendgrid-provider.git",
         "state": {
-          "branch": null,
-          "revision": "45e61ff516a50da74821f869d1dce4746ffa7224",
-          "version": "3.0.3"
+          "branch": "master",
+          "revision": "ec99ae7d0ca601c764eb08d4148b17e1775db212",
+          "version": null
         }
       },
       {
@@ -231,8 +231,8 @@
         "repositoryURL": "https://github.com/vapor/sql.git",
         "state": {
           "branch": null,
-          "revision": "1bb94271d8645b6d6983721080ad642aa35d749c",
-          "version": "1.0.0"
+          "revision": "5127aaf2eb7e5dec134739df17fc7e565024e416",
+          "version": "2.0.0-beta.2"
         }
       },
       {
@@ -240,8 +240,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "77dc77b9b5cdddfb3c385c5ee6cb74153d284967",
-          "version": "1.7.2"
+          "revision": "695afc5205aaa49fca092b94b479ff71c43d9d3c",
+          "version": "1.8.0"
         }
       },
       {
@@ -321,8 +321,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "39b4d3fa36e58c6f7415c9da6c65a703bec34cea",
-          "version": "3.0.3"
+          "revision": "74a46ecacca51d326a1e8cf4b7967827765f05bf",
+          "version": "3.0.5"
         }
       },
       {
@@ -330,8 +330,8 @@
         "repositoryURL": "https://github.com/twof/VaporMailgunService.git",
         "state": {
           "branch": null,
-          "revision": "11d300be43d189ecc3d782fcde6d638af6a25e6d",
-          "version": "1.1.0"
+          "revision": "135f522866cc2e45734a0ad9b78dcfb85450e4fc",
+          "version": "1.2.0"
         }
       },
       {

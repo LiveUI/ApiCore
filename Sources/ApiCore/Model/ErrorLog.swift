@@ -55,10 +55,10 @@ extension ErrorLog: Migration {
     /// Prepare migrations
     public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
-            schema.addField(type: DbCoreColumnType.id(), name: CodingKeys.id.stringValue, isIdentifier: true)
-            schema.addField(type: DbCoreColumnType.datetime(), name: CodingKeys.added.stringValue)
-            schema.addField(type: DbCoreColumnType.varChar(250), name: CodingKeys.uri.stringValue)
-            schema.addField(type: DbCoreColumnType.text(), name: CodingKeys.error.stringValue)
+            schema.field(for: \.id, isIdentifier: true)
+            schema.field(for: \.added, type: .timestamp)
+            schema.field(for: \.uri, type: .varchar(250))
+            schema.field(for: \.error, type: DbCoreColumnType.text())
         }
     }
     
