@@ -16,8 +16,8 @@ public struct BasicQuery: Codable {
     /// Requesting plain text result (comparing to JSON result)
     public let plain: Bool?
     
-    /// Page (used in pagination, default is 0)
-    public let page: Int?
+    /// From (used in pagination, default is 0)
+    public let from: Int?
     
     /// Limit number of items per page
     public let limit: Int?
@@ -43,8 +43,8 @@ extension QueryContainer {
     }
     
     /// Page (used in pagination, default is 0)
-    public var page: Int? {
-        return basic?.page
+    public var from: Int? {
+        return basic?.from
     }
     
     /// Limit number of items per page
@@ -69,9 +69,8 @@ extension QueryBuilder {
     /// Apply pagination onto a database query
     public func paginate(on req: Request) throws -> Self {
         if let limit = req.query.basic?.limit {
-            let page = req.query.basic?.page ?? 0
-            let lower = (page * limit)
-            return range(lower: lower, upper: (lower + limit))
+            let from = req.query.basic?.from ?? 0
+            return range(lower: from, upper: (from + limit))
         }
         return self
     }
