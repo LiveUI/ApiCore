@@ -58,7 +58,7 @@ extension ErrorLog: Migration {
             schema.field(for: \.id, isIdentifier: true)
             schema.field(for: \.added, type: .timestamp)
             schema.field(for: \.uri, type: .varchar(250))
-            schema.field(for: \.error, type: DbCoreColumnType.text())
+            schema.field(for: \.error, type: .text)
         }
     }
     
