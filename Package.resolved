@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/LiveUI/DbCore.git",
         "state": {
           "branch": "master",
-          "revision": "78421d08f52faf777f5022ae6ef21f7061dd5d03",
+          "revision": "914bb68948a5d1a9b08ce995abca7fc0249adb08",
           "version": null
         }
       },
@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/LiveUI/ErrorsCore.git",
         "state": {
           "branch": "master",
-          "revision": "21e3fec29e9d92a28841b9bfcaca3b5cc8febc3d",
+          "revision": "8fe09ed43c658c40e3d57d129cda85f15fcc7fbc",
           "version": null
         }
       },
@@ -123,7 +123,7 @@
         "repositoryURL": "https://github.com/LiveUI/FluentTestTools.git",
         "state": {
           "branch": "master",
-          "revision": "f3f538c3850331942ffca669ac875e6a35035077",
+          "revision": "d1d3f43900813558c4c34a6c71df3535d9e694d2",
           "version": null
         }
       },
@@ -168,7 +168,7 @@
         "repositoryURL": "https://github.com/LiveUI/MailCore.git",
         "state": {
           "branch": "master",
-          "revision": "6dc6924ef69d70094c3bea0fca8c354e5183c9c4",
+          "revision": "f6950f977e0d994f48d37f7940fd7d77299fe20f",
           "version": null
         }
       },
@@ -210,11 +210,11 @@
       },
       {
         "package": "SendGrid",
-        "repositoryURL": "https://github.com/rafiki270/sendgrid-provider.git",
+        "repositoryURL": "https://github.com/vapor-community/sendgrid-provider.git",
         "state": {
-          "branch": "master",
-          "revision": "ec99ae7d0ca601c764eb08d4148b17e1775db212",
-          "version": null
+          "branch": null,
+          "revision": "3b71cae7ed953a128a7bb0381b80b31bc7f1d8e5",
+          "version": "3.0.5"
         }
       },
       {
@@ -276,8 +276,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/Swift-SMTP.git",
         "state": {
           "branch": null,
-          "revision": "54fbbb90df7c8e6dd952755701e4921c96b7d2d2",
-          "version": "4.0.1"
+          "revision": "496f779a073991609cf3745214e49449d9b5db24",
+          "version": "5.1.0"
         }
       },
       {
@@ -338,9 +338,9 @@
         "package": "VaporTestTools",
         "repositoryURL": "https://github.com/LiveUI/VaporTestTools.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "e07ce263257463f2f2af9e640f81eb95a72760e4",
-          "version": null
+          "version": "0.1.5"
         }
       },
       {

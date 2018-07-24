@@ -10,9 +10,9 @@ let package = Package(
         .library(name: "ApiCoreTestTools", targets: ["ApiCoreTestTools"])
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0-rc.2"),
-        .package(url: "https://github.com/vapor/fluent.git", from: "3.0.0-rc.2"),
-        .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.2"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "3.0.0"),
+        .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.4"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc.2"),
         .package(url: "https://github.com/vapor/leaf.git", from: "3.0.0-rc.2"),
         .package(url: "https://github.com/twostraws/SwiftGD.git", from: "2.0.0"),
