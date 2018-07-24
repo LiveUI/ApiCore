@@ -57,7 +57,8 @@ let package = Package(
         .target(name: "ImageCore", dependencies: [
             "Vapor",
             "ErrorsCore",
-            "SwiftGD"
+            "SwiftGD",
+            "COperatingSystem"
             ]
         ),
         .target(
