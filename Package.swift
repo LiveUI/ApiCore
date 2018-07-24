@@ -11,6 +11,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+        .package(url: "https://github.com/vapor/core.git", from: "3.4.1"),
         .package(url: "https://github.com/vapor/fluent.git", from: "3.0.0"),
         .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.4"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc.2"),
