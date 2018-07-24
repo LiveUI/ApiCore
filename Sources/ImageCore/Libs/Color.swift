@@ -112,7 +112,7 @@ public class Color {
     
     /// Get random color
     public static func randomColor() -> Color {
-        return Color(r: Color.random, g: Color.random, b: Color.random)
+        return Color(r: Color.randomRGBValue, g: Color.randomRGBValue, b: Color.randomRGBValue)
     }
     
 }
@@ -120,7 +120,7 @@ public class Color {
 extension Color {
     
     /// Make random Int within a range
-    internal static func makeRandom(min: Int = 0, max: Int = Int.max) -> Int {
+    public static func randomInt(min: Int = 0, max: Int = Int.max) -> Int {
         let top = max - min + 1
         #if os(Linux)
             // will always be initialized
@@ -132,8 +132,8 @@ extension Color {
     }
     
     /// Random value
-    internal static var random: Int {
-        return makeRandom(min: 0, max: 256)
+    public static var randomRGBValue: Int {
+        return randomInt(min: 0, max: 256)
     }
     
 }
@@ -146,7 +146,6 @@ extension Int {
     }
     
 }
-
 
 #if os(Linux)
     /// Generates a random number between (and inclusive of)
