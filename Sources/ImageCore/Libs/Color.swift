@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Random
 
 
 /// Color
@@ -101,11 +102,6 @@ public class Color {
         return [r.floatColorValue, g.floatColorValue, b.floatColorValue]
     }
     
-    /// Random value
-    internal static var random: Double {
-        return Double(arc4random()) / Double(UInt32.max)
-    }
-    
     // MARK: Static helpers
     
     /// Convert color to hex
@@ -116,11 +112,31 @@ public class Color {
     
     /// Get random color
     public static func randomColor() -> Color {
-        return Color(r: .random, g: .random, b: .random)
+        return Color(r: Color.random, g: Color.random, b: Color.random)
     }
     
 }
 
+extension Color {
+    
+    /// Make random Int within a range
+    internal static func makeRandom(min: Int = 0, max: Int = Int.max) -> Int {
+        let top = max - min + 1
+        #if os(Linux)
+            // will always be initialized
+            guard randomInitializedBoost else { fatalError() }
+            return Int(COperatingSystem.random() % top) + min
+        #else
+            return Int(arc4random_uniform(UInt32(top))) + min
+        #endif
+    }
+    
+    /// Random value
+    internal static var random: Int {
+        return makeRandom(min: 0, max: 256)
+    }
+    
+}
 
 extension Int {
     
@@ -129,9 +145,18 @@ extension Int {
         return Double(self) / 255.0
     }
     
-    /// Random value
-    internal static var random: Int {
-        return Int((Double(arc4random()) / Double(UInt32.max)) * 256.0)
-    }
-    
 }
+
+
+#if os(Linux)
+    /// Generates a random number between (and inclusive of)
+    /// the given minimum and maximum.
+    private let randomInitializedBoost: Bool = {
+        /// This stylized initializer is used to work around dispatch_once
+        /// not existing and still guarantee thread safety
+        let current = Date().timeIntervalSinceReferenceDate
+        let salt = current.truncatingRemainder(dividingBy: 1) * 100000000
+        COperatingSystem.srand(UInt32(current + salt))
+        return true
+    }()
+#endif
