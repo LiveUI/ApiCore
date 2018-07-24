@@ -7,6 +7,7 @@
 
 import Foundation
 import Random
+import COperatingSystem
 
 
 /// Color
