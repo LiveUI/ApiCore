@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
-          "revision": "4503221a71d49c6075b5042f5ff2d858acbe74a8",
-          "version": "1.0.4"
+          "revision": "7865ad2f864633eb945dc77c43213fb34688bb3e",
+          "version": "1.0.5"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
         "state": {
           "branch": null,
-          "revision": "a4370251998438d60335151141968546e2330379",
-          "version": "1.0.8"
+          "revision": "e2f6aee81b9e316f61e173e8350cb69d7714ead8",
+          "version": "1.0.10"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
         "state": {
           "branch": null,
-          "revision": "6225376e53ca2cf59477bca9bb48f4f5acf7a1c1",
-          "version": "1.0.8"
+          "revision": "f4c012b783f8809d4e6597b304357c5324ff459b",
+          "version": "1.0.10"
         }
       },
       {
@@ -87,7 +87,7 @@
         "repositoryURL": "https://github.com/LiveUI/DbCore.git",
         "state": {
           "branch": "master",
-          "revision": "c3f0e75bf5032aaed1ea7cdc2ca1c2ac3150b1e4",
+          "revision": "78421d08f52faf777f5022ae6ef21f7061dd5d03",
           "version": null
         }
       },
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/vapor/fluent.git",
         "state": {
           "branch": null,
-          "revision": "058b4579aea61dd05012f121fa9fa9042488c57b",
-          "version": "3.0.0-rc.4.0.2"
+          "revision": "270b6fa372f03809b9795e8f8b9d1c31267a0ff3",
+          "version": "3.0.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/vapor/fluent-postgresql.git",
         "state": {
           "branch": null,
-          "revision": "2a5b8d147d6937d3cca0951864fcf000590e099e",
-          "version": "1.0.0-rc.4.0.2"
+          "revision": "b5da9d5ba48314092c1f401cc50b0f0263288181",
+          "version": "1.0.0-rc.4.1"
         }
       },
       {
@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/vapor/multipart.git",
         "state": {
           "branch": null,
-          "revision": "7778dcb62f3efa845e8e2808937bb347575ba7ce",
-          "version": "3.0.1"
+          "revision": "e57007c23a52b68e44ebdfc70cbe882a7c4f1ec3",
+          "version": "3.0.2"
         }
       },
       {
@@ -186,8 +186,8 @@
         "repositoryURL": "https://github.com/vapor/postgresql.git",
         "state": {
           "branch": null,
-          "revision": "f44de16c544c603e777f58d4df4008fd9f03ff89",
-          "version": "1.0.0-rc.4.1"
+          "revision": "7659f62f951dba3527fc9179f4e30301fc47d3c2",
+          "version": "1.0.0-rc.4.4"
         }
       },
       {
@@ -204,7 +204,7 @@
         "repositoryURL": "https://github.com/LiveUI/S3.git",
         "state": {
           "branch": "master",
-          "revision": "d6dff77425dd76a1dc2d50c0e304703608486c20",
+          "revision": "1faabf22004fe9e1f4fa8f756b42cd4c26db090a",
           "version": null
         }
       },
@@ -231,8 +231,8 @@
         "repositoryURL": "https://github.com/vapor/sql.git",
         "state": {
           "branch": null,
-          "revision": "5127aaf2eb7e5dec134739df17fc7e565024e416",
-          "version": "2.0.0-beta.2"
+          "revision": "bfbaa048f9e655218611b65da470efa7deb16616",
+          "version": "2.0.2"
         }
       },
       {
@@ -249,8 +249,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
         "state": {
           "branch": null,
-          "revision": "0adc938bc8de3d3829b842f9767d81c7480b8403",
-          "version": "1.1.1"
+          "revision": "6617eb0d3afcb12170594968df01ca63afb58ac5",
+          "version": "1.2.0"
         }
       },
       {
@@ -321,8 +321,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "74a46ecacca51d326a1e8cf4b7967827765f05bf",
-          "version": "3.0.5"
+          "revision": "6b07105a3899fbbae194ee3eb82f54debe502221",
+          "version": "3.0.6"
         }
       },
       {

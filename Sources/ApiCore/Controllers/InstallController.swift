@@ -10,6 +10,7 @@ import Vapor
 import ErrorsCore
 import DbCore
 import Fluent
+import FluentPostgreSQL
 
 
 public class InstallController: Controller {
@@ -80,7 +81,7 @@ extension InstallController {
         var futures: [Future<Void>] = []
         return req.requestPooledConnection(to: .db).flatMap(to: Response.self) { connection in
             for model in DbCore.models {
-                futures.append(connection.query("DROP TABLE IF EXISTS \(model.entity)").flatten())
+                futures.append(connection.query(PostgreSQLQuery.raw("DROP TABLE IF EXISTS \(model.entity)", binds: [])).flatten())
             }
             return futures.flatten(on: req).flatMap(to: Void.self) { _ in
                 return FluentDesign.query(on: req).delete()

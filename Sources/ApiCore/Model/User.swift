@@ -102,7 +102,7 @@ public final class User: DbCoreModel {
     }
     
     /// User displayable object
-    public final class Display: Content {
+    public final class Display: DbCoreModel {
         
         /// Object Id
         public var id: DbCoreIdentifier?
