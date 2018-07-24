@@ -24,10 +24,17 @@ public final class Token: DbCoreModel {
     public enum TokenType: String, Codable, CaseIterable, ReflectionDecodable {
         
         /// Authentication
-        case Authentication = "auth"
+        case authentication = "auth"
         
         /// Password recovery
-        case PasswordRecovery = "pare"
+        case passwordRecovery = "pare"
+        
+        public static var allCases: [TokenType] {
+            return [
+                .authentication,
+                .passwordRecovery
+            ]
+        }
 
     }
     
@@ -127,7 +134,7 @@ public final class Token: DbCoreModel {
     
     /// Initializer
     convenience init(user: User) throws {
-        try self.init(user: user, type: .Authentication)
+        try self.init(user: user, type: .authentication)
     }
     
     /// Initializer
