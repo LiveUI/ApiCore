@@ -119,6 +119,7 @@ public class Color {
 
 extension Color {
     
+    // TODO: Replace with unified random from swift 4.2 when it becomes available!!!
     /// Make random Int within a range
     public static func randomInt(min: Int = 0, max: Int = Int.max) -> Int {
         let top = max - min + 1

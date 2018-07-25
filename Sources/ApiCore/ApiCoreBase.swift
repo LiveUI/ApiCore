@@ -40,7 +40,39 @@ public class ApiCoreBase {
                     if let error = error as? DecodingError {
                         fatalError("Invalid configuration file: \(error.reason)")
                     } else {
-                        fatalError("Default configuration doesn't exist")
+                        _configuration = Configuration(
+                            server: Configuration.Server(
+                                name: "Booster",
+                                url: nil,
+                                maxUploadFilesize: nil
+                            ),
+                            jwtSecret: "secret",
+                            database: Configuration.Database(
+                                host: nil,
+                                port: nil,
+                                user: "boost",
+                                password: "aaaaaa",
+                                database: "boost",
+                                logging: false
+                            ),
+                            mail: Configuration.Mail(
+                                mailgun: Configuration.Mail.MailGun(
+                                    domain: "",
+                                    key: ""
+                                )
+                            ),
+                            storage: Configuration.Storage(
+                                local: Configuration.Storage.Local(root: "/tmp/Boost"),
+                                s3: Configuration.Storage.S3(
+                                    enabled: false,
+                                    bucket: "",
+                                    accessKey: "",
+                                    secretKey: "",
+                                    region: .apSoutheast1,
+                                    securityToken: nil
+                                )
+                            )
+                        )
                     }
                 }
             }
