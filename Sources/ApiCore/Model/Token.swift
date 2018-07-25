@@ -87,9 +87,17 @@ public final class Token: DbCoreModel {
     }
     
     public final class PublicNoUser: DbCoreModel {
+        
+        /// Object id
         public var id: DbCoreIdentifier?
+        
+        /// Token
         public var token: String
+        
+        /// Token expiry time
         public var expires: Date
+        
+        /// Token type
         public var type: TokenType
         
         public init(token: Token) {
