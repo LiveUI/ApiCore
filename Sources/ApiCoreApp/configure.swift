@@ -6,7 +6,7 @@ import MailCore
 
 
 public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ services: inout Services) throws {
-    print("Starting Boost")
+    print("Starting Boost LR7zw5Hk7Ze3k")
     Env.print()
     
     // Register routes
