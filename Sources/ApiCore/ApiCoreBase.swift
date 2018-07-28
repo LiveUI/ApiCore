@@ -73,6 +73,8 @@ public class ApiCoreBase {
                                 )
                             )
                         )
+                        
+                        _configuration?.loadEnv()
                     }
                 }
             }
