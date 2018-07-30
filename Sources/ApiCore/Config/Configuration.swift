@@ -28,7 +28,7 @@ public final class Configuration: Configurable {
         public internal(set) var url: String?
         
         /// Max upload filesize (in Mb, default is 50)
-        public internal(set) var maxUploadFilesize: Int?
+        public internal(set) var maxUploadFilesize: Double?
         
         enum CodingKeys: String, CodingKey {
             case name

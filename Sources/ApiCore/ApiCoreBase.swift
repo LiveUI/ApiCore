@@ -42,7 +42,7 @@ public class ApiCoreBase {
                     } else {
                         _configuration = Configuration(
                             server: Configuration.Server(
-                                name: "Booster",
+                                name: "API Core!",
                                 url: nil,
                                 maxUploadFilesize: nil
                             ),
@@ -50,9 +50,9 @@ public class ApiCoreBase {
                             database: Configuration.Database(
                                 host: nil,
                                 port: nil,
-                                user: "boost",
+                                user: "apicore",
                                 password: "aaaaaa",
-                                database: "boost",
+                                database: "apicore",
                                 logging: false
                             ),
                             mail: Configuration.Mail(
@@ -117,6 +117,12 @@ public class ApiCoreBase {
     
     /// Main configure method for ApiCore
     public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+        // Set max upload filesize
+        let mb = Double(configuration.server.maxUploadFilesize ?? 50)
+        let maxBodySize = Int(Filesize.megabyte(mb).value)
+        let serverConfig = NIOServerConfig.default(maxBodySize: maxBodySize)
+        services.register(serverConfig)
+        
         // Migrate models / tables
         DbCore.add(model: Token.self, database: .db)
         DbCore.add(model: Team.self, database: .db)
