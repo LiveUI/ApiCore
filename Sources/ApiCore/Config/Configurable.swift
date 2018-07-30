@@ -43,6 +43,20 @@ extension Configurable {
         }
     }
     
+    /// Load Double property from env
+    public func load(_ key: String, to property: inout Double) {
+        if let value = self.property(key: key), let converted = Double(value) {
+            property = converted
+        }
+    }
+    
+    /// Load optional Double property from env
+    public func load(_ key: String, to property: inout Double?) {
+        if let value = self.property(key: key), let converted = Double(value) {
+            property = converted
+        }
+    }
+    
     /// Load Bool property from env
     public func load(_ key: String, to property: inout Bool) {
         if let value = self.property(key: key), let converted = value.bool {

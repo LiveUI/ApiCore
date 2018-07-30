@@ -27,7 +27,7 @@ public final class Configuration: Configurable {
         /// Server URL
         public internal(set) var url: String?
         
-        /// Max upload filesize (in Mb, default is 50)
+        /// Max upload filesize (in Mb, default is 2Mb)
         public internal(set) var maxUploadFilesize: Double?
         
         enum CodingKeys: String, CodingKey {
@@ -37,7 +37,7 @@ public final class Configuration: Configurable {
         }
         
         /// Initializer
-        init(name: String, url: String?, maxUploadFilesize: Int?) {
+        init(name: String, url: String?, maxUploadFilesize: Double?) {
             self.name = name
             self.url = url
             self.maxUploadFilesize = maxUploadFilesize

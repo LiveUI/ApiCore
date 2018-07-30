@@ -33,7 +33,10 @@ public class ApiCoreBase {
                         return conf
                     }
                     let conf = try Configuration.load(fromFile: path)
+                    
+                    // Override any properties with ENV
                     conf.loadEnv()
+                    
                     _configuration = conf
                     return conf
                 } catch {
@@ -46,7 +49,7 @@ public class ApiCoreBase {
                             server: Configuration.Server(
                                 name: "API Core!",
                                 url: nil,
-                                maxUploadFilesize: nil
+                                maxUploadFilesize: 2 // 2Mb
                             ),
                             jwtSecret: "secret",
                             database: Configuration.Database(
