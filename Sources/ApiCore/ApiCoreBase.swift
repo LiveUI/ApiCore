@@ -38,8 +38,10 @@ public class ApiCoreBase {
                     return conf
                 } catch {
                     if let error = error as? DecodingError {
+                        // Should config exist but is invalid, crash
                         fatalError("Invalid configuration file: \(error.reason)")
                     } else {
+                        // Create default configuration
                         _configuration = Configuration(
                             server: Configuration.Server(
                                 name: "API Core!",
@@ -74,6 +76,7 @@ public class ApiCoreBase {
                             )
                         )
                         
+                        // Override any properties with ENV
                         _configuration?.loadEnv()
                     }
                 }
