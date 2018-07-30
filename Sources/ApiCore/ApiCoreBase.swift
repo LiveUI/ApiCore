@@ -160,13 +160,13 @@ public class ApiCoreBase {
         }
         
         // System
-        middlewareConfig.use(FileMiddleware.self)
-        // TODO: CHANGE THE HARDCODED STUFF!!!!!!!!!!!
-        services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
+//        middlewareConfig.use(FileMiddleware.self)
+//        // TODO: CHANGE THE HARDCODED STUFF!!!!!!!!!!!
+//        //services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
         try services.register(LeafProvider())
         
         // Filesystem
-        // TODO: Refactor following into converting helpers to cleanup this method!
+        // TODO: Refactor following to cleanup this method!
         if configuration.storage.s3.enabled {
             let config = S3Signer.Config(accessKey: configuration.storage.s3.accessKey,
                                          secretKey: configuration.storage.s3.secretKey,
@@ -188,6 +188,7 @@ public class ApiCoreBase {
         // Errors
         middlewareConfig.use(ErrorLoggingMiddleware.self)
         services.register(ErrorLoggingMiddleware())
+        
         middlewareConfig.use(ErrorsCoreMiddleware.self)
         services.register(ErrorsCoreMiddleware(environment: env, log: PrintLogger()))
         
@@ -197,7 +198,10 @@ public class ApiCoreBase {
         
         let jwtService = JWTService(secret: configuration.jwtSecret)
         services.register(jwtService)
-        services.register(AuthenticationCache())
+//        services.register { _ in
+//            return AuthenticationCache()
+//        }
+        services.register(AuthenticationCache.self)
         
         // CORS
         let corsConfig = CORSMiddleware.Configuration(

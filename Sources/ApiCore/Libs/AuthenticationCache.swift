@@ -105,7 +105,17 @@ final class JWTService: Service {
 
 
 /// Authentication cache service
-final class AuthenticationCache: Service {
+final class AuthenticationCache: ServiceType {
+    
+    /// See `ServiceType`.
+    static var serviceSupports: [Any.Type] {
+        return [AuthenticationCache.self]
+    }
+    
+    /// See `ServiceType`.
+    static func makeService(for worker: Container) throws -> AuthenticationCache {
+        return AuthenticationCache()
+    }
     
     /// The internal storage.
     private var storage: [ObjectIdentifier: Any]
