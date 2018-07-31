@@ -196,11 +196,9 @@ public class ApiCoreBase {
         middlewareConfig.use(ApiAuthMiddleware.self)
         services.register(ApiAuthMiddleware())
         
-        let jwtService = JWTService(secret: configuration.jwtSecret)
-        services.register(jwtService)
-//        services.register { _ in
-//            return AuthenticationCache()
-//        }
+        services.register { _ in
+            JWTService(secret: configuration.jwtSecret)
+        }
         services.register(AuthenticationCache.self)
         
         // CORS
