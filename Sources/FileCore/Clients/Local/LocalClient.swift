@@ -43,7 +43,7 @@ public class LocalClient: FileManagement, Service {
         Async.dispatchQueue.async {
             do {
                 // TODO: Check if destination is a folder append the filename to it if so!!
-                let destinationUrl = URL(fileURLWithPath: destination)
+                let destinationUrl = self.path(file: destination)
                 let parent = destinationUrl.deletingLastPathComponent()
                 try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: nil)
                 try FileManager.default.copyItem(at: URL(fileURLWithPath: path), to: destinationUrl)
@@ -55,13 +55,21 @@ public class LocalClient: FileManagement, Service {
         return promise.futureResult
     }
     
+    
     /// Move file
+    ///
+    /// - Parameters:
+    ///   - path: String, full path to the original file
+    ///   - destination: Local path to the destination
+    ///   - container: Event loop / Worker
+    /// - Returns: Future
+    /// - Throws: Various
     public func move(file path: String, to destination: String, on container: Container) throws -> EventLoopFuture<Void> {
         let promise = container.eventLoop.newPromise(Void.self)
         Async.dispatchQueue.async {
             do {
                 // TODO: Check if destination is a folder append the filename to it if so!!
-                let destinationUrl = URL(fileURLWithPath: destination)
+                let destinationUrl = self.path(file: destination)
                 let parent = destinationUrl.deletingLastPathComponent()
                 try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true, attributes: nil)
                 try FileManager.default.moveItem(at: URL(fileURLWithPath: path), to: destinationUrl)
@@ -73,7 +81,14 @@ public class LocalClient: FileManagement, Service {
         return promise.futureResult
     }
     
+    
     /// Retrieve file
+    ///
+    /// - Parameters:
+    ///   - path: Local path to the file
+    ///   - container: Event loop / Worker
+    /// - Returns: Future<Data>
+    /// - Throws: Various
     public func get(file path: String, on container: Container) throws -> EventLoopFuture<Data> {
         let url = self.path(file: path)
         let promise = container.eventLoop.newPromise(Data.self)

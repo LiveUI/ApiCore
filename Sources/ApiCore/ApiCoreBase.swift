@@ -215,7 +215,8 @@ public class ApiCoreBase {
                 HTTPHeaderName.expires.description
             ]
         )
-        middlewareConfig.use(CORSMiddleware(configuration: corsConfig))
+        let cors = CORSMiddleware(configuration: corsConfig)
+        middlewareConfig.use(cors)
         
         // Register middlewares
         services.register(middlewareConfig)
