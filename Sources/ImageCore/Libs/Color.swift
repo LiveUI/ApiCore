@@ -134,7 +134,7 @@ extension Color {
     
     /// Random value
     public static var randomRGBValue: Int {
-        return randomInt(min: 0, max: 256)
+        return randomInt(min: 0, max: 255)
     }
     
 }
