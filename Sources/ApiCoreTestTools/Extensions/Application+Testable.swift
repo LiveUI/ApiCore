@@ -49,6 +49,7 @@ extension TestableProperty where TestableType: Application {
             ApiCoreBase.middlewareConfig = MiddlewareConfig()
             
             _ = ApiCoreBase.configuration
+            ApiCoreBase._configuration?.database.host = "docker.for.mac.host.internal"
             ApiCoreBase._configuration?.database.user = "test"
             ApiCoreBase._configuration?.database.database = "boost-test"
             try! ApiCoreBase.configure(&config, &env, &services)

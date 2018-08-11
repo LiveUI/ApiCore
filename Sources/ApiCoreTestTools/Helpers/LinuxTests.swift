@@ -10,7 +10,9 @@ import XCTest
 
 
 public protocol LinuxTests {
+    #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     static var defaultTestSuite: XCTestSuite { get }
+    #endif
     static var allTests: [(String, Any)] { get }
     func testLinuxTests()
 }
@@ -38,11 +40,5 @@ extension LinuxTests {
         #endif
     }
     
-    #if os(Linux)
-    /// Fix missing requirement from LinuxTests on ... well, Linux
-    static var defaultTestSuite: XCTestSuite {
-        fatalError("Not implemented")
-    }
-    #endif
 }
 

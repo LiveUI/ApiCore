@@ -100,13 +100,13 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertEqual(mailer.receivedMessage!.subject, "polip si", "Email has a wrong subject")
         XCTAssertEqual(mailer.receivedMessage!.text, """
 Hi Lemmy Kilmister
-Please confirm your email lemmy@liveui.io by clicking on this link http://www.example.com/#what-the-fuck
+Please confirm your email lemmy@liveui.io by clicking on this link http://www.example.com/#what-the-heck
 HTML - huhuhu woe :)
 Boost team
 """, "Email has a wrong text")
         XCTAssertEqual(mailer.receivedMessage!.html, """
 <h1>Hi Lemmy Kilmister</h1>
-<p>Please confirm your email lemmy@liveui.io by clicking on this <a href="http://www.example.com/#what-the-fuck">link</a></p>
+<p>Please confirm your email lemmy@liveui.io by clicking on this <a href="http://www.example.com/#what-the-heck">link</a></p>
 <p>HTML - huhuhu woe :)</p>
 <p>Boost team</p>
 """, "Email has a wrong html")
