@@ -6,7 +6,7 @@
 
 # Build
 echo "🤖 Build"
-docker build -f ./docker/test/Dockerfile -t boost .
+docker build -f ./docker/test/Dockerfile -t apicore .
 
 # Run
 echo "🏃‍♀️ Run"
@@ -17,5 +17,5 @@ docker run \
     -e APICORE_DATABASE_LOGGING=1 \
     -e APICORE_SERVER_MAX_UPLOAD_FILESIZE=500 \
     -p 8080:8080 \
-    boost
+    apicore
 
