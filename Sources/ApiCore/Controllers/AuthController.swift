@@ -85,7 +85,7 @@ public class AuthController: Controller {
                             // TODO: Throw an error instead?
                             switch mailResult {
                             case .success:
-                                return try req.response.success(code: "Password recovery email has been sent").asFuture(on: req)
+                                return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
                             case .failure(let error):
                                 return try req.response.internalServerError(message: error.localizedDescription).asFuture(on: req)
                             default:

@@ -13,6 +13,8 @@ import ApiCoreTestTools
 @testable import ApiCore
 import MailCore
 import MailCoreTestTools
+import ErrorsCore
+
 
 class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     
@@ -161,7 +163,13 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         let req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         do {
             let r = try app.testable.response(throwingTo: req)
-            XCTAssertEqual(r.response.http.status, HTTPStatus.ok)
+            
+            r.response.testable.debug()
+            
+            XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
+            let data = r.response.testable.content(as: SuccessResponse.self)!
+            XCTAssertEqual(data.code, "auth.recovery_sent")
+            XCTAssertEqual(data.description, "Password recovery email has been sent")
 
             let mailer = try! r.request.make(MailerService.self) as! MailerMock
             XCTAssertEqual(mailer.receivedMessage!.from, "ondrej.rafaj@gmail.com", "Email has a wrong sender")
@@ -180,7 +188,6 @@ Boost team
 <p>Boost team</p>
 """, "Email has a wrong html")
 
-            XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
             XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
         } catch {
             print(error)

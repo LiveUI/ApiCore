@@ -417,7 +417,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
         
         let message = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(message.error, "httperror.not_found")
+        XCTAssertEqual(message.error, "team_error.unable_delete_admin_team")
         XCTAssertEqual(message.description, "Can't delete admin team")
         
         count = app.testable.count(allFor: Team.self)
