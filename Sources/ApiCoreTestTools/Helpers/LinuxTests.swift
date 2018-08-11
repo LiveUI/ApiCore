@@ -18,6 +18,7 @@ public protocol LinuxTests {
 
 extension LinuxTests {
     
+    /// Test the allTests dictionary has all the appropriate tests in it ... mac only
     public func doTestLinuxTestsAreOk() {
         #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
         // Count number of methods
@@ -37,5 +38,11 @@ extension LinuxTests {
         #endif
     }
     
+    #if os(Linux)
+    /// Fix missing requirement from LinuxTests on ... well, Linux
+    static var defaultTestSuite: XCTestSuite {
+        fatalError("Not implemented")
+    }
+    #endif
 }
 
