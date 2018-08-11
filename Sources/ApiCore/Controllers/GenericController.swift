@@ -48,6 +48,7 @@ public class GenericController: Controller {
         router.get("ping") { req in
             return try req.response.ping()
         }
+        
     }
     
 }
