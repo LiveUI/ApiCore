@@ -44,16 +44,10 @@ extension TestableProperty where TestableType: Application {
     
     public static func newApiCoreTestApp(databaseConfig: DatabasesConfig? = nil, _ configClosure: AppConfigClosure? = nil, _ routerClosure: AppRouterClosure? = nil) -> Application {
         let app = new({ (config, env, services) in
-            Env.print()
-            fatalError("fuck off")
-            
             // Reset static configs
             DbCore.migrationConfig = MigrationConfig()
             ApiCoreBase.middlewareConfig = MiddlewareConfig()
             
-            
-            
-            _ = ApiCoreBase.configuration
             try! ApiCoreBase.configure(&config, &env, &services)
             
             // Set mailer mock

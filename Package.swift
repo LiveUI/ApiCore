@@ -73,10 +73,14 @@ let package = Package(
             ]
         ),
         .testTarget(name: "ApiCoreTests", dependencies: [
+            "Vapor",
+            "ErrorsCore",
             "ApiCore",
+            "MailCore",
             "VaporTestTools",
             "FluentTestTools",
-            "ApiCoreTestTools"
+            "ApiCoreTestTools",
+            "MailCoreTestTools"
             ]
         )
     ]
