@@ -1,0 +1,36 @@
+version: '3.1'
+
+services:
+    web:
+        build: 
+            context: .
+            dockerfile: docker/run/Dockerfile
+        ports:
+            - "8080:8080"
+        environment:
+            apicore.server.name: ApiCore
+            apicore.database.host: db
+            apicore.database.user: dbuser
+            apicore.database.password: aaaaaa
+            apicore.database.database: dbuser
+            apicore.database.port: 5432
+            apicore.jwt_secret: secret
+            apicore.storage.s3.enabled: 0
+            apicore.storage.local.root: /home/ApiCore
+        depends_on:
+            - "db"
+        command: ["./wait-for-it.sh", "db:5432", "--", "./run", "serve", "--hostname", "0.0.0.0", "--port", "8080"]
+    db:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: dbuser
+            POSTGRES_PASSWORD: aaaaaa
+            POSTGRES_DB: dbuser
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8081:8080
+        depends_on:
+            - "db"
