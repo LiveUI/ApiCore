@@ -32,7 +32,7 @@ pipeline {
               }
               steps {
                 script {
-                  docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+                  sh 'docker-compose -f docker-compose.test.yml up --abort-on-container-exit'
                 }
               }
             }
