@@ -32,9 +32,7 @@ pipeline {
               }
               steps {
                 script {
-                  mgw.inDocker('liveui/boost-base:1.1.1') {
-                    sh 'swift test'
-                  }
+			      docker-compose -f docker-compose.test.yml up --abort-on-container-exit
                 }
               }
             }
