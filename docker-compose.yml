@@ -20,6 +20,10 @@ services:
         depends_on:
             - "db"
         command: ["./wait-for-it.sh", "db:5432", "--", "./run", "serve", "--hostname", "0.0.0.0", "--port", "8080"]
+        dns:
+          - 1.1.1.1
+          - 8.8.8.8
+          - 9.9.9.9
     db:
         image: postgres
         restart: always
