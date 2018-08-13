@@ -15,6 +15,7 @@ services:
             apicore.database.database: dbuser
         depends_on:
             - "db"
+        command: ["./wait-for-it.sh", "db:5432", "--", "swift", "test"]
     db:
         image: postgres
         restart: always
