@@ -7,9 +7,9 @@ pipeline {
   stages {
     stage('Builds') {
         parallel {
-            stage('Build MacOS') {
+            stage('Build Linux') {
               agent {
-                label 'xcode'
+                label 'mac'
               }
               when {
                 anyOf {
@@ -18,12 +18,12 @@ pipeline {
               }
               steps {
                 script {
-                  sh 'swift test'
+                  sh 'swift build --configuration debug'
                 }
               }
             }
 
-            stage('Build Linux') {
+            stage('Test Linux') {
               agent any
               when {
                 anyOf {
