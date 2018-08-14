@@ -203,7 +203,7 @@ public class ApiCoreBase {
         
         // CORS
         let corsConfig = CORSMiddleware.Configuration(
-            allowedOrigin: .originBased,
+            allowedOrigin: .all,
             allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
             allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent],
             exposedHeaders: [
