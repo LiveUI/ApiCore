@@ -44,7 +44,7 @@ public class GenericController: Controller {
             return try req.response.teapot()
         }
         
-        // Ping response
+        // Ping response (ok, 200)
         router.get("ping") { req in
             return try req.response.ping()
         }

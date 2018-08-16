@@ -26,8 +26,8 @@ struct JWTAuthPayload: JWTPayload {
     }
     
     /// Verify
-    func verify() throws {
-        try exp.verify()
+    func verify(using signer: JWTSigner) throws {
+        try exp.verifyNotExpired()
     }
 }
 
@@ -50,8 +50,8 @@ struct JWTPasswordResetPayload: JWTPayload {
     }
     
     /// Verify
-    func verify() throws {
-        try exp.verify()
+    func verify(using signer: JWTSigner) throws {
+        try exp.verifyNotExpired()
     }
 }
 
@@ -79,7 +79,7 @@ final class JWTService: Service {
         var jwt = JWT(payload: JWTAuthPayload(exp: exp, userId: user.id!))
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
-        let data = try signer.sign(&jwt)
+        let data = try signer.sign(jwt)
         
         guard let jwtToken: String = String(data: data, encoding: .utf8) else {
             throw AuthError.serverError
@@ -93,7 +93,7 @@ final class JWTService: Service {
         var jwt = JWT(payload: JWTPasswordResetPayload(exp: exp, userId: user.id!, redirectUri: redirectUri))
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
-        let data = try signer.sign(&jwt)
+        let data = try signer.sign(jwt)
         
         guard let jwtToken: String = String(data: data, encoding: .utf8) else {
             throw AuthError.serverError

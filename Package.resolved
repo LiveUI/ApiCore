@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
         "state": {
           "branch": null,
-          "revision": "a75d816e175eb6094295e17bb6ad81f99189a398",
-          "version": "1.0.14"
+          "revision": "15ff39f95e0b56058cf050c910c1e26002d01f71",
+          "version": "1.0.15"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
         "state": {
           "branch": null,
-          "revision": "8844622f67490f28dff8c34d136f8ed84a2a4664",
-          "version": "1.0.14"
+          "revision": "e29d5112fb5958327f537a6420d292922f3587dc",
+          "version": "1.0.15"
         }
       },
       {
@@ -132,8 +132,8 @@
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {
           "branch": null,
-          "revision": "8123ea00e9858b369cd168d0303d33e7d3804d19",
-          "version": "3.0.7"
+          "revision": "a192ee144ab53370b2c095c003f429746df85595",
+          "version": "3.1.0"
         }
       },
       {
@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/vapor/jwt.git",
         "state": {
           "branch": null,
-          "revision": "de0dc5bbba60250c24c5c4b4d2505d7a71dd03ae",
-          "version": "3.0.0-rc.2.1.2"
+          "revision": "2e225c722bf26407c1c4bd11d341e48759f46095",
+          "version": "3.0.0"
         }
       },
       {
