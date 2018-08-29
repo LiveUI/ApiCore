@@ -192,7 +192,7 @@ public final class User: DbCoreModel {
             su = user.su
             
             let email = user.email
-            avatar = email.imageUrlFromMail
+            avatar = email.imageUrlHashFromMail
         }
         
     }

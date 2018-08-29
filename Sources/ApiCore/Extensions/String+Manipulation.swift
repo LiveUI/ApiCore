@@ -30,10 +30,9 @@ extension String {
         return text
     }
     
-    /// Gravatar URL from an email
-    public var imageUrlFromMail: String {
-        let text = try? Gravatar.link(fromEmail: self)
-        return text ?? "https://www.gravatar.com/avatar/unknown"
+    /// Gravatar MD5 hash from an email
+    public var imageUrlHashFromMail: String {
+        return md5 ?? ""
     }
     
     /// Name inititials (two letters) from a string
