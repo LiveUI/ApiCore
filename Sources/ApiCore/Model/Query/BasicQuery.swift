@@ -24,7 +24,9 @@ public struct BasicQuery: Codable {
     
     /// Search value
     public let search: String?
-    public let jwt: String?
+    
+    /// Token
+    public let token: String?
     
 }
 
@@ -57,8 +59,8 @@ extension QueryContainer {
         return basic?.search
     }
     
-    public var jwt: String? {
-        return basic?.jwt
+    public var token: String? {
+        return basic?.token
     }
     
 }

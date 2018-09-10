@@ -77,12 +77,11 @@ public class AuthController: Controller {
         
         // Forgotten password
         router.post("auth", "start-recovery") { (req) -> Future<Response> in
-            print("start recovery")
             // Read user email from request
             // Read redirect url from request
-            return try req.content.decode(User.Auth.StartRecovery.self).flatMap(to: Response.self) { (recoveryData) -> Future<Response> in
+            return try req.content.decode(User.Auth.StartRecovery.self).flatMap(to: Response.self) { recoveryData in
                 // Fetch the user by email
-                return User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { (optionalUser) -> Future<Response> in
+                return User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { optionalUser in
                     guard let user = optionalUser else {
                         return try req.response.notFound().asFuture(on: req)
                     }
@@ -90,36 +89,59 @@ public class AuthController: Controller {
                     let jwtService = try req.make(JWTService.self)
                     let jwtToken = try jwtService.signPasswordReset(user: user, redirectUri: recoveryData.targetUri)
 
-                    // TODO: send email
                     let templateModel = User.Auth.RecoveryTemplate(
                         verification: jwtToken,
-                        link: "http://www.liveui.io/fake_url",
+                        link: recoveryData.targetUri + "?token=" + jwtToken,
                         user: user
                     )
-                    return try PasswordRecoveryTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
-                        let from = "ondrej.rafaj@gmail.com"
+                    return try PasswordRecoveryEmailTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
+                        let from = ApiCoreBase.configuration.mail.email
                         let subject = "Password recovery" // TODO: Localize!!!!!!
                         let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: template.string, html: template.html)
                         return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
-                            // TODO: Throw an error instead?
                             switch mailResult {
                             case .success:
                                 return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
-                            case .failure(let error):
-                                return try req.response.internalServerError(message: error.localizedDescription).asFuture(on: req)
                             default:
                                 throw Error.recoveryEmailFailedToSend
                             }
                         }
                     }
-                
                 }
+            }
+        }
+        
+        router.get("auth/input-recovery") { (req) -> Future<Response> in
+            let jwtService: JWTService = try req.make()
+            
+            guard let token = req.query.token else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            // Get user payload
+            guard let resetPayload = try? JWT<JWTPasswordResetPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            try resetPayload.exp.verifyNotExpired()
+            
+            return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+                guard let user = user else {
+                    throw ErrorsCore.HTTPError.notFound
+                }
+                
+                let templateModel = User.Auth.RecoveryTemplate(
+                    verification: token,
+                    link: "?token=" + token,
+                    user: user
+                )
+                
+                return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
             }
         }
         
         router.post("auth/finish-recovery") { (req) -> Future<Response> in
             let jwtService: JWTService = try req.make()
-            guard let token = req.query.jwt else {
+            guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
             
@@ -132,7 +154,7 @@ public class AuthController: Controller {
             return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
         }
     }
-    
+
 }
 
 

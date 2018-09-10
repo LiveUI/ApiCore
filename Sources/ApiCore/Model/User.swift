@@ -89,15 +89,34 @@ public final class User: DbCoreModel {
             
         }
         
+        /// Start recovery object
         public struct StartRecovery: Content {
+            
+            /// Email
             public let email: String
+            
+            /// Target URI to tell client where to redirect
             public let targetUri: String
+            
+            enum CodingKeys: String, CodingKey {
+                case email
+                case targetUri = "target"
+            }
+            
         }
         
+        /// Recovery email template object
         public struct RecoveryTemplate: Content {
+            
+            /// Verification hash (JWT token)
             public let verification: String
+            
+            /// Recovery validation endpoint link
             public let link: String
+            
+            /// User
             public var user: User
+            
         }
         
     }

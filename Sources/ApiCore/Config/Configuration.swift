@@ -81,6 +81,9 @@ public final class Configuration: Configurable {
     /// Email configuration
     public final class Mail: Codable {
         
+        /// Admin email (all administration emails should be sent from this email)
+        public internal(set) var email: String = "admin@apicore"
+        
         /// Mailgun configuration
         public final class MailGun: Codable {
             
@@ -223,6 +226,9 @@ extension Configuration {
         load("apicore.jwt_secret", to: &jwtSecret)
 
         // Mail
+        load("apicore.mail.email", to: &mail.email)
+        
+        load("apicore.mail.mailgun.domain", to: &mail.mailgun.domain)
         load("apicore.mail.mailgun.domain", to: &mail.mailgun.domain)
         load("apicore.mail.mailgun.key", to: &mail.mailgun.key)
 

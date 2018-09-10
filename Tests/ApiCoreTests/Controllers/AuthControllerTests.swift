@@ -14,6 +14,7 @@ import ApiCoreTestTools
 import MailCore
 import MailCoreTestTools
 import ErrorsCore
+import JWT
 
 
 class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
@@ -159,8 +160,11 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     // MARK: Recovery tests
 
     func testValidRecoveryRequests() {
-        let data = User.Auth.StartRecovery(email: "dev@liveui.io", targetUri: "https://example.com/target")
-        let req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        // Test start recovery request
+        let target = "https://example.com/target_url_which_would_call_finish_recovery_endpoint"
+        let data = User.Auth.StartRecovery(email: "dev@liveui.io", targetUri: target)
+        var req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        var token: String = ""
         do {
             let r = try app.testable.response(throwingTo: req)
             
@@ -172,19 +176,21 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             XCTAssertEqual(data.description, "Password recovery email has been sent")
 
             let mailer = try! r.request.make(MailerService.self) as! MailerMock
-            XCTAssertEqual(mailer.receivedMessage!.from, "ondrej.rafaj@gmail.com", "Email has a wrong sender")
+            XCTAssertTrue(ApiCoreBase.configuration.mail.email.count > 0, "Sender should not be empty")
+            XCTAssertEqual(mailer.receivedMessage!.from, ApiCoreBase.configuration.mail.email, "Email has a wrong sender")
             XCTAssertEqual(mailer.receivedMessage!.to, "dev@liveui.io", "Email has a wrong recipient")
             XCTAssertEqual(mailer.receivedMessage!.subject, "Password recovery", "Email has a wrong subject")
+            token = String(mailer.receivedMessage!.text.split(separator: "|")[1])
             XCTAssertEqual(mailer.receivedMessage!.text, """
                 Hi Ondrej Rafaj
-                Please confirm your email dev@liveui.io by clicking on this link http://www.liveui.io/fake_url
-                HTML - huhuhu woe :)
+                Please confirm your email dev@liveui.io by clicking on this link \(target)?token=\(token)
+                Recovery code is: |\(token)|
                 Boost team
                 """, "Email has a wrong text")
             XCTAssertEqual(mailer.receivedMessage!.html, """
                 <h1>Hi Ondrej Rafaj</h1>
-                <p>Please confirm your email dev@liveui.io by clicking on this <a href="http://www.liveui.io/fake_url">link</a></p>
-                <p>HTML - huhuhu woe :)</p>
+                <p>Please confirm your email dev@liveui.io by clicking on this <a href="\(target)?token=\(token)">link</a></p>
+                <p>Recovery code is: <strong>\(token)</strong></p>
                 <p>Boost team</p>
                 """, "Email has a wrong html")
 
@@ -193,8 +199,27 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             print(error)
             XCTFail()
         }
+        
+        // Test recovery verification
+        req = HTTPRequest.testable.post(uri: "/auth/finish-recovery?token=" + token)
+        
+        do {
+            let r = try app.testable.response(throwingTo: req)
+            
+            r.response.testable.debug()
+            
+            let fakeReq = app.testable.fakeRequest()
+            let jwtService: JWTService = try fakeReq.make()
+            guard let resetPayload = try? JWT<JWTPasswordResetPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+                XCTFail("Missing payload")
+                return
+            }
+        } catch {
+            print(error)
+            XCTFail(error.localizedDescription)
+        }
     }
-
+    
 }
 
 

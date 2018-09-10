@@ -98,16 +98,19 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertEqual(mailer.receivedMessage!.from, "ondrej.rafaj@gmail.com", "Email has a wrong sender")
         XCTAssertEqual(mailer.receivedMessage!.to, "lemmy@liveui.io", "Email has a wrong recipient")
         XCTAssertEqual(mailer.receivedMessage!.subject, "Registration", "Email has a wrong subject")
+        
+        let token = String(mailer.receivedMessage!.text.split(separator: "|")[1])
+        
         XCTAssertEqual(mailer.receivedMessage!.text, """
             Hi Lemmy Kilmister
             Please confirm your email lemmy@liveui.io by clicking on this link http://www.liveui.io/fake_url
-            HTML - huhuhu woe :)
+            Verification code is: |\(token)|
             Boost team
             """, "Email has a wrong text")
         XCTAssertEqual(mailer.receivedMessage!.html, """
             <h1>Hi Lemmy Kilmister</h1>
-            <p>Please confirm your email lemmy@liveui.io by clicking on this <a href="http://www.liveui.io/fake_url">link</a></p>
-            <p>HTML - huhuhu woe :)</p>
+            <p>Please confirm your email lemmy@liveui.io by clicking on this <a href=\"http://www.liveui.io/fake_url\">link</a></p>
+            <p>Verification code is: <strong>\(token)</strong></p>
             <p>Boost team</p>
             """, "Email has a wrong html")
         
@@ -127,7 +130,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         let users = r.response.testable.content(as: [CoreUser.AllSearch].self)!
         XCTAssertEqual(users.count, 2, "There should be two users in the database")
         XCTAssertEqual(users[0].id, user1.id, "Avatar is not in the correct format")
-        XCTAssertEqual(users[0].avatar, "e7e8b7ac59a724a481bec410d0cb44a4", "Avatar is not in the correct format")
+        XCTAssertEqual(users[0].avatar, "e7e8b7ac59a724a481bec410d0cb44a4", "Avatar hash (MD5 of an email) is not in the correct format")
     }
     
 }

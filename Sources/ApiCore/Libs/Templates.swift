@@ -44,7 +44,9 @@ public class Templates {
     
     /// Available templates
     static var templates: [Template.Type] = [
-        RegistrationTemplate.self
+        RegistrationTemplate.self, // Confirm registration email
+        PasswordRecoveryEmailTemplate.self, // Recovery email
+        PasswordRecoveryTemplate.self // Web page
     ]
     
     // MARK: Public interface
@@ -52,11 +54,11 @@ public class Templates {
     /// Install missing templates
     public static func installMissing() {
         for template in templates {
-            if !exists(template, type: .string) {
-                create(template, type: .string)
+            if !template.exists(type: .string) {
+                template.create(type: .string)
             }
-            if !exists(template, type: .html) {
-                create(template, type: .html)
+            if !template.exists(type: .html) {
+                template.create(type: .html)
             }
         }
     }
@@ -65,32 +67,8 @@ public class Templates {
     /// *(Changes will be lost)*
     public static func resetTemplates() {
         for template in templates {
-            create(template, type: .string)
-            create(template, type: .html)
-        }
-    }
-    
-    // MARK: Private interface
-    
-    /// Does template exist?
-    private static func exists(_ template: Template.Type, type: Which) -> Bool {
-        return FileManager.default.fileExists(atPath: (type == .string ? template.stringPath.path : template.htmlPath.path))
-    }
-    
-    /// Create a template
-    private static func create(_ template: Template.Type, type: Which) {
-        do {
-            if type == .string {
-                try template.string.write(to: template.stringPath, atomically: true, encoding: .utf8)
-            } else {
-                try template.html?.write(to: template.htmlPath, atomically: true, encoding: .utf8)
-            }
-        } catch {
-            if type == .string {
-                fatalError("Unable to save default template \(template.name) to path: \(template.stringPath)")
-            } else {
-                fatalError("Unable to save default template \(template.name) to path: \(template.htmlPath)")
-            }
+            template.create(type: .string)
+            template.create(type: .html)
         }
     }
     
