@@ -20,4 +20,14 @@ extension Content {
         }
     }
     
+    /// Create and fill object from POST data
+    public static func fill(post req: Request) throws -> Future<Self> {
+        return try req.content.decode(Self.self)
+    }
+    
+    /// Create and fill object from GET data
+    public static func fill(get req: Request) throws -> Self {
+        return try req.query.decode(Self.self)
+    }
+    
 }

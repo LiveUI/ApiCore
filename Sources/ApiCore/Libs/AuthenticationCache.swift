@@ -32,7 +32,7 @@ struct JWTAuthPayload: JWTPayload {
 }
 
 /// Password reset payload
-struct JWTPasswordResetPayload: JWTPayload {
+struct JWTConfirmEmailPayload: JWTPayload {
     
     /// Expiration
     var exp: ExpirationClaim
@@ -40,12 +40,20 @@ struct JWTPasswordResetPayload: JWTPayload {
     /// User Id
     var userId: UUID
     
+    /// User email
+    var email: String
+    
+    /// Service type
+    var type: JWTService.TokenType
+    
     /// Redirection URL
     var redirectUri: String
 
     enum CodingKeys: String, CodingKey {
         case exp
         case userId = "user_id"
+        case email
+        case type
         case redirectUri = "redirect_uri"
     }
     
@@ -58,6 +66,28 @@ struct JWTPasswordResetPayload: JWTPayload {
 
 /// JWT service
 final class JWTService: Service {
+    
+    /// Type of the generated token
+    public enum TokenType: Int, Codable, CaseIterable, ReflectionDecodable {
+        
+        /// Token for registration email
+        case registration = 1
+        
+        /// Password recovery token
+        case passwordRecovery = 2
+        
+        /// Change email token
+        case changeEmail = 3
+        
+        public static var allCases: [JWTService.TokenType] {
+            return [
+                .registration,
+                .passwordRecovery,
+                .changeEmail
+            ]
+        }
+        
+    }
     
     /// Seconds in one minute
     let minute: TimeInterval = 60
@@ -87,10 +117,10 @@ final class JWTService: Service {
         return jwtToken
     }
     
-    /// Sign password reset
-    func signPasswordReset(user: User, redirectUri: String) throws -> String {
+    /// Sign any email confirmation JWT token
+    func signEmailConfirmation(user: User, type: TokenType, redirectUri: String?) throws -> String {
         let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (36 * hour)))
-        var jwt = JWT(payload: JWTPasswordResetPayload(exp: exp, userId: user.id!, redirectUri: redirectUri))
+        var jwt = JWT(payload: JWTConfirmEmailPayload(exp: exp, userId: user.id!, email: user.email, type: type, redirectUri: redirectUri ?? ""))
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
         let data = try signer.sign(jwt)

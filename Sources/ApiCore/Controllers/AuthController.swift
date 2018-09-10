@@ -79,7 +79,7 @@ public class AuthController: Controller {
         router.post("auth", "start-recovery") { (req) -> Future<Response> in
             // Read user email from request
             // Read redirect url from request
-            return try req.content.decode(User.Auth.StartRecovery.self).flatMap(to: Response.self) { recoveryData in
+            return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { recoveryData in
                 // Fetch the user by email
                 return User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { optionalUser in
                     guard let user = optionalUser else {
@@ -87,11 +87,15 @@ public class AuthController: Controller {
                     }
 
                     let jwtService = try req.make(JWTService.self)
-                    let jwtToken = try jwtService.signPasswordReset(user: user, redirectUri: recoveryData.targetUri)
+                    let jwtToken = try jwtService.signEmailConfirmation(
+                        user: user,
+                        type: .passwordRecovery,
+                        redirectUri: recoveryData.targetUri
+                    )
 
                     let templateModel = User.Auth.RecoveryTemplate(
                         verification: jwtToken,
-                        link: recoveryData.targetUri + "?token=" + jwtToken,
+                        link: recoveryData.targetUri ?? "" + "?token=" + jwtToken,
                         user: user
                     )
                     return try PasswordRecoveryEmailTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
@@ -119,7 +123,7 @@ public class AuthController: Controller {
             }
             
             // Get user payload
-            guard let resetPayload = try? JWT<JWTPasswordResetPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
             try resetPayload.exp.verifyNotExpired()
@@ -146,7 +150,7 @@ public class AuthController: Controller {
             }
             
             // Get user payload
-            guard let resetPayload = try? JWT<JWTPasswordResetPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
             

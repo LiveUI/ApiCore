@@ -26,14 +26,10 @@ public final class Token: DbCoreModel {
         /// Authentication
         case authentication = "auth"
         
-        /// Password recovery
-        case passwordRecovery = "pare"
-        
         /// All available cases
         public static var allCases: [TokenType] {
             return [
-                .authentication,
-                .passwordRecovery
+                .authentication
             ]
         }
 

@@ -162,7 +162,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     func testValidRecoveryRequests() {
         // Test start recovery request
         let target = "https://example.com/target_url_which_would_call_finish_recovery_endpoint"
-        let data = User.Auth.StartRecovery(email: "dev@liveui.io", targetUri: target)
+        let data = User.Auth.EmailConfirmation(email: "dev@liveui.io", targetUri: target)
         var req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         var token: String = ""
         do {
@@ -210,7 +210,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             
             let fakeReq = app.testable.fakeRequest()
             let jwtService: JWTService = try fakeReq.make()
-            guard let resetPayload = try? JWT<JWTPasswordResetPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 XCTFail("Missing payload")
                 return
             }

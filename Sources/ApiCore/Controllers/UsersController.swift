@@ -75,29 +75,34 @@ public class UsersController: Controller {
         }
         
         router.post("users") { (req) -> Future<Response> in
-            return try req.content.decode(User.Registration.self).flatMap(to: Response.self) { user in
-                let newUser = try user.newUser(on: req)
-                guard let verification = newUser.verification else {
-                    throw Error.verificationCodeMissing
-                }
-                let templateModel = User.Registration.Template(
-                    verification: verification,
-                    link: "http://www.liveui.io/fake_url",
-                    user: user
-                )
-                return try RegistrationTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { double in
-                    let from = "ondrej.rafaj@gmail.com"
-                    let subject = "Registration" // TODO: Localize!!!!!!
-                    let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: double.string, html: double.html)
-                    return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
-                        print(mailResult)
-                        newUser.verification = try newUser.verification?.passwordHash(req)
-                        return newUser.save(on: req).flatMap(to: Response.self) { user in
-                            return try user.asDisplay().asResponse(.created, to: req)
+            return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { emailConfirmation in
+                return try User.Registration.fill(post: req).flatMap(to: Response.self) { user in
+                    let newUser = try user.newUser(on: req)
+                    
+                    let jwtService = try req.make(JWTService.self)
+                    let jwtToken = try jwtService.signEmailConfirmation(user: newUser, type: .registration, redirectUri: emailConfirmation.targetUri)
+                    
+                    let templateModel = User.Registration.Template(
+                        verification: jwtToken,
+                        link: req.serverURL().absoluteString.finished(with: "/") + "users/verify?token=" + jwtToken,
+                        user: user
+                    )
+                    return try RegistrationTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { double in
+                        let from = "ondrej.rafaj@gmail.com"
+                        let subject = "Registration" // TODO: Localize!!!!!!
+                        let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: double.string, html: double.html)
+                        return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
+                            return newUser.save(on: req).flatMap(to: Response.self) { user in
+                                return try user.asDisplay().asResponse(.created, to: req)
+                            }
                         }
                     }
                 }
             }
+        }
+        
+        router.get("users", "verify") { (req) -> Future<Response> in
+            fatalError()
         }
     }
     

@@ -52,7 +52,7 @@ public final class User: DbCoreModel {
         
         /// Convert to user
         public func newUser(on req: Request) throws -> User {
-            let user = try User(username: username, firstname: firstname, lastname: lastname, email: email, verification: UUID().uuidString, password: password.passwordHash(req), disabled: false, su: false)
+            let user = try User(username: username, firstname: firstname, lastname: lastname, email: email, password: password.passwordHash(req), disabled: false, su: false)
             return user
         }
         
@@ -89,14 +89,14 @@ public final class User: DbCoreModel {
             
         }
         
-        /// Start recovery object
-        public struct StartRecovery: Content {
+        /// Email confirmation object
+        public struct EmailConfirmation: Content {
             
             /// Email
             public let email: String
             
             /// Target URI to tell client where to redirect
-            public let targetUri: String
+            public let targetUri: String?
             
             enum CodingKeys: String, CodingKey {
                 case email
@@ -244,9 +244,6 @@ public final class User: DbCoreModel {
     /// Email
     public var email: String
     
-    /// Verification
-    public var verification: String?
-    
     /// Password
     public var password: String?
     
@@ -260,12 +257,11 @@ public final class User: DbCoreModel {
     public var su: Bool
     
     /// Initializer
-    public init(username: String, firstname: String, lastname: String, email: String, verification: String? = nil, password: String? = nil, token: String? = nil, disabled: Bool = true, su: Bool = false) {
+    public init(username: String, firstname: String, lastname: String, email: String, password: String? = nil, token: String? = nil, disabled: Bool = true, su: Bool = false) {
         self.username = username
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
-        self.verification = verification
         self.password = password
         self.registered = Date()
         self.disabled = disabled
@@ -297,7 +293,6 @@ extension User: Migration {
             schema.field(for: \.firstname, type: .varchar(80), .notNull)
             schema.field(for: \.lastname, type: .varchar(140), .notNull)
             schema.field(for: \.email, type: .varchar(141), .notNull)
-            schema.field(for: \.verification, type: .varchar(64))
             schema.field(for: \.password, type: .varchar(64))
             schema.field(for: \.registered, type: .timestamp, .notNull)
             schema.field(for: \.disabled, type: .bool, .notNull)
