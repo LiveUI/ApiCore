@@ -88,7 +88,7 @@ public class UsersController: Controller {
                         user: user
                     )
                     return try RegistrationTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { double in
-                        let from = "ondrej.rafaj@gmail.com"
+                        let from = ApiCoreBase.configuration.mail.email
                         let subject = "Registration" // TODO: Localize!!!!!!
                         let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: double.string, html: double.html)
                         return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in

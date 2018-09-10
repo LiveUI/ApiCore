@@ -166,7 +166,7 @@ extension AuthController {
     
     /// Renew token helper
     static func token(request req: Request, token: String) throws -> Future<Response> {
-        return try Token.query(on: req).filter(\Token.token == token.passwordHash(req)).first().flatMap(to: Response.self) { token in
+        return try Token.query(on: req).filter(\Token.token == token.sha()).first().flatMap(to: Response.self) { token in
             guard let token = token else {
                 throw AuthError.authenticationFailed
             }
@@ -188,13 +188,13 @@ extension AuthController {
         guard !login.email.isEmpty, !login.password.isEmpty else {
             throw AuthError.authenticationFailed
         }
-        return try User.query(on: req).filter(\User.email == login.email).filter(\User.password == login.password.passwordHash(req)).first().flatMap(to: Response.self) { user in
-            guard let user = user else {
+        return User.query(on: req).filter(\User.email == login.email).first().flatMap(to: Response.self) { user in
+            guard let user = user, let password = user.password, login.password.verify(against: password) else {
                 throw AuthError.authenticationFailed
             }
             let token = try Token(user: user)
             let tokenBackup = token
-            token.token = try token.token.passwordHash(req)
+            token.token = try token.token.sha()
             return token.save(on: req).flatMap(to: Response.self) { token in
                 tokenBackup.id = token.id
                 

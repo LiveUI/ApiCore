@@ -8,18 +8,22 @@
 import Foundation
 import Vapor
 import Crypto
+import ErrorsCore
 
 
 extension String {
     
     /// Hashed password
     public func passwordHash(_ req: Request) throws -> String {
-        if req.environment == .production {
-            let hashedString = try BCrypt.hash(self)
-            return hashedString
-        } else {
-            return self
-        }
+        let cost = (req.environment == .production) ? 12 : 4
+        let hashedString = try BCrypt.hash(self, cost: cost)
+        return hashedString
+    }
+    
+    /// Verify password
+    public func verify(against storedHash: String) -> Bool {
+        let ok = (try? BCrypt.verify(self, created: storedHash)) ?? false
+        return ok
     }
     
     /// Base64 decoded string
@@ -34,6 +38,14 @@ extension String {
     public var md5: String? {
         guard let data = data(using: .utf8) else { return nil }
         return try? MD5.hash(data).hexEncodedString()
+    }
+    
+    /// SHA256 of a string
+    public func sha() throws -> String {
+        guard let data = data(using: .utf8) else {
+            throw ErrorsCore.HTTPError.missingAuthorizationData
+        }
+        return try SHA256.hash(data).hexEncodedString()
     }
     
 }

@@ -68,24 +68,16 @@ struct JWTConfirmEmailPayload: JWTPayload {
 final class JWTService: Service {
     
     /// Type of the generated token
-    public enum TokenType: Int, Codable, CaseIterable, ReflectionDecodable {
+    public enum TokenType: String, Codable {
         
         /// Token for registration email
-        case registration = 1
+        case registration = "reg"
         
         /// Password recovery token
-        case passwordRecovery = 2
+        case passwordRecovery = "rec"
         
         /// Change email token
-        case changeEmail = 3
-        
-        public static var allCases: [JWTService.TokenType] {
-            return [
-                .registration,
-                .passwordRecovery,
-                .changeEmail
-            ]
-        }
+        case changeEmail = "chg"
         
     }
     
