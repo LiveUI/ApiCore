@@ -97,19 +97,19 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         let mailer = try! r.request.make(MailerService.self) as! MailerMock
         XCTAssertEqual(mailer.receivedMessage!.from, "ondrej.rafaj@gmail.com", "Email has a wrong sender")
         XCTAssertEqual(mailer.receivedMessage!.to, "lemmy@liveui.io", "Email has a wrong recipient")
-        XCTAssertEqual(mailer.receivedMessage!.subject, "polip si", "Email has a wrong subject")
+        XCTAssertEqual(mailer.receivedMessage!.subject, "Registration", "Email has a wrong subject")
         XCTAssertEqual(mailer.receivedMessage!.text, """
-Hi Lemmy Kilmister
-Please confirm your email lemmy@liveui.io by clicking on this link http://www.example.com/#what-the-heck
-HTML - huhuhu woe :)
-Boost team
-""", "Email has a wrong text")
+            Hi Lemmy Kilmister
+            Please confirm your email lemmy@liveui.io by clicking on this link http://www.liveui.io/fake_url
+            HTML - huhuhu woe :)
+            Boost team
+            """, "Email has a wrong text")
         XCTAssertEqual(mailer.receivedMessage!.html, """
-<h1>Hi Lemmy Kilmister</h1>
-<p>Please confirm your email lemmy@liveui.io by clicking on this <a href="http://www.example.com/#what-the-heck">link</a></p>
-<p>HTML - huhuhu woe :)</p>
-<p>Boost team</p>
-""", "Email has a wrong html")
+            <h1>Hi Lemmy Kilmister</h1>
+            <p>Please confirm your email lemmy@liveui.io by clicking on this <a href="http://www.liveui.io/fake_url">link</a></p>
+            <p>HTML - huhuhu woe :)</p>
+            <p>Boost team</p>
+            """, "Email has a wrong html")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
         XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
@@ -127,7 +127,7 @@ Boost team
         let users = r.response.testable.content(as: [CoreUser.AllSearch].self)!
         XCTAssertEqual(users.count, 2, "There should be two users in the database")
         XCTAssertEqual(users[0].id, user1.id, "Avatar is not in the correct format")
-        XCTAssertEqual(users[0].avatar, "https://www.gravatar.com/avatar/e7e8b7ac59a724a481bec410d0cb44a4", "Avatar is not in the correct format")
+        XCTAssertEqual(users[0].avatar, "e7e8b7ac59a724a481bec410d0cb44a4", "Avatar is not in the correct format")
     }
     
 }

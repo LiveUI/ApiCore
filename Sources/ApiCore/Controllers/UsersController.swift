@@ -82,12 +82,12 @@ public class UsersController: Controller {
                 }
                 let templateModel = User.Registration.Template(
                     verification: verification,
-                    serverLink: "http://www.liveui.io/fake_url",
+                    link: "http://www.liveui.io/fake_url",
                     user: user
                 )
                 return try RegistrationTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { double in
                     let from = "ondrej.rafaj@gmail.com"
-                    let subject = "polip si"
+                    let subject = "Registration" // TODO: Localize!!!!!!
                     let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: double.string, html: double.html)
                     return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
                         print(mailResult)

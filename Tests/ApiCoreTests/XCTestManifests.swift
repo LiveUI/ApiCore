@@ -18,7 +18,7 @@ extension AuthControllerTests {
         ("testValidGetTokenAuthRequest", testValidGetTokenAuthRequest),
         ("testValidPostAuthRequest", testValidPostAuthRequest),
         ("testValidPostTokenAuthRequest", testValidPostTokenAuthRequest),
-        ("testValidStartRecoveryRequest", testValidStartRecoveryRequest),
+        ("testValidRecoveryRequests", testValidRecoveryRequests),
     ]
 }
 

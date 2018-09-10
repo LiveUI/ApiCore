@@ -17,6 +17,24 @@ import JWT
 
 public class AuthController: Controller {
     
+    enum Error: FrontendError {
+        
+        case recoveryEmailFailedToSend
+        
+        var status: HTTPStatus {
+            return .internalServerError
+        }
+        
+        var identifier: String {
+            return "auth.recovery_email_failed"
+        }
+        
+        var reason: String {
+            return "Failed to send password recovery email"
+        }
+        
+    }
+    
     /// Setup routes
     public static func boot(router: Router) throws {
         // Authenticate with username and password in an Authorization header
@@ -74,12 +92,13 @@ public class AuthController: Controller {
 
                     // TODO: send email
                     let templateModel = User.Auth.RecoveryTemplate(
-                        recoveryJwt: jwtToken,
+                        verification: jwtToken,
+                        link: "http://www.liveui.io/fake_url",
                         user: user
                     )
                     return try PasswordRecoveryTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
                         let from = "ondrej.rafaj@gmail.com"
-                        let subject = "Password recovery"
+                        let subject = "Password recovery" // TODO: Localize!!!!!!
                         let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: template.string, html: template.html)
                         return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
                             // TODO: Throw an error instead?
@@ -89,7 +108,7 @@ public class AuthController: Controller {
                             case .failure(let error):
                                 return try req.response.internalServerError(message: error.localizedDescription).asFuture(on: req)
                             default:
-                                return try req.response.internalServerError(message: "Failed to send password recovery email").asFuture(on: req)
+                                throw Error.recoveryEmailFailedToSend
                             }
                         }
                     }
@@ -109,7 +128,7 @@ public class AuthController: Controller {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
             
-            try resetPayload.exp.verify()
+            try resetPayload.exp.verifyNotExpired()
             return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
         }
     }

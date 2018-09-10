@@ -36,7 +36,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testInvalidGetTokenAuthRequest", testInvalidGetTokenAuthRequest),
         ("testValidPostTokenAuthRequest", testValidPostTokenAuthRequest),
         ("testInvalidPostTokenAuthRequest", testInvalidPostTokenAuthRequest),
-        ("testValidStartRecoveryRequest", testValidStartRecoveryRequest),
+        ("testValidRecoveryRequests", testValidRecoveryRequests),
         ("testLinuxTests", testLinuxTests)
     ]
     
@@ -158,7 +158,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
 
     // MARK: Recovery tests
 
-    func testValidStartRecoveryRequest() {
+    func testValidRecoveryRequests() {
         let data = User.Auth.StartRecovery(email: "dev@liveui.io", targetUri: "https://example.com/target")
         let req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         do {
@@ -176,17 +176,17 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             XCTAssertEqual(mailer.receivedMessage!.to, "dev@liveui.io", "Email has a wrong recipient")
             XCTAssertEqual(mailer.receivedMessage!.subject, "Password recovery", "Email has a wrong subject")
             XCTAssertEqual(mailer.receivedMessage!.text, """
-Hi Ondrej Rafaj
-Please confirm your email dev@liveui.io by clicking on this link http://www.example.com/#what-the-heck
-HTML - huhuhu woe :)
-Boost team
-""", "Email has a wrong text")
+                Hi Ondrej Rafaj
+                Please confirm your email dev@liveui.io by clicking on this link http://www.liveui.io/fake_url
+                HTML - huhuhu woe :)
+                Boost team
+                """, "Email has a wrong text")
             XCTAssertEqual(mailer.receivedMessage!.html, """
-<h1>Hi Ondrej Rafaj</h1>
-<p>Please confirm your email dev@liveui.io by clicking on this <a href="http://www.example.com/#what-the-heck">link</a></p>
-<p>HTML - huhuhu woe :)</p>
-<p>Boost team</p>
-""", "Email has a wrong html")
+                <h1>Hi Ondrej Rafaj</h1>
+                <p>Please confirm your email dev@liveui.io by clicking on this <a href="http://www.liveui.io/fake_url">link</a></p>
+                <p>HTML - huhuhu woe :)</p>
+                <p>Boost team</p>
+                """, "Email has a wrong html")
 
             XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
         } catch {

@@ -29,7 +29,7 @@ public final class User: DbCoreModel {
             public var verification: String
             
             /// Server link
-            public var serverLink: String
+            public var link: String
             
             /// User registration
             public var user: Registration
@@ -95,7 +95,8 @@ public final class User: DbCoreModel {
         }
         
         public struct RecoveryTemplate: Content {
-            public let recoveryJwt: String
+            public let verification: String
+            public let link: String
             public var user: User
         }
         
