@@ -131,10 +131,32 @@ public final class User: DbCoreModel {
             public let verification: String
             
             /// Recovery validation endpoint link
-            public let link: String
+            public let link: String?
             
             /// User
             public var user: User
+            
+            /// Finish recovery link
+            public var finish: String
+            
+            /// System wide template data
+            public var system: FrontendSystemData
+            
+            /// Initializer
+            ///
+            /// - Parameters:
+            ///   - verification: Verification token
+            ///   - link: Full verification link
+            ///   - user: User model
+            ///   - req: Request
+            /// - Throws: whatever comes it's way
+            public init(verification: String, link: String? = nil, user: User, on req: Request) throws {
+                self.verification = verification
+                self.link = link
+                self.user = user
+                finish = req.serverURL().absoluteString.finished(with: "/") + "auth/finish-recovery?token=" + verification
+                system = try FrontendSystemData(req)
+            }
             
         }
         

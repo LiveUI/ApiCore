@@ -19,15 +19,7 @@ public class ServerController: Controller {
     public static func boot(router: Router) throws {
         // Get server info
         router.get("info") { req -> Info in
-            let fm = try req.makeFileCore()
-            let info = Info(
-                name: ApiCoreBase.configuration.server.name,
-                url: req.serverURL().absoluteString,
-                icons: try IconSize.all.sorted(by: { $0.rawValue < $1.rawValue }).map({
-                    let url = try fm.url(for: "server/image/\($0.rawValue)", on: req)
-                    return Info.Icon(size: $0, url: url)
-                })
-            )
+            let info = try Info(req)
             return info
         }
         

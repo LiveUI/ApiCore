@@ -32,4 +32,19 @@ public struct Info: Content {
     /// Server icons
     public let icons: [Icon]
     
+    
+    /// Initializer
+    ///
+    /// - Parameter req: Request
+    /// - Throws: yes
+    public init(_ req: Request) throws {
+        let fm = try req.makeFileCore()
+        name = ApiCoreBase.configuration.server.name
+        url = req.serverURL().absoluteString
+        icons = try IconSize.all.sorted(by: { $0.rawValue < $1.rawValue }).map({
+            let url = try fm.url(for: "server/image/\($0.rawValue)", on: req)
+            return Info.Icon(size: $0, url: url)
+        })
+    }
+    
 }

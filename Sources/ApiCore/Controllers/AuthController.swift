@@ -101,11 +101,12 @@ public class AuthController: Controller {
                     )
                     
                     let inputLink = req.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery"
-
-                    let templateModel = User.Auth.RecoveryTemplate(
+                    
+                    let templateModel = try User.Auth.RecoveryTemplate(
                         verification: jwtToken,
                         link: (recoveryData.targetUri ?? inputLink) + "?token=" + jwtToken,
-                        user: user
+                        user: user,
+                        on: req
                     )
                     return try PasswordRecoveryEmailTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
                         let from = ApiCoreBase.configuration.mail.email
@@ -142,14 +143,15 @@ public class AuthController: Controller {
                     throw ErrorsCore.HTTPError.notFound
                 }
                 
-                let templateModel = User.Auth.RecoveryTemplate(
+                let templateModel = try User.Auth.RecoveryTemplate(
                     verification: token,
                     link: "?token=" + token,
-                    user: user
+                    user: user,
+                    on: req
                 )
                 
-                let leaf = try req.make(LeafRenderer.self)
-                return try leaf.render(template: Data(), templateModel).asResponse(.ok, to: req)
+                let template = try PasswordRecoveryTemplate.parsed(.html, model: templateModel, on: req)
+                return try template.asResponse(.ok, to: req)
             }
         }
         
