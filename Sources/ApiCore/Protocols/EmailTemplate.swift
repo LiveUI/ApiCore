@@ -20,20 +20,6 @@ public protocol EmailTemplate: Template {
 
 extension EmailTemplate {
     
-    /// Path to the template
-    private static var path: URL {
-        let config = DirectoryConfig.detect()
-        let url: URL = URL(fileURLWithPath: config.workDir).appendingPathComponent("Resources/Templates")
-        if !FileManager.default.fileExists(atPath: url.path) {
-            do {
-                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-            } catch {
-                fatalError("Unable to create templates folder at path: \(url.path)")
-            }
-        }
-        return url
-    }
-    
     /// Text template
     public static var stringPath: URL {
         var url = path
@@ -66,7 +52,7 @@ extension EmailTemplate {
             output = leaf.render(template: data, [String: String]())
         }
         return output.map(to: String.self) { view in
-            guard let string = String.init(data: view.data, encoding: .utf8) else {
+            guard let string = String(data: view.data, encoding: .utf8) else {
                 throw Templates.Error.templateUnavailable
             }
             return string

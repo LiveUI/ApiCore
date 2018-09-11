@@ -18,10 +18,10 @@ public protocol Template {
 }
 
 
-extension WebTemplate {
+extension Template {
     
-    /// Path to the template
-    static var path: URL {
+    /// Path to the templates folder
+    public static var path: URL {
         let config = DirectoryConfig.detect()
         let url: URL = URL(fileURLWithPath: config.workDir).appendingPathComponent("Resources/Templates")
         if !FileManager.default.fileExists(atPath: url.path) {

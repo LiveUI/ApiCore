@@ -13,6 +13,5 @@ DerivedData/
 *_Info.plist
 
 *.xcodeproj
-/Resources/Templates/password-recovery-web.html.temp
-/Resources/Templates/password-recovery-email.string.temp
-/Resources/Templates/password-recovery-email.html.temp
+/Resources/Templates/*
+!empty

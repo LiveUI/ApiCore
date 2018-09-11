@@ -14,22 +14,29 @@ import ErrorsCore
 import Random
 import MailCore
 import JWT
+import Leaf
+
 
 public class AuthController: Controller {
     
-    enum Error: FrontendError {
+    /// AuthController specific errors
+    public enum Error: FrontendError {
         
+        /// Recovery email failed to be send
         case recoveryEmailFailedToSend
         
-        var status: HTTPStatus {
+        /// HTTP status code for error response
+        public var status: HTTPStatus {
             return .internalServerError
         }
         
-        var identifier: String {
+        /// Error identifier
+        public var identifier: String {
             return "auth.recovery_email_failed"
         }
         
-        var reason: String {
+        /// Reason for failing
+        public var reason: String {
             return "Failed to send password recovery email"
         }
         
@@ -92,10 +99,12 @@ public class AuthController: Controller {
                         type: .passwordRecovery,
                         redirectUri: recoveryData.targetUri
                     )
+                    
+                    let inputLink = req.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery"
 
                     let templateModel = User.Auth.RecoveryTemplate(
                         verification: jwtToken,
-                        link: (recoveryData.targetUri ?? "invalid_target_uri") + "?token=" + jwtToken,
+                        link: (recoveryData.targetUri ?? inputLink) + "?token=" + jwtToken,
                         user: user
                     )
                     return try PasswordRecoveryEmailTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
@@ -115,7 +124,7 @@ public class AuthController: Controller {
             }
         }
         
-        router.get("auth/input-recovery") { (req) -> Future<Response> in
+        router.get("auth", "input-recovery") { (req) -> Future<Response> in
             let jwtService: JWTService = try req.make()
             
             guard let token = req.query.token else {
@@ -139,7 +148,8 @@ public class AuthController: Controller {
                     user: user
                 )
                 
-                return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
+                let leaf = try req.make(LeafRenderer.self)
+                return try leaf.render(template: Data(), templateModel).asResponse(.ok, to: req)
             }
         }
         

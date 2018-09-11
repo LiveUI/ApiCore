@@ -19,15 +19,6 @@ public protocol WebTemplate: Template {
 
 extension WebTemplate {
     
-    /// Text template
-    public static var stringPath: URL {
-        var url = path
-        url.appendPathComponent(name)
-        url.appendPathExtension("string")
-        url.appendPathExtension("temp")
-        return url
-    }
-    
     /// HTML template
     public static var htmlPath: URL {
         var url = path
