@@ -37,7 +37,7 @@ final class StringCryptoTests : XCTestCase {
     func testPasswordHash() throws {
         let req = app.testable.fakeRequest()
         let hashed = try! "password".passwordHash(req)
-        XCTAssert(hashed == "password")
+        XCTAssertTrue("password".verify(against: hashed), "Hashed password is invalid")
     }
     
 }

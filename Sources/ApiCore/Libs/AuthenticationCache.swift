@@ -38,7 +38,7 @@ struct JWTConfirmEmailPayload: JWTPayload {
     var exp: ExpirationClaim
     
     /// User Id
-    var userId: UUID
+    var userId: UUID?
     
     /// User email
     var email: String
@@ -112,7 +112,7 @@ final class JWTService: Service {
     /// Sign any email confirmation JWT token
     func signEmailConfirmation(user: User, type: TokenType, redirectUri: String?) throws -> String {
         let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (36 * hour)))
-        var jwt = JWT(payload: JWTConfirmEmailPayload(exp: exp, userId: user.id!, email: user.email, type: type, redirectUri: redirectUri ?? ""))
+        var jwt = JWT(payload: JWTConfirmEmailPayload(exp: exp, userId: user.id, email: user.email, type: type, redirectUri: redirectUri ?? ""))
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
         let data = try signer.sign(jwt)

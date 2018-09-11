@@ -95,7 +95,7 @@ public class AuthController: Controller {
 
                     let templateModel = User.Auth.RecoveryTemplate(
                         verification: jwtToken,
-                        link: recoveryData.targetUri ?? "" + "?token=" + jwtToken,
+                        link: (recoveryData.targetUri ?? "invalid_target_uri") + "?token=" + jwtToken,
                         user: user
                     )
                     return try PasswordRecoveryEmailTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
@@ -192,13 +192,15 @@ extension AuthController {
             guard let user = user, let password = user.password, login.password.verify(against: password) else {
                 throw AuthError.authenticationFailed
             }
-            let token = try Token(user: user)
-            let tokenBackup = token
+            let token = try Token(user: user, type: .authentication)
+            let tokenBackup = token.token
             token.token = try token.token.sha()
             return token.save(on: req).flatMap(to: Response.self) { token in
-                tokenBackup.id = token.id
-                
-                let publicToken = Token.PublicFull(token: tokenBackup, user: user)
+                guard let _ = token.id else {
+                    throw AuthError.serverError
+                }
+                let publicToken = Token.PublicFull(token: token, user: user)
+                publicToken.token = tokenBackup
                 return try publicToken.asResponse(.ok, to: req).map(to: Response.self) { response in
                     let jwtService = try req.make(JWTService.self)
                     try response.http.headers.replaceOrAdd(name: "Authorization", value: "Bearer \(jwtService.signUserToToken(user: user))")

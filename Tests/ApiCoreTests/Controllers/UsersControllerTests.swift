@@ -89,13 +89,13 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertEqual(user.firstname, post.firstname, "Firstname doesn't match")
         XCTAssertEqual(user.lastname, post.lastname, "Lastname doesn't match")
         XCTAssertEqual(user.email, post.email, "Email doesn't match")
-        XCTAssertEqual(user.password, try! post.password.passwordHash(r.request), "Password doesn't match")
+        XCTAssertTrue(post.password.verify(against: user.password!), "Password doesn't match")
         XCTAssertEqual(user.disabled, false, "Disabled should be false")
         XCTAssertEqual(user.su, false, "SU should be false")
         
         // Test email has been sent (on a mock email client ... obviously)
         let mailer = try! r.request.make(MailerService.self) as! MailerMock
-        XCTAssertEqual(mailer.receivedMessage!.from, "ondrej.rafaj@gmail.com", "Email has a wrong sender")
+        XCTAssertEqual(mailer.receivedMessage!.from, "admin@apicore", "Email has a wrong sender")
         XCTAssertEqual(mailer.receivedMessage!.to, "lemmy@liveui.io", "Email has a wrong recipient")
         XCTAssertEqual(mailer.receivedMessage!.subject, "Registration", "Email has a wrong subject")
         
@@ -103,13 +103,13 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         
         XCTAssertEqual(mailer.receivedMessage!.text, """
             Hi Lemmy Kilmister
-            Please confirm your email lemmy@liveui.io by clicking on this link http://www.liveui.io/fake_url
+            Please confirm your email lemmy@liveui.io by clicking on this link http://localhost:8080/users/verify?token=\(token)
             Verification code is: |\(token)|
             Boost team
             """, "Email has a wrong text")
         XCTAssertEqual(mailer.receivedMessage!.html, """
             <h1>Hi Lemmy Kilmister</h1>
-            <p>Please confirm your email lemmy@liveui.io by clicking on this <a href=\"http://www.liveui.io/fake_url\">link</a></p>
+            <p>Please confirm your email lemmy@liveui.io by clicking on this <a href=\"http://localhost:8080/users/verify?token=\(token)\">link</a></p>
             <p>Verification code is: <strong>\(token)</strong></p>
             <p>Boost team</p>
             """, "Email has a wrong html")

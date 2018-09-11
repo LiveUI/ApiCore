@@ -50,6 +50,11 @@ extension TestableProperty where TestableType: Application {
             
             try! ApiCoreBase.configure(&config, &env, &services)
             
+            // Check the database ... if it doesn't contain test then make sure we are not pointing to a production DB
+            if !ApiCoreBase.configuration.database.database.contains("test") {
+                ApiCoreBase.configuration.database.database = ApiCoreBase.configuration.database.database + "-test"
+            }
+            
             // Set mailer mock
             MailerMock(services: &services)
             
