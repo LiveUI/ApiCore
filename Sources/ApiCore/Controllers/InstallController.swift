@@ -50,7 +50,7 @@ public class InstallController: Controller {
         router.get("reinstall") { (req)->Future<Response> in
             return try uninstall(on: req).flatMap(to: Response.self) { _ in
                 return try install(on: req).map(to: Response.self) { _ in
-                    return try req.response.maintenanceFinished(message: "Re-installation finished, login as admin@liveui.io/admin")
+                    return try req.response.maintenanceFinished(message: "Re-installation finished, login as core@liveui.io/admin")
                 }
             }
         }
@@ -67,8 +67,8 @@ public class InstallController: Controller {
 extension InstallController {
     
     /// New super user
-    private static var su: User {
-        return User(username: "admin", firstname: "Super", lastname: "Admin", email: "admin@liveui.io", password: "admin", disabled: false, su: true)
+    private static func su(on req: Request) throws -> User {
+        return try User(username: "admin", firstname: "Super", lastname: "Admin", email: "core@liveui.io", password: "admin".passwordHash(req), disabled: false, su: true)
     }
     
     /// New admin team
@@ -95,7 +95,7 @@ extension InstallController {
     private static func install(on req: Request) throws -> Future<Response> {
         return try install(files: req).flatMap({
             return try install(migrations: req).map({
-                return try req.response.maintenanceFinished(message: "Installation finished, login as admin@liveui.io/admin")
+                return try req.response.maintenanceFinished(message: "Installation finished, login as core@liveui.io/admin")
             })
         })
     }
@@ -113,7 +113,7 @@ extension InstallController {
                 if count > 0 {
                     throw Error.dataExists
                 }
-                return su.save(on: req).flatMap(to: Void.self) { user in
+                return try su(on: req).save(on: req).flatMap(to: Void.self) { user in
                     return adminTeam.save(on: req).flatMap(to: Void.self) { team in
                         var futures = [
                             team.users.attach(user, on: req).flatten()

@@ -29,6 +29,8 @@ public final class ApiAuthMiddleware: Middleware, Service {
     public static var allowedGetUri: [String] = [
         // Authentication
         "/auth",
+        "/auth/input-recovery",
+        "/auth/finish-recovery",
         "/token",
         
         // Helpers
@@ -49,7 +51,6 @@ public final class ApiAuthMiddleware: Middleware, Service {
         // Authentication
         "/auth",
         "/auth/start-recovery",
-        "/auth/finish-recovery",
         "/token",
         
         // User management

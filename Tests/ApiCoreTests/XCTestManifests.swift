@@ -9,16 +9,17 @@ extension ApiCoreTests {
 
 extension AuthControllerTests {
     static let __allTests = [
+        ("testHtmlInputRecoveryRequest", testHtmlInputRecoveryRequest),
         ("testInvalidGetAuthRequest", testInvalidGetAuthRequest),
         ("testInvalidGetTokenAuthRequest", testInvalidGetTokenAuthRequest),
         ("testInvalidPostAuthRequest", testInvalidPostAuthRequest),
         ("testInvalidPostTokenAuthRequest", testInvalidPostTokenAuthRequest),
         ("testLinuxTests", testLinuxTests),
+        ("testStartRecovery", testStartRecovery),
         ("testValidGetAuthRequest", testValidGetAuthRequest),
         ("testValidGetTokenAuthRequest", testValidGetTokenAuthRequest),
         ("testValidPostAuthRequest", testValidPostAuthRequest),
         ("testValidPostTokenAuthRequest", testValidPostTokenAuthRequest),
-        ("testValidRecoveryRequests", testValidRecoveryRequests),
     ]
 }
 

@@ -50,7 +50,7 @@ public class AuthController: Controller {
                 throw AuthError.authenticationFailed
             }
             let parts = decoded.split(separator: ":")
-            guard parts.count == 2, let loginData = User.Auth.Login(email: String(parts[0]), password: String(parts[1])) else {
+            guard parts.count == 2, let loginData = try User.Auth.Login(email: String(parts[0]), password: String(parts[1])) else {
                 throw AuthError.authenticationFailed
             }
             return try login(request: req, login: loginData)

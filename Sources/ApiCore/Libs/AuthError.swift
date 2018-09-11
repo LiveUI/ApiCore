@@ -20,10 +20,16 @@ public enum AuthError: FrontendError {
     /// Server error
     case serverError
     
+    /// Email is invalid
+    case invalidEmail
+    
+    /// Password is invalid
+    case invalidPassword
+    
     /// Error code
     public var identifier: String {
         switch self {
-        case .authenticationFailed:
+        case .authenticationFailed, .invalidEmail, .invalidPassword:
             return "auth_error.authentication_failed"
         case .serverError:
             return "auth_error.server_error"
@@ -35,6 +41,8 @@ public enum AuthError: FrontendError {
         switch self {
         case .authenticationFailed:
             return .unauthorized
+        case .invalidEmail, .invalidPassword:
+            return .notAcceptable
         case .serverError:
             return .internalServerError
         }
@@ -47,6 +55,10 @@ public enum AuthError: FrontendError {
             return "Authentication has failed"
         case .serverError:
             return "Server error"
+        case .invalidEmail:
+            return "Invalid email"
+        case .invalidPassword:
+            return "Invalid password"
         }
     }
 }

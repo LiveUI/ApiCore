@@ -30,7 +30,7 @@ extension WebTemplate {
     
     /// Parse model onto a template
     public static func parsed<M>(_ type: Templates.Which, model: M? = nil, on req: Request) throws -> Future<String> where M: Content {
-        guard let data = html.data(using: .utf8) else {
+        guard let data = (try? Data(contentsOf: htmlPath)) else {
             throw Templates.Error.templateUnavailable
         }
         

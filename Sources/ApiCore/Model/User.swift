@@ -71,11 +71,30 @@ public final class User: DbCoreModel {
             public let password: String
             
             /// Initializer (optional)
-            public init?(email: String, password: String) {
-                guard email.count > 0, password.count > 0 else {
-                    return nil
+            public init?(email: String, password: String) throws {
+                guard email.count > 3 else {
+                    throw AuthError.invalidEmail
+                }
+                guard password.count > 6 else {
+                    throw AuthError.invalidPassword
                 }
                 self.email = email
+                self.password = password
+            }
+            
+        }
+        
+        /// Change password
+        public struct Password: Content {
+            
+            /// Password
+            public let password: String
+            
+            /// Initializer (optional)
+            public init?(password: String) throws {
+                guard password.count > 6 else {
+                    throw AuthError.invalidPassword
+                }
                 self.password = password
             }
             

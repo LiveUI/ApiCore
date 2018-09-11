@@ -37,7 +37,8 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testInvalidGetTokenAuthRequest", testInvalidGetTokenAuthRequest),
         ("testValidPostTokenAuthRequest", testValidPostTokenAuthRequest),
         ("testInvalidPostTokenAuthRequest", testInvalidPostTokenAuthRequest),
-        ("testValidRecoveryRequests", testValidRecoveryRequests),
+        ("testStartRecovery", testStartRecovery),
+        ("testHtmlInputRecoveryRequest", testHtmlInputRecoveryRequest),
         ("testLinuxTests", testLinuxTests)
     ]
     
@@ -84,7 +85,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     }
     
     func testValidPostAuthRequest() {
-        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "admin@liveui.io", password: "admin").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "core@liveui.io", password: "admin").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         do {
             let r = try app.testable.response(throwingTo: req)
             
@@ -158,50 +159,24 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     }
 
     // MARK: Recovery tests
+    
+    func testStartRecovery() {
+        startRecovery(type: .redirectUrl)
+        startRecovery(type: .htmlInput)
+    }
 
-    func testValidRecoveryRequests() {
-        // Test start recovery request
-        let target = "https://example.com/target_url_which_would_call_finish_recovery_endpoint"
-        let data = User.Auth.EmailConfirmation(email: "dev@liveui.io", targetUri: target)
-        var req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
-        var token: String = ""
-        do {
-            let r = try app.testable.response(throwingTo: req)
-            
-            r.response.testable.debug()
-            
-            XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
-            let data = r.response.testable.content(as: SuccessResponse.self)!
-            XCTAssertEqual(data.code, "auth.recovery_sent")
-            XCTAssertEqual(data.description, "Password recovery email has been sent")
+    func testHtmlInputRecoveryRequest() {
+        let token = startRecovery(type: .htmlInput)
+        finishRecovery(token: token)
+    }
+    
+}
 
-            let mailer = try! r.request.make(MailerService.self) as! MailerMock
-            XCTAssertTrue(ApiCoreBase.configuration.mail.email.count > 0, "Sender should not be empty")
-            XCTAssertEqual(mailer.receivedMessage!.from, ApiCoreBase.configuration.mail.email, "Email has a wrong sender")
-            XCTAssertEqual(mailer.receivedMessage!.to, "dev@liveui.io", "Email has a wrong recipient")
-            XCTAssertEqual(mailer.receivedMessage!.subject, "Password recovery", "Email has a wrong subject")
-            token = String(mailer.receivedMessage!.text.split(separator: "|")[1])
-            XCTAssertEqual(mailer.receivedMessage!.text, """
-                Hi Ondrej Rafaj
-                Please confirm your email dev@liveui.io by clicking on this link \(target)?token=\(token)
-                Recovery code is: |\(token)|
-                Boost team
-                """, "Email has a wrong text")
-            XCTAssertEqual(mailer.receivedMessage!.html, """
-                <h1>Hi Ondrej Rafaj</h1>
-                <p>Please confirm your email dev@liveui.io by clicking on this <a href="\(target)?token=\(token)">link</a></p>
-                <p>Recovery code is: <strong>\(token)</strong></p>
-                <p>Boost team</p>
-                """, "Email has a wrong html")
 
-            XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
-        } catch {
-            print(error)
-            XCTFail()
-        }
-        
-        // Test recovery verification
-        req = HTTPRequest.testable.post(uri: "/auth/finish-recovery?token=" + token)
+extension AuthControllerTests {
+    
+    private func finishRecovery(token: String) {
+        let req = HTTPRequest.testable.post(uri: "/auth/finish-recovery?token=" + token)
         
         do {
             let r = try app.testable.response(throwingTo: req)
@@ -220,13 +195,57 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         }
     }
     
-}
-
-
-extension AuthControllerTests {
+    enum RecoveryType {
+        case htmlInput
+        case redirectUrl
+    }
+    
+    @discardableResult private func startRecovery(type: RecoveryType) -> String {
+        let fakeReq = app.testable.fakeRequest()
+        
+        let target: String = (type == .redirectUrl) ? "https://example.com/target_url_which_would_call_finish_recovery_endpoint" : (fakeReq.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery")
+        let data = User.Auth.EmailConfirmation(email: "dev@liveui.io", targetUri: ((type == .redirectUrl) ? target : nil))
+        let req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        var token: String = ""
+        do {
+            let r = try app.testable.response(throwingTo: req)
+            
+            r.response.testable.debug()
+            
+            XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
+            let data = r.response.testable.content(as: SuccessResponse.self)!
+            XCTAssertEqual(data.code, "auth.recovery_sent")
+            XCTAssertEqual(data.description, "Password recovery email has been sent")
+            
+            let mailer = try! r.request.make(MailerService.self) as! MailerMock
+            XCTAssertTrue(ApiCoreBase.configuration.mail.email.count > 0, "Sender should not be empty")
+            XCTAssertEqual(mailer.receivedMessage!.from, ApiCoreBase.configuration.mail.email, "Email has a wrong sender")
+            XCTAssertEqual(mailer.receivedMessage!.to, "dev@liveui.io", "Email has a wrong recipient")
+            XCTAssertEqual(mailer.receivedMessage!.subject, "Password recovery", "Email has a wrong subject")
+            token = String(mailer.receivedMessage!.text.split(separator: "|")[1])
+            XCTAssertEqual(mailer.receivedMessage!.text, """
+                Hi Ondrej Rafaj
+                Please confirm your email dev@liveui.io by clicking on this link \(target)?token=\(token)
+                Recovery code is: |\(token)|
+                Boost team
+                """, "Email has a wrong text")
+            XCTAssertEqual(mailer.receivedMessage!.html, """
+                <h1>Hi Ondrej Rafaj</h1>
+                <p>Please confirm your email dev@liveui.io by clicking on this <a href="\(target)?token=\(token)">link</a></p>
+                <p>Recovery code is: <strong>\(token)</strong></p>
+                <p>Boost team</p>
+                """, "Email has a wrong html")
+            
+            XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+        } catch {
+            print(error)
+            XCTFail()
+        }
+        return token
+    }
     
     private func token() -> Token.PublicFull {
-        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "admin@liveui.io", password: "admin").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "core@liveui.io", password: "admin").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         let r = try! app.testable.response(throwingTo: req)
         r.response.testable.debug()
         let token = r.response.testable.content(as: Token.PublicFull.self)!

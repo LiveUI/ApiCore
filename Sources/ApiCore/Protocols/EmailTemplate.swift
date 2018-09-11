@@ -40,7 +40,9 @@ extension EmailTemplate {
     
     /// Parse model onto a template
     public static func parsed<M>(_ type: Templates.Which, model: M? = nil, on req: Request) throws -> Future<String> where M: Content {
-        guard let content = type == .string ? string : html, let data = content.data(using: .utf8) else {
+        let path = (type == .string) ? stringPath : htmlPath
+        
+        guard let data = (try? Data(contentsOf: path)) else {
             throw Templates.Error.templateUnavailable
         }
         
