@@ -14,6 +14,47 @@ import Vapor
 /// Authentication error
 public enum AuthError: FrontendError {
     
+    /// Invalid input value reason
+    public enum InvalidInputReason {
+        
+        /// Generic problem
+        case generic
+        
+        /// Input is too short
+        case tooShort
+        
+        /// Input doesn't match verification value
+        case notMatching
+        
+        /// Needs special characters
+        case needsSpecialCharacters
+        
+        /// Needs numeric values
+        case needsNumericCharacters
+        
+        /// Custom reason
+        case custom(String)
+        
+        /// Reason description
+        public var description: String {
+            switch self {
+            case .generic:
+                return "Password is invalid"
+            case .tooShort:
+                return "Value is too short"
+            case .notMatching:
+                return "Value doesn't match its verification"
+            case .needsSpecialCharacters:
+                return "Value needs additional special characters"
+            case .needsNumericCharacters:
+                return "Value needs numbers"
+            case .custom(let message):
+                return message
+            }
+        }
+        
+    }
+    
     /// Authentication has failed
     case authenticationFailed
     
@@ -24,7 +65,7 @@ public enum AuthError: FrontendError {
     case invalidEmail
     
     /// Password is invalid
-    case invalidPassword
+    case invalidPassword(reason: InvalidInputReason)
     
     /// Error code
     public var identifier: String {
@@ -57,8 +98,8 @@ public enum AuthError: FrontendError {
             return "Server error"
         case .invalidEmail:
             return "Invalid email"
-        case .invalidPassword:
-            return "Invalid password"
+        case .invalidPassword(let reason):
+            return "Invalid password (\(reason.description))"
         }
     }
 }

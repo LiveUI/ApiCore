@@ -52,6 +52,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         "/auth",
         "/auth/start-recovery",
         "/token",
+        "/auth/password-check",
         
         // User management
         "/users",

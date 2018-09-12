@@ -75,8 +75,8 @@ public final class User: DbCoreModel {
                 guard email.count > 3 else {
                     throw AuthError.invalidEmail
                 }
-                guard password.count > 6 else {
-                    throw AuthError.invalidPassword
+                guard try password.validatePassword() else {
+                    throw AuthError.invalidPassword(reason: .generic)
                 }
                 self.email = email
                 self.password = password
@@ -92,8 +92,8 @@ public final class User: DbCoreModel {
             
             /// Initializer (optional)
             public init?(password: String) throws {
-                guard password.count > 6 else {
-                    throw AuthError.invalidPassword
+                guard try password.validatePassword() else {
+                    throw AuthError.invalidPassword(reason: .generic)
                 }
                 self.password = password
             }
@@ -354,6 +354,14 @@ extension User {
     /// Convert to displayable object
     public func asDisplay() -> User.Display {
         return User.Display(self)
+    }
+    
+}
+
+extension User.Auth.Password {
+    
+    public func validate() throws -> Bool {
+        return try password.validatePassword()
     }
     
 }

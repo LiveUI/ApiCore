@@ -83,6 +83,16 @@ public class AuthController: Controller {
         }
         
         // Forgotten password
+        router.post("auth", "password-check") { (req) -> Future<Response> in
+            return try User.Auth.Password.fill(post: req).map(to: Response.self) { password in
+                guard try password.validate() else {
+                    throw AuthError.invalidPassword(reason: .generic)
+                }
+                return try req.response.success(code: "auth.password_ok", description: "Password seems to be valid")
+            }
+        }
+        
+        // Forgotten password
         router.post("auth", "start-recovery") { (req) -> Future<Response> in
             // Read user email from request
             // Read redirect url from request
@@ -92,7 +102,7 @@ public class AuthController: Controller {
                     guard let user = optionalUser else {
                         return try req.response.notFound().asFuture(on: req)
                     }
-
+                    
                     let jwtService = try req.make(JWTService.self)
                     let jwtToken = try jwtService.signEmailConfirmation(
                         user: user,
@@ -151,7 +161,7 @@ public class AuthController: Controller {
                 )
                 
                 let template = try PasswordRecoveryTemplate.parsed(.html, model: templateModel, on: req)
-                return try template.asResponse(.ok, to: req)
+                return try template.asHtmlResponse(.ok, to: req)
             }
         }
         

@@ -20,6 +20,15 @@ extension Future where T: ResponseEncodable {
         }
     }
     
+    /// Turn Future into a Future<Response> with text/html Content-Type (.ok by default)
+    public func asHtmlResponse(_ status: HTTPStatus = .ok, to req: Request) throws -> Future<Response> {
+        return self.flatMap(to: Response.self) { try $0.encode(for: req) }.map(to: Response.self) {
+            $0.http.status = status
+            $0.http.headers.replaceOrAdd(name: HTTPHeaderName.contentType, value: "text/html; charset=utf-8")
+            return $0
+        }
+    }
+    
 }
 
 extension Future where T == Void {
