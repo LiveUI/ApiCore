@@ -108,6 +108,14 @@ public final class User: DbCoreModel {
             
         }
         
+        /// URL object
+        public struct URI: Content {
+            
+            /// Target URI to tell client where to redirect
+            public let targetUri: String?
+            
+        }
+        
         /// Email confirmation object
         public struct EmailConfirmation: Content {
             

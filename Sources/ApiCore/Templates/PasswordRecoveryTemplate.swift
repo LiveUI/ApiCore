@@ -16,7 +16,7 @@ public class PasswordRecoveryTemplate: WebTemplate {
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Password recovery</title>
+        <title>#(system.info.name) - Password recovery</title>
         <style>
             * {
                 font-family: Helvetica, Arial, sans-serif;
@@ -97,7 +97,7 @@ public class PasswordRecoveryTemplate: WebTemplate {
             <p class="input">
                 <label>Password again:</label> <input id="verification" name="verification" type="password" value="" />
             </p>
-            <p><button type="submit">Reset password</button></p>
+            <p><button type="submit">Save password</button></p>
         </form>
     </body>
 </html>

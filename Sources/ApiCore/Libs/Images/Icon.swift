@@ -12,6 +12,9 @@ import Foundation
 /// Icon size
 public enum IconSize: Int, Codable {
     
+    /// Favicon, 16x16 px
+    case favicon = 16
+    
     /// 64x64 px
     case at1x = 64
     
@@ -35,6 +38,7 @@ public enum IconSize: Int, Codable {
     
     /// All values
     public static let all: [IconSize] = [
+        .favicon,
         .at1x,
         .at2x,
         .at3x,

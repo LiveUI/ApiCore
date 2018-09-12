@@ -80,7 +80,12 @@ public class UsersController: Controller {
                     let newUser = try user.newUser(on: req)
                     
                     let jwtService = try req.make(JWTService.self)
-                    let jwtToken = try jwtService.signEmailConfirmation(user: newUser, type: .registration, redirectUri: emailConfirmation.targetUri)
+                    let jwtToken = try jwtService.signEmailConfirmation(
+                        user: newUser,
+                        type: .registration,
+                        redirectUri: emailConfirmation.targetUri,
+                        on: req
+                    )
                     
                     let templateModel = User.Registration.Template(
                         verification: jwtToken,

@@ -110,8 +110,9 @@ final class JWTService: Service {
     }
     
     /// Sign any email confirmation JWT token
-    func signEmailConfirmation(user: User, type: TokenType, redirectUri: String?) throws -> String {
-        let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (36 * hour)))
+    func signEmailConfirmation(user: User, type: TokenType, redirectUri: String?, on req: Request) throws -> String {
+        let hours = (req.environment == .production) ? 0.5 : 48
+        let exp = ExpirationClaim(value: Date(timeIntervalSinceNow: (hours * hour)))
         var jwt = JWT(payload: JWTConfirmEmailPayload(exp: exp, userId: user.id, email: user.email, type: type, redirectUri: redirectUri ?? ""))
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs

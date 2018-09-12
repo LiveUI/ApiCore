@@ -38,6 +38,8 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testValidPostTokenAuthRequest", testValidPostTokenAuthRequest),
         ("testInvalidPostTokenAuthRequest", testInvalidPostTokenAuthRequest),
         ("testStartRecovery", testStartRecovery),
+        ("testSuccessfulPasswordCheck", testSuccessfulPasswordCheck),
+        ("testFailingPasswordCheck", testFailingPasswordCheck),
         ("testHtmlInputRecoveryRequest", testHtmlInputRecoveryRequest),
         ("testLinuxTests", testLinuxTests)
     ]
@@ -155,6 +157,38 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             XCTFail()
         } catch {
             // Should fail
+        }
+    }
+    
+    func testSuccessfulPasswordCheck() {
+        let data = try! User.Auth.Password(password: "p4sswoRd!")
+        let req = try! HTTPRequest.testable.post(uri: "/auth/password-check", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        do {
+            let r = try app.testable.response(throwingTo: req)
+            
+            r.response.testable.debug()
+            
+            XCTAssertTrue(r.response.testable.has(statusCode: .ok), "Wrong status code")
+            XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+            XCTAssertTrue(r.response.testable.has(contentLength: 70), "Wrong content length") // Checks the content is correct(ish)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testFailingPasswordCheck() {
+        let data = "{ \"password\": \"p4ss\" }".data(using: .utf8)!
+        let req = HTTPRequest.testable.post(uri: "/auth/password-check", data: data, headers: ["Content-Type": "application/json; charset=utf-8"])
+        do {
+            let r = try app.testable.response(throwingTo: req)
+            
+            r.response.testable.debug()
+            
+            XCTAssertTrue(r.response.testable.has(statusCode: .notAcceptable), "Wrong status code")
+            XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+            XCTAssertTrue(r.response.testable.has(contentLength: 98), "Wrong content length") // Checks the content is correct(ish)
+        } catch {
+            XCTFail(error.localizedDescription)
         }
     }
 

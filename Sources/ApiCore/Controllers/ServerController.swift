@@ -56,6 +56,15 @@ public class ServerController: Controller {
             }
         }
         
+        // Retrieve a server image (favicon)
+        router.get("server", "favicon") { req -> Future<Response> in
+            let fm = try req.makeFileCore()
+            return try fm.get(file: "server/image/\(IconSize.favicon.rawValue)", on: req).map(to: Response.self) { data in
+                let response = try req.response.image(data)
+                return response
+            }
+        }
+        
         // Retrieve a server image (large)
         router.get("server", "image") { req -> Future<Response> in
             let fm = try req.makeFileCore()

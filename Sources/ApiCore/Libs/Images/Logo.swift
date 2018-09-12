@@ -43,7 +43,7 @@ public struct Logo {
         public var reason: String {
             switch self {
             case .invalidSize:
-                return "Invalid image size; Available sizes are 64, 128, 192, 256 & 512 px"
+                return "Invalid image size; Available sizes are 16, 64, 128, 192, 256 & 512 px"
             case .imageCorrupted:
                 return "Image seems to be corrupted"
             case .imageTooSmall(let size):
@@ -1028,7 +1028,8 @@ extension Logo {
         }
         
         // Resize all images
-        guard let at1x = image.resizedTo(width: IconSize.at1x.rawValue), let at1xData = try? at1x.export(as: .png),
+        guard let favicon = image.resizedTo(width: IconSize.favicon.rawValue), let faviconData = try? favicon.export(as: .png),
+            let at1x = image.resizedTo(width: IconSize.at1x.rawValue), let at1xData = try? at1x.export(as: .png),
             let at2x = image.resizedTo(width: IconSize.at2x.rawValue), let at2xData = try? at2x.export(as: .png),
             let at3x = image.resizedTo(width: IconSize.at3x.rawValue), let at3xData = try? at3x.export(as: .png),
             let reg = image.resizedTo(width: IconSize.regular.rawValue), let regData = try? reg.export(as: .png),
@@ -1038,11 +1039,13 @@ extension Logo {
         
         // Save all images
         let fm = try req.makeFileCore()
-        return try fm.save(file: at1xData, to: "server/image/\(IconSize.at1x.rawValue)", mime: mime, on: req).flatMap({ _ in
-            return try fm.save(file: at2xData, to: "server/image/\(IconSize.at2x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                return try fm.save(file: at3xData, to: "server/image/\(IconSize.at3x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                    return try fm.save(file: regData, to: "server/image/\(IconSize.regular.rawValue)", mime: mime, on: req).flatMap({ _ in
-                        return try fm.save(file: largeData, to: "server/image/\(IconSize.large.rawValue)", mime: mime, on: req)
+        return try fm.save(file: faviconData, to: "server/image/\(IconSize.favicon.rawValue)", mime: mime, on: req).flatMap({ _ in
+            return try fm.save(file: at1xData, to: "server/image/\(IconSize.at1x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                return try fm.save(file: at2xData, to: "server/image/\(IconSize.at2x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                    return try fm.save(file: at3xData, to: "server/image/\(IconSize.at3x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                        return try fm.save(file: regData, to: "server/image/\(IconSize.regular.rawValue)", mime: mime, on: req).flatMap({ _ in
+                            return try fm.save(file: largeData, to: "server/image/\(IconSize.large.rawValue)", mime: mime, on: req)
+                        })
                     })
                 })
             })

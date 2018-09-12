@@ -30,7 +30,6 @@ public final class ApiAuthMiddleware: Middleware, Service {
         // Authentication
         "/auth",
         "/auth/input-recovery",
-        "/auth/finish-recovery",
         "/token",
         
         // Helpers
@@ -39,6 +38,9 @@ public final class ApiAuthMiddleware: Middleware, Service {
         
         /// Server info
         "/info",
+        "/server/favicon",
+        "/server/image",
+        "/server/image/16",
         "/server/image/64",
         "/server/image/128",
         "/server/image/192",
@@ -51,8 +53,9 @@ public final class ApiAuthMiddleware: Middleware, Service {
         // Authentication
         "/auth",
         "/auth/start-recovery",
-        "/token",
+        "/auth/finish-recovery",
         "/auth/password-check",
+        "/token",
         
         // User management
         "/users",

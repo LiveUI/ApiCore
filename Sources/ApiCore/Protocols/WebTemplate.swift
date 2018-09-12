@@ -56,6 +56,9 @@ extension WebTemplate {
     
     /// Create a template
     public static func create(type: Templates.Which) {
+        guard type == .html else {
+            return
+        }
         do {
             try html.write(to: htmlPath, atomically: true, encoding: .utf8)
         } catch {

@@ -107,7 +107,8 @@ public class AuthController: Controller {
                     let jwtToken = try jwtService.signEmailConfirmation(
                         user: user,
                         type: .passwordRecovery,
-                        redirectUri: recoveryData.targetUri
+                        redirectUri: recoveryData.targetUri,
+                        on: req
                     )
                     
                     let inputLink = req.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery"
@@ -175,9 +176,43 @@ public class AuthController: Controller {
             guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
-            
             try resetPayload.exp.verifyNotExpired()
-            return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
+            
+            return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
+                return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+                    guard let user = user else {
+                        throw ErrorsCore.HTTPError.notFound
+                    }
+                    
+                    // Validate new password
+                    var passwordError: FrontendError? = nil
+                    do {
+                        if try !password.validate() {
+                            passwordError = AuthError.invalidPassword(reason: .generic)
+                        }
+                    } catch {
+                        passwordError = (error as? FrontendError) ?? AuthError.invalidPassword(reason: .generic)
+                    }
+                    
+                    // If no error save
+                    if passwordError == nil {
+                        user.password = try password.password.passwordHash(req)
+                    }
+                    
+                    if !resetPayload.redirectUri.isEmpty {
+                        return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
+                    } else {
+                        let templateModel = try User.Auth.RecoveryTemplate(
+                            verification: token,
+                            link: "?token=" + token,
+                            user: user,
+                            on: req
+                        )
+                        let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
+                        return try template.asHtmlResponse(.ok, to: req)
+                    }
+                }
+            }
         }
     }
 
