@@ -198,6 +198,7 @@ public class AuthController: Controller {
                     // If no error save
                     if passwordError == nil {
                         user.password = try password.password.passwordHash(req)
+                        user.verified = true
                     }
                     
                     // Save new password
