@@ -302,6 +302,9 @@ public final class User: DbCoreModel {
     /// User disabled
     public var disabled: Bool
     
+    /// User verified
+    public var verified: Bool
+    
     /// Super user
     public var su: Bool
     
@@ -314,6 +317,7 @@ public final class User: DbCoreModel {
         self.password = password
         self.registered = Date()
         self.disabled = disabled
+        self.verified = false
         self.su = su
     }
     
@@ -344,6 +348,7 @@ extension User: Migration {
             schema.field(for: \.email, type: .varchar(141), .notNull)
             schema.field(for: \.password, type: .varchar(64))
             schema.field(for: \.registered, type: .timestamp, .notNull)
+            schema.field(for: \.verified, type: .bool, .notNull)
             schema.field(for: \.disabled, type: .bool, .notNull)
             schema.field(for: \.su, type: .bool, .notNull)
         }

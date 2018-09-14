@@ -6,12 +6,58 @@
 //
 
 import Foundation
+import Vapor
 
 
 public class InfoWebTemplate: WebTemplate {
     
+    /// Template model
+    public struct Model: Content {
+        
+        /// Action link model
+        public struct Action: Codable {
+            
+            /// Link (href attribute)
+            public var link: String
+            
+            /// Title attribute of the link
+            public var title: String
+            
+            /// Text of the link
+            public var text: String
+            
+        }
+        
+        /// Title of the page
+        public var title: String
+        
+        /// Text of the page
+        public var text: String
+        
+        /// User
+        public var user: User
+        
+        /// Finish recovery link
+        public var action: Action?
+        
+        /// System wide template data
+        public var system: FrontendSystemData
+        
+        /// Initializer
+        public init(title: String, text: String, user: User, action: Action? = nil, on req: Request) throws {
+            self.title = title
+            self.text = text
+            self.user = user
+            self.action = action
+            system = try FrontendSystemData(req)
+        }
+        
+    }
+    
+    /// Template name
     public static var name: String = "info-message-web"
     
+    /// Template content
     public static var html: String = """
 <!DOCTYPE html>
 <html>
@@ -64,9 +110,11 @@ public class InfoWebTemplate: WebTemplate {
         <p><img src="#(system.info.url)/server/image/256" alt="#(system.info.name)" /></p>
         <h1>#(title)</h1>
         <p>#(text)</p>
+        #if(action) {
         <p>
             <a href="#(action.link)" title="#(action.title)">#(action.text)</a>
         </p>
+        }
     </body>
 </html>
 """

@@ -180,6 +180,7 @@ public class AuthController: Controller {
             
             return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
                 return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+                    // Validate user
                     guard let user = user else {
                         throw ErrorsCore.HTTPError.notFound
                     }
@@ -199,17 +200,21 @@ public class AuthController: Controller {
                         user.password = try password.password.passwordHash(req)
                     }
                     
-                    if !resetPayload.redirectUri.isEmpty {
-                        return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
-                    } else {
-                        let templateModel = try User.Auth.RecoveryTemplate(
-                            verification: token,
-                            link: "?token=" + token,
-                            user: user,
-                            on: req
-                        )
-                        let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
-                        return try template.asHtmlResponse(.ok, to: req)
+                    // Save new password
+                    return user.save(on: req).flatMap(to: Response.self) { user in
+                        if !resetPayload.redirectUri.isEmpty {
+                            return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
+                        } else {
+                            let templateModel = try InfoWebTemplate.Model(
+                                title: "Success", // TODO: Translate!!!!
+                                text: "Your password has been changed",
+                                user: user,
+                                //action: InfoWebTemplate.Model.Action(link: "link", title: "title", text: "text"),
+                                on: req
+                            )
+                            let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
+                            return try template.asHtmlResponse(.ok, to: req)
+                        }
                     }
                 }
             }

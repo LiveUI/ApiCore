@@ -159,6 +159,23 @@ public class ApiCoreBase {
             fatalError("You shouldn't be running around in a production mode with Configuration.jwt_secret set to \"secret\" as it is not very ... well, secret")
         }
         
+        // CORS
+        let corsConfig = CORSMiddleware.Configuration(
+            allowedOrigin: .all,
+            allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
+            allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent],
+            exposedHeaders: [
+                HTTPHeaderName.authorization.description,
+                HTTPHeaderName.contentLength.description,
+                HTTPHeaderName.contentType.description,
+                HTTPHeaderName.contentDisposition.description,
+                HTTPHeaderName.cacheControl.description,
+                HTTPHeaderName.expires.description
+            ]
+        )
+        let cors = CORSMiddleware(configuration: corsConfig)
+        middlewareConfig.use(cors)
+        
         // System
 //        middlewareConfig.use(FileMiddleware.self)
 //        // TODO: CHANGE THE HARDCODED STUFF!!!!!!!!!!!
@@ -200,23 +217,6 @@ public class ApiCoreBase {
             JWTService(secret: configuration.jwtSecret)
         }
         services.register(AuthenticationCache.self)
-        
-        // CORS
-        let corsConfig = CORSMiddleware.Configuration(
-            allowedOrigin: .all,
-            allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
-            allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent],
-            exposedHeaders: [
-                HTTPHeaderName.authorization.description,
-                HTTPHeaderName.contentLength.description,
-                HTTPHeaderName.contentType.description,
-                HTTPHeaderName.contentDisposition.description,
-                HTTPHeaderName.cacheControl.description,
-                HTTPHeaderName.expires.description
-            ]
-        )
-        let cors = CORSMiddleware(configuration: corsConfig)
-        middlewareConfig.use(cors)
         
         // Register middlewares
         services.register(middlewareConfig)

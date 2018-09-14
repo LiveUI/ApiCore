@@ -16,7 +16,7 @@ public class PasswordRecoveryTemplate: WebTemplate {
 <!DOCTYPE html>
 <html>
     <head>
-        <title>#(system.info.name) - Password recovery</title>
+        <title>#(system.info.name) - Password recovery</title>#// Translate all copy!!!!!
         <style>
             * {
                 font-family: Helvetica, Arial, sans-serif;
@@ -83,13 +83,12 @@ public class PasswordRecoveryTemplate: WebTemplate {
     <body>
         <p><img src="#(system.info.url)/server/image/256" alt="#(system.info.name)" /></p>
         <h1>Hi #(user.firstname) #(user.lastname)</h1>
-
-        <!--
+        #/*
             #(finish) contains an API link to which you need to send the form data either as JSON data or as a standard webform.
             You can also append a target URL to redirect the user to when done by appending '&target=http://example.com/all_is_dandy'.
             Target is an optional value and if not set a JSON (API) result will be returned.
-        -->
-        <form action="#(finish)">
+        */
+        <form method="post" action="#(finish)">
             <h2>Please set your new #(system.info.name) password here:</h2>
             <p class="input">
                 <label>Password:</label> <input id="password" name="password" type="password" value="" />
