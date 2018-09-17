@@ -31,6 +31,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         "/auth",
         "/auth/input-recovery",
         "/token",
+        "/users/verify",
         
         // Helpers
         "/ping",

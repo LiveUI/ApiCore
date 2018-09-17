@@ -9,6 +9,7 @@ import Foundation
 import Vapor
 import DbCore
 import JWT
+import ErrorsCore
 
 
 /// JWT payload object
@@ -61,6 +62,7 @@ struct JWTConfirmEmailPayload: JWTPayload {
     func verify(using signer: JWTSigner) throws {
         try exp.verifyNotExpired()
     }
+    
 }
 
 

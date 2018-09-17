@@ -67,6 +67,15 @@ public enum AuthError: FrontendError {
     /// Password is invalid
     case invalidPassword(reason: InvalidInputReason)
     
+    /// Invalid token signature
+    case invalidToken
+    
+    /// Email already exists
+    case emailExists
+    
+    /// Recovery email failed to be send
+    case recoveryEmailFailedToSend
+    
     /// Error code
     public var identifier: String {
         switch self {
@@ -74,6 +83,12 @@ public enum AuthError: FrontendError {
             return "auth_error.authentication_failed"
         case .serverError:
             return "auth_error.server_error"
+        case .recoveryEmailFailedToSend:
+            return "auth.recovery_email_failed"
+        case .emailExists:
+            return "auth.email_exists"
+        case .invalidToken:
+            return "auth.invalid_recovery_token"
         }
     }
     
@@ -84,7 +99,9 @@ public enum AuthError: FrontendError {
             return .unauthorized
         case .invalidEmail, .invalidPassword:
             return .notAcceptable
-        case .serverError:
+        case .invalidToken:
+            return .preconditionFailed
+        default:
             return .internalServerError
         }
     }
@@ -100,6 +117,13 @@ public enum AuthError: FrontendError {
             return "Invalid email"
         case .invalidPassword(let reason):
             return "Invalid password (\(reason.description))"
+        case .recoveryEmailFailedToSend:
+            return "Failed to send password recovery email"
+        case .emailExists:
+            return "Email already exists"
+        case .invalidToken:
+            return "Invalid recovery token"
         }
     }
+    
 }

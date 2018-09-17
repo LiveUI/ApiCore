@@ -19,29 +19,6 @@ import Leaf
 
 public class AuthController: Controller {
     
-    /// AuthController specific errors
-    public enum Error: FrontendError {
-        
-        /// Recovery email failed to be send
-        case recoveryEmailFailedToSend
-        
-        /// HTTP status code for error response
-        public var status: HTTPStatus {
-            return .internalServerError
-        }
-        
-        /// Error identifier
-        public var identifier: String {
-            return "auth.recovery_email_failed"
-        }
-        
-        /// Reason for failing
-        public var reason: String {
-            return "Failed to send password recovery email"
-        }
-        
-    }
-    
     /// Setup routes
     public static func boot(router: Router) throws {
         // Authenticate with username and password in an Authorization header
@@ -128,7 +105,7 @@ public class AuthController: Controller {
                             case .success:
                                 return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
                             default:
-                                throw Error.recoveryEmailFailedToSend
+                                throw AuthError.recoveryEmailFailedToSend
                             }
                         }
                     }
@@ -166,7 +143,7 @@ public class AuthController: Controller {
             }
         }
         
-        router.post("auth/finish-recovery") { (req) -> Future<Response> in
+        router.post("auth", "finish-recovery") { (req) -> Future<Response> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -177,6 +154,9 @@ public class AuthController: Controller {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
             try resetPayload.exp.verifyNotExpired()
+            guard resetPayload.type == .passwordRecovery else {
+                throw AuthError.invalidToken
+            }
             
             return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
                 return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
