@@ -22,7 +22,7 @@ public class AuthController: Controller {
     /// Setup routes
     public static func boot(router: Router) throws {
         // Authenticate with username and password in an Authorization header
-        router.get("auth") { (req)->Future<Response> in
+        router.get("auth") { req -> Future<Response> in
             guard let token = req.http.headers.authorizationToken, let decoded = token.base64Decoded else {
                 throw AuthError.authenticationFailed
             }
@@ -34,7 +34,7 @@ public class AuthController: Controller {
         }
         
         // Authenticate with username and password in a POST json
-        router.post("auth") { (req)->Future<Response> in
+        router.post("auth") { req -> Future<Response> in
             do {
                 return try req.content.decode(User.Auth.Login.self).flatMap(to: Response.self) { loginData in
                     return try login(request: req, login: loginData)
@@ -45,7 +45,7 @@ public class AuthController: Controller {
         }
         
         // Create new JWT token using permanent token (Headers)
-        router.get("token") { (req)->Future<Response> in
+        router.get("token") { req -> Future<Response> in
             guard let tokenString = req.http.headers.authorizationToken else {
                 throw AuthError.authenticationFailed
             }
@@ -53,14 +53,14 @@ public class AuthController: Controller {
         }
         
         // Create new JWT token using permanent token (POST)
-        router.post("token") { (req) -> Future<Response> in
+        router.post("token") { req -> Future<Response> in
             return try req.content.decode(User.Auth.Token.self).flatMap(to: Response.self) { (loginData) -> Future<Response> in
                 return try token(request: req, token: loginData.token)
             }
         }
         
         // Forgotten password
-        router.post("auth", "password-check") { (req) -> Future<Response> in
+        router.post("   ") { req -> Future<Response> in
             return try User.Auth.Password.fill(post: req).map(to: Response.self) { password in
                 guard try password.validate() else {
                     throw AuthError.invalidPassword(reason: .generic)
@@ -70,7 +70,7 @@ public class AuthController: Controller {
         }
         
         // Forgotten password
-        router.post("auth", "start-recovery") { (req) -> Future<Response> in
+        router.post("auth", "start-recovery") { req -> Future<Response> in
             // Read user email from request
             // Read redirect url from request
             return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { recoveryData in
@@ -113,7 +113,7 @@ public class AuthController: Controller {
             }
         }
         
-        router.get("auth", "input-recovery") { (req) -> Future<Response> in
+        router.get("auth", "input-recovery") { req -> Future<Response> in
             let jwtService: JWTService = try req.make()
             
             guard let token = req.query.token else {
@@ -143,7 +143,7 @@ public class AuthController: Controller {
             }
         }
         
-        router.post("auth", "finish-recovery") { (req) -> Future<Response> in
+        router.post("auth", "finish-recovery") { req -> Future<Response> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized

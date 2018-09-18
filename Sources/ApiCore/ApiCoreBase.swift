@@ -147,7 +147,7 @@ public class ApiCoreBase {
         let databaseConfig = DbCore.config(hostname: c.database.host ?? "localhost", user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port ?? 5432)
         
         // Setup mailing
-        // TODO: Support SendGrid and SMTP!!!
+        // TODO: MVP! Support SendGrid and SMTP!!!!!!
         let mail = Mailer.Config.mailgun(key: c.mail.mailgun.key, domain: c.mail.mailgun.domain)
         try Mailer(config: mail, registerOn: &services)
         

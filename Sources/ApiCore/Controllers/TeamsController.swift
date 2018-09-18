@@ -211,7 +211,7 @@ extension TeamsController {
         if team.admin {
             throw Error.unableToDeleteAdminTeam
         }
-        // TODO: Cascade through all team data (that is not shared with other teams, possibly dleete users too?) !!!!!!
+        // TODO: Cascade through all team data (that is not shared with other teams, possibly delete users too?) !!!!!!
         return team.delete(on: req).map(to: Response.self, { (_) -> Response in
             return try req.response.deleted()
         })

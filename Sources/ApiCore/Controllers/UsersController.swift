@@ -20,7 +20,7 @@ public class UsersController: Controller {
     public static func boot(router: Router) throws {
         router.get("users") { (req) -> Future<[User.Display]> in
             if let search = req.query.search {
-                // TODO: Display only users in my team or within my reach as there are emails available here!!!!!!!!!!
+                // TODO: MVP! Display only users in my team or within my reach as there are emails available here!!!!!!!!!!!!!!!!!!!!!!!!!!
                 return try User.query(on: req).decode(User.Display.self).group(.or) { or in
                     // TODO: Make the search reusable!!
                     or.filter(\User.firstname ~~ search)
