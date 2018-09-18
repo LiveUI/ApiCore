@@ -12,7 +12,7 @@
 
 Base for API's that require user & team management including forgotten passwords, etc. This library should contain all the basic endpoints neccessary to make your own SaaS platform similar to a github's own user management.
 
-> ***Warning!**: This system is only designed to work with **PostgreSQL**!*
+> ***Warning!**: This system is only designed to work with **PostgreSQL** at the moment!*
 
 ## Available endpoints
 
