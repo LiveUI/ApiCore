@@ -70,6 +70,9 @@ public enum AuthError: FrontendError {
     /// Invalid token signature
     case invalidToken
     
+    /// Account has not been verified yet
+    case unverifiedAccount
+    
     /// Email already exists
     case emailExists
     
@@ -85,6 +88,8 @@ public enum AuthError: FrontendError {
             return "auth_error.server_error"
         case .recoveryEmailFailedToSend:
             return "auth.recovery_email_failed"
+        case .unverifiedAccount:
+            return "auth.unverified_account"
         case .emailExists:
             return "auth.email_exists"
         case .invalidToken:
@@ -99,7 +104,7 @@ public enum AuthError: FrontendError {
             return .unauthorized
         case .invalidEmail, .invalidPassword:
             return .notAcceptable
-        case .invalidToken:
+        case .invalidToken, .unverifiedAccount:
             return .preconditionFailed
         default:
             return .internalServerError
@@ -119,6 +124,8 @@ public enum AuthError: FrontendError {
             return "Invalid password (\(reason.description))"
         case .recoveryEmailFailedToSend:
             return "Failed to send password recovery email"
+        case .unverifiedAccount:
+            return "Account has not been verified yet"
         case .emailExists:
             return "Email already exists"
         case .invalidToken:

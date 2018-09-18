@@ -113,7 +113,9 @@ extension InstallController {
                 if count > 0 {
                     throw Error.dataExists
                 }
-                return try su(on: req).save(on: req).flatMap(to: Void.self) { user in
+                let user = try su(on: req)
+                user.verified = true
+                return user.save(on: req).flatMap(to: Void.self) { user in
                     return adminTeam.save(on: req).flatMap(to: Void.self) { team in
                         var futures = [
                             team.users.attach(user, on: req).flatten()

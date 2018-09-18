@@ -235,6 +235,9 @@ extension AuthController {
             guard let user = user, let password = user.password, login.password.verify(against: password) else {
                 throw AuthError.authenticationFailed
             }
+            guard user.verified == true else {
+                throw AuthError.unverifiedAccount
+            }
             let token = try Token(user: user, type: .authentication)
             let tokenBackup = token.token
             token.token = try token.token.sha()
