@@ -10,7 +10,7 @@
 [![Vapor 3](https://img.shields.io/badge/vapor-3.0-blue.svg?style=flat)](https://vapor.codes)
 
 
-Base for API's that require user & team management including forgotten passwords, etc
+Base for API's that require user & team management including forgotten passwords, etc. This library should contain all the basic endpoints neccessary to make your own SaaS platform similar to a github's own user management.
 
 > ***Warning!**: This system is only designed to work with **PostgreSQL**!*
 
