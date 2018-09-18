@@ -14,6 +14,46 @@ Base for API's that require user & team management including forgotten passwords
 
 > ***Warning!**: This system is only designed to work with **PostgreSQL**!*
 
+## Available endpoints
+
+#### Install (available in DEBUG mode only!)
+* `[GET] /install` - install base data (admin user, team, etc)
+* `[GET] /uninstall` - delete all tables (apart from fluent table)
+* `[GET] /reinstall` - delete, create again all tables (run all migrations) and install base data
+* `[GET] /database` - show content of the fluent table
+    
+
+#### Authentication
+* `[GET] /auth` - header based authentication (basic HTTP)
+* `[POST] /auth` - POST based authentication
+* `[GET] /token` - header based JWT token refresh
+* `[POST] /token` - POST based JWT token refresh
+
+* `[POST] /auth/password-check` - Check password validity (is the password strong enough)
+
+* `[POST] /auth/start-recovery` - Start password recovery
+* `[GET] /auth/input-recovery` - HTML (templatable) based new password input
+* `[POST] /auth/finish-recovery` - Finish recovery (from HTML or redirect)
+
+#### Server
+* `[GET] /info` - get server url, name and urls for server icons
+* `[POST] /server/image` - post a new server icon (will be used on default recovery html and as a favicon web based endpoints
+* `[GET] /server/image/{icon_size}` - get icon of a specific size (16, 64, 128, 192, 256 or 512px)
+* `[GET] /server/image` - 512px large icon
+* `[DELETE] /server/image` - delete server icon, default one will be used instead
+* `[GET] /server/favicon` - 16x16 px favicon (PNG format)
+
+#### Misc
+
+* `[GET] /errors` - print out db archived error logs
+* `[GET] /flush` - flush system logs (often useful when running apps in docker)
+* `[GET] /ping` - find out if the server is alive
+* `[GET] /teapot` - find out if the server is a teapot
+
+
+    
+
+
 ## Install
 
 Just add following line package to your `Package.swift` file.
