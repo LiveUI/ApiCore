@@ -208,7 +208,7 @@ public class AuthController: Controller {
 extension AuthController {
     
     /// Renew token helper
-    static func token(request req: Request, token: String) throws -> Future<Response> {
+    private static func token(request req: Request, token: String) throws -> Future<Response> {
         return try Token.query(on: req).filter(\Token.token == token.sha()).first().flatMap(to: Response.self) { token in
             guard let token = token else {
                 throw AuthError.authenticationFailed
@@ -227,7 +227,7 @@ extension AuthController {
     }
     
     /// Login helper
-    static func login(request req: Request, login: User.Auth.Login) throws -> Future<Response> {
+    private static func login(request req: Request, login: User.Auth.Login) throws -> Future<Response> {
         guard !login.email.isEmpty, !login.password.isEmpty else {
             throw AuthError.authenticationFailed
         }
@@ -238,6 +238,10 @@ extension AuthController {
             guard user.verified == true else {
                 throw AuthError.unverifiedAccount
             }
+            guard user.disabled == false else {
+                throw AuthError.unverifiedAccount
+            }
+            
             let token = try Token(user: user, type: .authentication)
             let tokenBackup = token.token
             token.token = try token.token.sha()

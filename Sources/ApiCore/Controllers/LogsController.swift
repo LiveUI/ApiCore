@@ -25,7 +25,7 @@ public class LogsController: Controller {
             return ErrorLog.query(on: req).sort(\ErrorLog.added, .descending).all()
         }
         
-        // Flush
+        // Flush system logs
         router.get("flush") { req -> Response in
             fflush(stdout)
             return try req.response.success(status: .ok, code: "system", description: "Flushed")

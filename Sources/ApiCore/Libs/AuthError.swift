@@ -73,6 +73,9 @@ public enum AuthError: FrontendError {
     /// Account has not been verified yet
     case unverifiedAccount
     
+    /// Account has been disabled
+    case disabledAccount
+    
     /// Email already exists
     case emailExists
     
@@ -90,6 +93,8 @@ public enum AuthError: FrontendError {
             return "auth.recovery_email_failed"
         case .unverifiedAccount:
             return "auth.unverified_account"
+        case .disabledAccount:
+            return "auth.disabled_account"
         case .emailExists:
             return "auth.email_exists"
         case .invalidToken:
@@ -126,6 +131,8 @@ public enum AuthError: FrontendError {
             return "Failed to send password recovery email"
         case .unverifiedAccount:
             return "Account has not been verified yet"
+        case .disabledAccount:
+            return "Account has been disabled"
         case .emailExists:
             return "Email already exists"
         case .invalidToken:

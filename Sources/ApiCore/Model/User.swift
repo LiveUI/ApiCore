@@ -276,6 +276,24 @@ public final class User: DbCoreModel {
         public init(id: DbCoreIdentifier) {
             self.id = id
         }
+        
+    }
+    
+    /// Disable object
+    public struct Disable: Content {
+        
+        /// Id
+        public var id: DbCoreIdentifier
+        
+        /// Acccount should be disabled / enable
+        public var disable: Bool
+        
+        /// Initializer
+        public init(id: DbCoreIdentifier, disable: Bool) {
+            self.id = id
+            self.disable = disable
+        }
+        
     }
     
     /// Object Id

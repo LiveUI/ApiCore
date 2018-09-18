@@ -97,6 +97,25 @@ public class UsersController: Controller {
             }
         }
         
+        router.post("users", "disable") { (req) -> Future<User> in
+            return try User.Disable.fill(post: req).flatMap(to: User.self) { disable in
+                return User.query(on: req).filter(\User.id == disable.id).first().flatMap(to: User.self) { user in
+                    guard let user = user else {
+                        throw ErrorsCore.HTTPError.notFound
+                    }
+                    // Only an admin can disable users
+                    return try req.me.isSystemAdmin().flatMap(to: User.self) { admin in
+                        guard admin else {
+                            throw ErrorsCore.HTTPError.notAuthorizedAsAdmin
+                        }
+                        
+                        user.disabled = disable.disable
+                        return user.save(on: req)
+                    }
+                }
+            }
+        }
+    
         router.get("users", "verify") { (req) -> Future<Response> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
