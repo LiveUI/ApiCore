@@ -21,16 +21,13 @@ Base for API's that require user & team management including forgotten passwords
 * `[GET] /uninstall` - delete all tables (apart from fluent table)
 * `[GET] /reinstall` - delete, create again all tables (run all migrations) and install base data
 * `[GET] /database` - show content of the fluent table
-    
 
 #### Authentication
 * `[GET] /auth` - header based authentication (basic HTTP)
 * `[POST] /auth` - POST based authentication
 * `[GET] /token` - header based JWT token refresh
 * `[POST] /token` - POST based JWT token refresh
-
 * `[POST] /auth/password-check` - Check password validity (is the password strong enough)
-
 * `[POST] /auth/start-recovery` - Start password recovery
 * `[GET] /auth/input-recovery` - HTML (templatable) based new password input
 * `[POST] /auth/finish-recovery` - Finish recovery (from HTML or redirect)
@@ -43,15 +40,29 @@ Base for API's that require user & team management including forgotten passwords
 * `[DELETE] /server/image` - delete server icon, default one will be used instead
 * `[GET] /server/favicon` - 16x16 px favicon (PNG format)
 
-#### Misc
+#### Users
+* `[GET] /users` - get list of connected users within your teams (searchable)
+* `[GET] /users/global` - search users globally, personal info ommited, email MD5 added for gravatar 
+* `[POST] /users` - register new user
+* `[GET] /users/verify` - verify regitered email (registration email/link is send to the user)
+* `[POST] /users/disable` - disable or enable a user (admin team members only)  
 
+#### Teams
+* `[GET] /teams` - list all available teams
+* `[GET] /teams/{team_id}` - details on a specific team
+* `[POST] /teams` - create team
+* `[GET] /teams/check` - check if team identifier/name is available
+* `[PUT] /teams/{team_id}` - modify existing team
+* `[GET] /teams/{team_id}/users` - users linked to a specific team
+* `[POST] /teams/{team_id}/link` - link a user to a specific team
+* `[POST] /teams/{team_id}/unlink` - un-link a user from a specific team
+* `[DELETE] /teams/{team_id}` - delete a team
+
+#### Misc
 * `[GET] /errors` - print out db archived error logs
 * `[GET] /flush` - flush system logs (often useful when running apps in docker)
 * `[GET] /ping` - find out if the server is alive
 * `[GET] /teapot` - find out if the server is a teapot
-
-
-    
 
 
 ## Install
