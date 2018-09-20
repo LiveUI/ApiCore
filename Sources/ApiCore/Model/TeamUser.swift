@@ -7,7 +7,7 @@
 
 import Foundation
 import Fluent
-import DbCore
+//import DbCore
 import Vapor
 
 
@@ -20,23 +20,23 @@ public final class TeamUser: ModifiablePivot, DbCoreModel {
     public typealias Right = User
     
     /// Left JOIN Id key
-    public static var leftIDKey: WritableKeyPath<TeamUser, DbCoreIdentifier> {
+    public static var leftIDKey: WritableKeyPath<TeamUser, DbIdentifier> {
         return \.teamId
     }
     
     /// Right JOIN Id key
-    public static var rightIDKey: WritableKeyPath<TeamUser, DbCoreIdentifier> {
+    public static var rightIDKey: WritableKeyPath<TeamUser, DbIdentifier> {
         return \.userId
     }
     
     /// Object Id
-    public var id: DbCoreIdentifier?
+    public var id: DbIdentifier?
     
     /// Team Id
-    public var teamId: DbCoreIdentifier
+    public var teamId: DbIdentifier
     
     /// User Id
-    public var userId: DbCoreIdentifier
+    public var userId: DbIdentifier
     
     // MARK: Initialization
     
@@ -53,7 +53,7 @@ public final class TeamUser: ModifiablePivot, DbCoreModel {
 extension TeamUser: Migration {
     
     /// Migration preparations
-    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
+    public static func prepare(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.field(for: \TeamUser.id)
             schema.field(for: \TeamUser.teamId, type: .uuid, .notNull)
@@ -62,7 +62,7 @@ extension TeamUser: Migration {
     }
     
     /// Migration reverse (DROP TABLE)
-    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
+    public static func revert(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.delete(TeamUser.self, on: connection)
     }
 }

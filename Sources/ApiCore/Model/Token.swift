@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 import Random
 
@@ -64,7 +64,7 @@ public final class Token: DbCoreModel {
     public final class PublicFull: DbCoreModel {
         
         /// Object id
-        public var id: DbCoreIdentifier?
+        public var id: DbIdentifier?
         
         /// User
         public var user: User.Display
@@ -91,7 +91,7 @@ public final class Token: DbCoreModel {
     public final class PublicNoUser: DbCoreModel {
         
         /// Object id
-        public var id: DbCoreIdentifier?
+        public var id: DbIdentifier?
         
         /// Token
         public var token: String
@@ -116,7 +116,7 @@ public final class Token: DbCoreModel {
     public final class Public: DbCoreModel {
         
         /// Object id
-        public var id: DbCoreIdentifier?
+        public var id: DbIdentifier?
         
         /// User
         public var user: User.Display
@@ -133,10 +133,10 @@ public final class Token: DbCoreModel {
     }
     
     /// Object id
-    public var id: DbCoreIdentifier?
+    public var id: DbIdentifier?
     
     /// User Id
-    public var userId: DbCoreIdentifier
+    public var userId: DbIdentifier
     
     /// Token
     public var token: String
@@ -175,7 +175,7 @@ public final class Token: DbCoreModel {
 extension Token: Migration {
     
     /// Migration preparations
-    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
+    public static func prepare(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.field(for: \.id, isIdentifier: true)
             schema.field(for: \.userId, type: .uuid, .notNull)
@@ -186,7 +186,7 @@ extension Token: Migration {
     }
     
     /// Migration reverse
-    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
+    public static func revert(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.delete(Token.self, on: connection)
     }
     

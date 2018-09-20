@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 
 
@@ -21,7 +21,7 @@ public typealias ErrorLogs = [ErrorLog]
 public final class ErrorLog: DbCoreModel {
     
     /// Object Id
-    public var id: DbCoreIdentifier?
+    public var id: DbIdentifier?
     
     /// Date added/created
     public var added: Date
@@ -33,7 +33,7 @@ public final class ErrorLog: DbCoreModel {
     public var error: String
     
     /// Initializer
-    public init(id: DbCoreIdentifier? = nil, request req: Request, error: Swift.Error) {
+    public init(id: DbIdentifier? = nil, request req: Request, error: Swift.Error) {
         let query = req.http.url.query != nil ? "?\(req.http.url.query!)" : ""
         self.uri = "\(req.http.url.path)\(query)"
         self.added = Date()
@@ -53,7 +53,7 @@ public final class ErrorLog: DbCoreModel {
 extension ErrorLog: Migration {
     
     /// Prepare migrations
-    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
+    public static func prepare(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.field(for: \.id, isIdentifier: true)
             schema.field(for: \.added, type: .timestamp)
@@ -63,7 +63,7 @@ extension ErrorLog: Migration {
     }
     
     /// Revert migrations
-    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
+    public static func revert(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.delete(ErrorLog.self, on: connection)
     }
     

@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 
 
 /// Users array type typealias
@@ -174,7 +174,7 @@ public final class User: DbCoreModel {
     public final class Display: DbCoreModel {
         
         /// Object Id
-        public var id: DbCoreIdentifier?
+        public var id: DbIdentifier?
         
         // Username / nickname
         public var username: String
@@ -227,7 +227,7 @@ public final class User: DbCoreModel {
     public final class AllSearch: Content {
         
         /// Object Id
-        public var id: DbCoreIdentifier?
+        public var id: DbIdentifier?
         
         // Username / nickname
         public var username: String
@@ -270,10 +270,10 @@ public final class User: DbCoreModel {
     public struct Id: Content {
         
         /// Id
-        public var id: DbCoreIdentifier?
+        public var id: DbIdentifier?
         
         /// Initializer
-        public init(id: DbCoreIdentifier) {
+        public init(id: DbIdentifier) {
             self.id = id
         }
         
@@ -283,13 +283,13 @@ public final class User: DbCoreModel {
     public struct Disable: Content {
         
         /// Id
-        public var id: DbCoreIdentifier
+        public var id: DbIdentifier
         
         /// Acccount should be disabled / enable
         public var disable: Bool
         
         /// Initializer
-        public init(id: DbCoreIdentifier, disable: Bool) {
+        public init(id: DbIdentifier, disable: Bool) {
             self.id = id
             self.disable = disable
         }
@@ -297,7 +297,7 @@ public final class User: DbCoreModel {
     }
     
     /// Object Id
-    public var id: DbCoreIdentifier?
+    public var id: DbIdentifier?
     
     // Username / nickname
     public var username: String
@@ -357,7 +357,7 @@ extension User {
 extension User: Migration {
     
     /// Migration preparations
-    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
+    public static func prepare(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.field(for: \.id, isIdentifier: true)
             schema.field(for: \.username, type: .varchar(80), .notNull)
@@ -373,7 +373,7 @@ extension User: Migration {
     }
     
     /// Migration reverse
-    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
+    public static func revert(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.delete(User.self, on: connection)
     }
     

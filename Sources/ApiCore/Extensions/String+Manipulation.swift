@@ -56,4 +56,34 @@ extension String {
         return String(String(capitals).prefix(2)).uppercased()
     }
     
+    /// Convert string to boolean if possible
+    func asBool() -> Bool? {
+        switch self.lowercased() {
+        case "true", "yes", "1":
+            return true
+        case "false", "no", "0":
+            return false
+        default:
+            return nil
+        }
+    }
+    
 }
+
+
+extension Optional where Wrapped == String {
+    
+    /// Convert optional string to boolean
+    func asBool() -> Bool {
+        switch self?.lowercased() {
+        case "true", "yes", "1":
+            return true
+        case "false", "no", "0":
+            return false
+        default:
+            return false
+        }
+    }
+    
+}
+

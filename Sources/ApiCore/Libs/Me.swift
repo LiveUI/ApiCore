@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 
 
@@ -48,7 +48,7 @@ public struct Me {
     }
     
     /// Team verified to contain currently authorized user
-    public func verifiedTeam(id teamId: DbCoreIdentifier) throws -> Future<Team> {
+    public func verifiedTeam(id teamId: DbIdentifier) throws -> Future<Team> {
         let me = try user()
         return try me.teams.query(on: self.request).filter(\Team.id == teamId).first().map(to: Team.self) { team in
             guard let team = team else {

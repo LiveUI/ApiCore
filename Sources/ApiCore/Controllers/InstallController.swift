@@ -8,7 +8,7 @@
 import Foundation
 import Vapor
 import ErrorsCore
-import DbCore
+//import DbCore
 import Fluent
 import FluentPostgreSQL
 
@@ -80,7 +80,7 @@ extension InstallController {
     private static func uninstall(on req: Request) throws -> Future<Response> {
         var futures: [Future<Void>] = []
         return req.requestPooledConnection(to: .db).flatMap(to: Response.self) { connection in
-            for model in DbCore.models {
+            for model in ApiCoreBase.models {
                 futures.append(connection.query(PostgreSQLQuery.raw("DROP TABLE IF EXISTS \(model.entity)", binds: [])).flatten())
             }
             return futures.flatten(on: req).flatMap(to: Void.self) { _ in

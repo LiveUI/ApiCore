@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 
 
@@ -100,8 +100,8 @@ class TeamsController: Controller {
             })
         }
         
-        router.get("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
-            let id = try req.parameters.next(DbCoreIdentifier.self)
+        router.get("teams", DbIdentifier.parameter) { (req) -> Future<Team> in
+            let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id)
         }
         
@@ -135,8 +135,8 @@ class TeamsController: Controller {
             }
         }
         
-        router.put("teams", DbCoreIdentifier.parameter) { (req) -> Future<Team> in
-            let id = try req.parameters.next(DbCoreIdentifier.self)
+        router.put("teams", DbIdentifier.parameter) { (req) -> Future<Team> in
+            let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: Team.self, { team in
                 return try req.content.decode(Team.New.self).flatMap(to: Team.self) { newTeam in
                     team.name = newTeam.name
@@ -166,25 +166,25 @@ class TeamsController: Controller {
             }
         }
         
-        router.get("teams", DbCoreIdentifier.parameter, "users") { (req) -> Future<[User]> in
-            let id = try req.parameters.next(DbCoreIdentifier.self)
+        router.get("teams", DbIdentifier.parameter, "users") { (req) -> Future<[User]> in
+            let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: [User].self) { (team) -> Future<[User]> in
                 return try team.users.query(on: req).paginate(on: req).all()
             }
         }
         
-        router.post("teams", DbCoreIdentifier.parameter, "link") { (req) -> Future<Response> in
+        router.post("teams", DbIdentifier.parameter, "link") { (req) -> Future<Response> in
             return try processLinking(request: req, action: .link)
         }
         
-        router.post("teams", DbCoreIdentifier.parameter, "unlink") { (req) -> Future<Response> in
+        router.post("teams", DbIdentifier.parameter, "unlink") { (req) -> Future<Response> in
             return try processLinking(request: req, action: .unlink)
         }
         
-        router.delete("teams", DbCoreIdentifier.parameter) { (req) -> Future<Response> in
+        router.delete("teams", DbIdentifier.parameter) { (req) -> Future<Response> in
             // TODO: Reload JWT token if successful with new info
             // QUESTION: Should we make sure user has at least one team?
-            let teamId = try req.parameters.next(DbCoreIdentifier.self)
+            let teamId = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self) { (team) -> Future<Response> in
                 if let canDelete = ApiCoreBase.deleteTeamWarning {
                     return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
@@ -219,7 +219,7 @@ extension TeamsController {
     
     /// Process linking from a request
     private static func processLinking(request req: Request, action: TeamsController.LinkAction) throws -> Future<Response> {
-        let teamId = try req.parameters.next(DbCoreIdentifier.self)
+        let teamId = try req.parameters.next(DbIdentifier.self)
         return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self) { team in
             return try team.users.query(on: req).all().flatMap(to: Response.self) { teamUsers in
                 return try req.content.decode(User.Id.self).flatMap(to: Response.self) { userId in

@@ -8,15 +8,43 @@
 import Foundation
 import Vapor
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 import MailCore
 import Leaf
 import FileCore
 
 
+/// Default database typealias
+public typealias ApiCoreDatabase = PostgreSQLDatabase
+
+/// Default database connection type typealias
+public typealias ApiCoreConnection = PostgreSQLConnection
+
+/// Default database ID column type typealias
+public typealias DbIdentifier = UUID
+
+/// Default database port
+public let DbDefaultPort: Int = 5432
+
+
 /// Main ApiCore class
 public class ApiCoreBase {
+    
+    /// Register models here
+    public internal(set) static var models: [AnyModel.Type] = []
+    
+    /// Migration config
+    public static var migrationConfig = MigrationConfig()
+    
+    /// Databse config
+    public static var databaseConfig: DatabasesConfig?
+    
+    /// Add / register model
+    public static func add<Model>(model: Model.Type, database: DatabaseIdentifier<Model.Database>) where Model: Fluent.Migration, Model: Fluent.Model, Model.Database: SchemaSupporting & QuerySupporting {
+        models.append(model)
+        migrationConfig.add(model: model, database: database)
+    }
     
     /// Configuration cache
     static var _configuration: Configuration?
@@ -130,11 +158,11 @@ public class ApiCoreBase {
         services.register(serverConfig)
         
         // Migrate models / tables
-        DbCore.add(model: Token.self, database: .db)
-        DbCore.add(model: Team.self, database: .db)
-        DbCore.add(model: User.self, database: .db)
-        DbCore.add(model: TeamUser.self, database: .db)
-        DbCore.add(model: ErrorLog.self, database: .db)
+        add(model: Token.self, database: .db)
+        add(model: Team.self, database: .db)
+        add(model: User.self, database: .db)
+        add(model: TeamUser.self, database: .db)
+        add(model: ErrorLog.self, database: .db)
         
         // Set database on tables that don't have migration
         FluentDesign.defaultDatabase = .db
@@ -144,15 +172,20 @@ public class ApiCoreBase {
         let c = configuration
         
         // Database - Load database details
-        let databaseConfig = DbCore.config(hostname: c.database.host ?? "localhost", user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port ?? 5432)
+        let databaseConfig = ApiCoreDb.config(hostname: c.database.host ?? "localhost", user: c.database.user, password: c.database.password, database: c.database.database, port: c.database.port ?? 5432)
         
         // Setup mailing
         // TODO: MVP! Support SendGrid and SMTP!!!!!!
         let mail = Mailer.Config.mailgun(key: c.mail.mailgun.key, domain: c.mail.mailgun.domain)
         try Mailer(config: mail, registerOn: &services)
         
-        // Forward configure to the DbCore
-        try DbCore.configure(databaseConfig: databaseConfig, &config, &env, &services)
+        // Configure database
+        try services.register(FluentPostgreSQLProvider())
+        
+        self.databaseConfig = databaseConfig
+        
+        services.register(databaseConfig)
+        services.register(migrationConfig)
         
         // Check JWT secret's security
         if env.isRelease && configuration.jwtSecret == "secret" {
@@ -176,10 +209,7 @@ public class ApiCoreBase {
         let cors = CORSMiddleware(configuration: corsConfig)
         middlewareConfig.use(cors)
         
-        // System
-//        middlewareConfig.use(FileMiddleware.self)
-//        // TODO: CHANGE THE HARDCODED STUFF!!!!!!!!!!!
-//        //services.register(FileMiddleware(publicDirectory: "/Projects/Web/Boost/Public/build/"))
+        // Templates
         try services.register(LeafProvider())
         
         // Filesystem

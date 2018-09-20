@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 
 
@@ -24,7 +24,7 @@ public final class FluentDesign: DbCoreModel {
     public static let entity: String = "fluent"
     
     /// Object Id
-    public var id: DbCoreIdentifier?
+    public var id: DbIdentifier?
     
     /// Name
     public var name: String
@@ -39,7 +39,7 @@ public final class FluentDesign: DbCoreModel {
     public var updatedAt: Date
     
     /// Initializer
-    public init(id: DbCoreIdentifier? = nil, name: String, batch: Int, createdAt: Date = Date(), updatedAt: Date = Date()) {
+    public init(id: DbIdentifier? = nil, name: String, batch: Int, createdAt: Date = Date(), updatedAt: Date = Date()) {
         self.id = id
         self.name = name
         self.batch = batch

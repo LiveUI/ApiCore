@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-import DbCore
+//import DbCore
 import ErrorsCore
 import ImageCore
 
@@ -96,7 +96,7 @@ public final class Team: DbCoreModel {
     }
     
     /// Object id
-    public var id: DbCoreIdentifier?
+    public var id: DbIdentifier?
     
     /// Name
     public var name: String
@@ -114,7 +114,7 @@ public final class Team: DbCoreModel {
     public var admin: Bool
     
     /// Initializer
-    public init(id: DbCoreIdentifier? = nil, name: String, identifier: String, color: String? = nil, initials: String? = nil, admin: Bool = false) {
+    public init(id: DbIdentifier? = nil, name: String, identifier: String, color: String? = nil, initials: String? = nil, admin: Bool = false) {
         self.name = name
         self.identifier = identifier
         self.color = color ?? Color.randomColor().hexValue
@@ -140,7 +140,7 @@ extension Team {
 extension Team: Migration {
     
     /// Migration preparations
-    public static func prepare(on connection: DbCoreConnection) -> Future<Void> {
+    public static func prepare(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
             schema.field(for: \.id, isIdentifier: true)
             schema.field(for: \.name, type: .varchar(40), .notNull)
@@ -152,7 +152,7 @@ extension Team: Migration {
     }
     
     /// Migration reverse
-    public static func revert(on connection: DbCoreConnection) -> Future<Void> {
+    public static func revert(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.delete(Team.self, on: connection)
     }
     
@@ -176,15 +176,15 @@ extension Team {
 extension Array where Element == Team {
     
     /// Team ids alone in an array
-    public var ids: [DbCoreIdentifier] {
-        let teamIds = compactMap({ (team) -> DbCoreIdentifier in
+    public var ids: [DbIdentifier] {
+        let teamIds = compactMap({ (team) -> DbIdentifier in
             return team.id!
         })
         return teamIds
     }
     
     /// Contains a team with id?
-    public func contains(_ teamId: DbCoreIdentifier) -> Bool {
+    public func contains(_ teamId: DbIdentifier) -> Bool {
         return ids.contains(teamId)
     }
     
