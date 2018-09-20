@@ -58,7 +58,7 @@ public final class Configuration: Configurable {
         public internal(set) var user: String
         
         /// Database password
-        public internal(set) var password: String
+        public internal(set) var password: String?
         
         /// Database name
         public internal(set) var database: String
@@ -67,7 +67,7 @@ public final class Configuration: Configurable {
         public internal(set) var logging: Bool
         
         /// Initializer
-        init(host: String?, port: Int?, user: String, password: String, database: String, logging: Bool) {
+        init(host: String?, port: Int?, user: String, password: String?, database: String, logging: Bool) {
             self.host = host
             self.port = port
             self.user = user
