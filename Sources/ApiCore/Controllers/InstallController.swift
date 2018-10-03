@@ -68,7 +68,9 @@ extension InstallController {
     
     /// New super user
     private static func su(on req: Request) throws -> User {
-        return try User(username: "admin", firstname: "Super", lastname: "Admin", email: "core@liveui.io", password: "admin".passwordHash(req), disabled: false, su: true)
+        let user = try User(username: "admin", firstname: "Super", lastname: "Admin", email: "core@liveui.io", password: "admin".passwordHash(req), disabled: false, su: true)
+        user.verified = true
+        return user
     }
     
     /// New admin team
