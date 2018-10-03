@@ -72,7 +72,7 @@ extension QueryBuilder {
     public func paginate(on req: Request) throws -> Self {
         if let limit = req.query.basic?.limit {
             let from = req.query.basic?.from ?? 0
-            return range(lower: from, upper: (from + limit))
+            return range(lower: from, upper: (from + (limit - 1)))
         }
         return self
     }

@@ -15,7 +15,6 @@
 	},
 	"mail": {
 		"email": "admin@apicore",
-		"name": "Administrator",
 		"mailgun": {
 			"domain": "sandbox-domain.mailgun.org",
 			"key": "secret-key"
