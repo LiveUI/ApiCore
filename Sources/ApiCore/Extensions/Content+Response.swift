@@ -20,6 +20,10 @@ extension Content {
         }
     }
     
+}
+
+extension Decodable {
+    
     /// Create and fill object from POST data
     public static func fill(post req: Request) throws -> Future<Self> {
         return try req.content.decode(Self.self)
