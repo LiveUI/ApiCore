@@ -6,7 +6,6 @@
 //
 
 import Foundation
-@testable //import DbCore
 @testable import ApiCore
 import Vapor
 import Fluent
@@ -45,7 +44,7 @@ extension TestableProperty where TestableType: Application {
     public static func newApiCoreTestApp(databaseConfig: DatabasesConfig? = nil, _ configClosure: AppConfigClosure? = nil, _ routerClosure: AppRouterClosure? = nil) -> Application {
         let app = new({ (config, env, services) in
             // Reset static configs
-            DbCore.migrationConfig = MigrationConfig()
+            ApiCoreBase.migrationConfig = MigrationConfig()
             ApiCoreBase.middlewareConfig = MiddlewareConfig()
             
             try! ApiCoreBase.configure(&config, &env, &services)

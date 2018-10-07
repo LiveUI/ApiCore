@@ -60,7 +60,7 @@ public class AuthController: Controller {
         }
         
         // Forgotten password
-        router.post("   ") { req -> Future<Response> in
+        router.post("auth", "password-check") { req -> Future<Response> in
             return try User.Auth.Password.fill(post: req).map(to: Response.self) { password in
                 guard try password.validate() else {
                     throw AuthError.invalidPassword(reason: .generic)
@@ -210,8 +210,15 @@ extension AuthController {
     /// Renew token helper
     private static func token(request req: Request, token: String) throws -> Future<Response> {
         return try Token.query(on: req).filter(\Token.token == token.sha()).first().flatMap(to: Response.self) { token in
+            // Check token exists
             guard let token = token else {
                 throw AuthError.authenticationFailed
+            }
+            // If token is expired, delete and fail authentication
+            guard token.expires > Date() else {
+                return token.delete(on: req).map(to: Response.self) { _ in
+                    throw AuthError.expiredToken
+                }
             }
             return User.find(token.userId, on: req).flatMap(to: Response.self) { user in
                 guard let user = user else {

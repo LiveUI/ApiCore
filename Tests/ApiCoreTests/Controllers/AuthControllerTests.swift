@@ -41,6 +41,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testSuccessfulPasswordCheck", testSuccessfulPasswordCheck),
         ("testFailingPasswordCheck", testFailingPasswordCheck),
         ("testHtmlInputRecoveryRequest", testHtmlInputRecoveryRequest),
+        ("testExpiredGetTokenAuthRequest", testExpiredGetTokenAuthRequest),
         ("testLinuxTests", testLinuxTests)
     ]
     
@@ -64,7 +65,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     
     func testValidGetAuthRequest() {
         let req = HTTPRequest.testable.get(uri: "/auth", headers: [
-            "Authorization": "Basic YWRtaW5AbGl2ZXVpLmlvOmFkbWlu"
+            "Authorization": "Basic Y29yZUBsaXZldWkuaW86c3VwM3JTM2NyM3Q="
             ])
         do {
             let r = try app.testable.response(throwingTo: req)
@@ -82,12 +83,12 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             _ = try app.testable.response(throwingTo: req)
             XCTFail()
         } catch {
-            // Should fails
+            // Should fail
         }
     }
     
     func testValidPostAuthRequest() {
-        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "core@liveui.io", password: "admin").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "core@liveui.io", password: "sup3rS3cr3t").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         do {
             let r = try app.testable.response(throwingTo: req)
             
@@ -104,7 +105,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             _ = try app.testable.response(throwingTo: req)
             XCTFail()
         } catch {
-            // Should fails
+            // Should fail
         }
     }
     
@@ -126,13 +127,43 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         }
     }
     
+    func testExpiredGetTokenAuthRequest() {
+        let t = token()
+        
+        let fakeReq = app.testable.fakeRequest()
+        try! Token.query(on: fakeReq).all().wait().forEach({ token in
+            token.expires = Date().addMonth(n: -2)
+            _ = try! token.save(on: fakeReq).wait()
+        })
+        
+        let req = HTTPRequest.testable.get(uri: "/token", headers: [
+            "Authorization": "Token \(t.token)"
+            ])
+        do {
+            let r = try app.testable.response(throwingTo: req)
+            
+            r.response.testable.debug()
+            
+            let data = r.response.testable.content(as: ErrorResponse.self)
+            XCTAssertEqual(data!.error, "auth_error.authentication_failed")
+            XCTAssertEqual(data!.description, "Authentication token has expired")
+            
+            XCTAssertTrue(r.response.testable.has(statusCode: .unauthorized), "Wrong status code")
+            XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+            
+        } catch {
+            print(error)
+            XCTFail()
+        }
+    }
+    
     func testInvalidGetTokenAuthRequest() {
         let req = HTTPRequest.testable.get(uri: "/token", headers: ["Bad-Headers": "For-Sure"])
         do {
             _ = try app.testable.response(throwingTo: req)
             XCTFail()
         } catch {
-            // Should fails
+            // Should fail
         }
     }
     
@@ -210,7 +241,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
 extension AuthControllerTests {
     
     private func finishRecovery(token: String) {
-        let req = HTTPRequest.testable.post(uri: "/auth/finish-recovery?token=" + token)
+        let req = HTTPRequest.testable.post(uri: "/auth/finish-recovery?token=" + token, headers: ["Content-Type": "application/json"])
         
         do {
             let r = try app.testable.response(throwingTo: req)
@@ -219,10 +250,11 @@ extension AuthControllerTests {
             
             let fakeReq = app.testable.fakeRequest()
             let jwtService: JWTService = try fakeReq.make()
-            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let _ = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 XCTFail("Missing payload")
                 return
             }
+            // TODO: Finish test!!!!!!!!!!!
         } catch {
             print(error)
             XCTFail(error.localizedDescription)
@@ -259,14 +291,20 @@ extension AuthControllerTests {
             token = String(mailer.receivedMessage!.text.split(separator: "|")[1])
             XCTAssertEqual(mailer.receivedMessage!.text, """
                 Hi Ondrej Rafaj
+                
                 Please confirm your email dev@liveui.io by clicking on this link \(target)?token=\(token)
+                
                 Recovery code is: |\(token)|
+                
                 Boost team
                 """, "Email has a wrong text")
             XCTAssertEqual(mailer.receivedMessage!.html, """
                 <h1>Hi Ondrej Rafaj</h1>
+                <p>&nbsp;</p>
                 <p>Please confirm your email dev@liveui.io by clicking on this <a href="\(target)?token=\(token)">link</a></p>
+                <p>&nbsp;</p>
                 <p>Recovery code is: <strong>\(token)</strong></p>
+                <p>&nbsp;</p>
                 <p>Boost team</p>
                 """, "Email has a wrong html")
             
@@ -279,7 +317,7 @@ extension AuthControllerTests {
     }
     
     private func token() -> Token.PublicFull {
-        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "core@liveui.io", password: "admin").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
+        let req = try! HTTPRequest.testable.post(uri: "/auth", data: User.Auth.Login(email: "core@liveui.io", password: "sup3rS3cr3t").asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         let r = try! app.testable.response(throwingTo: req)
         r.response.testable.debug()
         let token = r.response.testable.content(as: Token.PublicFull.self)!

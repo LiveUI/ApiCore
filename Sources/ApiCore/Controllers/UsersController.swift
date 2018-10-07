@@ -52,6 +52,7 @@ public class UsersController: Controller {
             }
         }
         
+        // TODO: Turn authenticated registration into invitation and make registrations disableablebleble!!!!!!!!!
         router.post("users") { (req) -> Future<Response> in
             return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { emailConfirmation in
                 return try User.Registration.fill(post: req).flatMap(to: Response.self) { registrationData in

@@ -58,6 +58,9 @@ public enum AuthError: FrontendError {
     /// Authentication has failed
     case authenticationFailed
     
+    /// Authentication token has expired
+    case expiredToken
+    
     /// Server error
     case serverError
     
@@ -85,7 +88,7 @@ public enum AuthError: FrontendError {
     /// Error code
     public var identifier: String {
         switch self {
-        case .authenticationFailed, .invalidEmail, .invalidPassword:
+        case .authenticationFailed, .invalidEmail, .invalidPassword, .expiredToken:
             return "auth_error.authentication_failed"
         case .serverError:
             return "auth_error.server_error"
@@ -105,7 +108,7 @@ public enum AuthError: FrontendError {
     /// HTTP status code for the error
     public var status: HTTPStatus {
         switch self {
-        case .authenticationFailed:
+        case .authenticationFailed, .expiredToken:
             return .unauthorized
         case .invalidEmail, .invalidPassword:
             return .notAcceptable
@@ -121,6 +124,8 @@ public enum AuthError: FrontendError {
         switch self {
         case .authenticationFailed:
             return "Authentication has failed"
+        case .expiredToken:
+            return "Authentication token has expired"
         case .serverError:
             return "Server error"
         case .invalidEmail:
