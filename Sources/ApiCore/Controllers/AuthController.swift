@@ -175,7 +175,7 @@ public class AuthController: Controller {
                         passwordError = (error as? FrontendError) ?? AuthError.invalidPassword(reason: .generic)
                     }
                     
-                    // If no error save
+                    // If there is no error, save
                     if passwordError == nil {
                         user.password = try password.password.passwordHash(req)
                         user.verified = true

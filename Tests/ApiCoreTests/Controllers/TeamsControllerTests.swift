@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-import ApiCore
+@testable import ApiCore
 import Vapor
 import VaporTestTools
 import FluentTestTools
@@ -46,6 +46,9 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         ("testUnlinkUser", testUnlinkUser),
         ("testUnlinkUserThatDoesntExist", testUnlinkUserThatDoesntExist),
         ("testTryUnlinkUserWhereHeIsNot", testTryUnlinkUserWhereHeIsNot),
+        ("testLinkUserSingleTeamUpdateFail", testLinkUserSingleTeamUpdateFail),
+        ("testUnlinkUserSingleTeamUpdateFail", testUnlinkUserSingleTeamUpdateFail),
+        ("testValidTeamNameCheckSingleTeamUpdateFail", testValidTeamNameCheckSingleTeamUpdateFail),
         ("testGetTeamUsers", testGetTeamUsers)
     ]
     
@@ -442,9 +445,106 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         }), "Team 2 should not have been deleted")
     }
     
+    func testSingleTeamDeleteFail() {
+        ApiCoreBase.configuration.general.singleTeam = true
+        
+        var count = app.testable.count(allFor: Team.self)
+        XCTAssertEqual(count, 3)
+        
+        let req = HTTPRequest.testable.delete(uri: "/teams/\(adminTeam.id!.uuidString)", authorizedUser: user1, on: app)
+        let r = app.testable.response(to: req)
+        
+        testSingleTeamFail(r)
+        
+        count = app.testable.count(allFor: Team.self)
+        XCTAssertEqual(count, 3)
+    }
+    
+    func testSingleTeamUpdateFail() {
+        ApiCoreBase.configuration.general.singleTeam = true
+        
+        let testName = "Stay PUT"
+        team1.name = testName
+        team1.identifier = team1.name.safeText
+        
+        let postData = try! team1.asJson()
+        let req = HTTPRequest.testable.put(uri: "/teams/\(team1.id!.uuidString)", data: postData, headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ], authorizedUser: user1, on: app
+        )
+        let r = app.testable.response(to: req)
+        
+        testSingleTeamFail(r)
+    }
+    
+    func testLinkUserSingleTeamUpdateFail() {
+        ApiCoreBase.configuration.general.singleTeam = true
+        
+        var user = User(username: "test", firstname: "Test", lastname: "User", email: "test.user1@liveui.io")
+        user = User.testable.create(user: user, on: app)
+        
+        let postData = try! User.Id(id: user.id!).asJson()
+        let req = HTTPRequest.testable.post(uri: "/teams/\(team1.id!.uuidString)/link", data: postData, headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ], authorizedUser: user1, on: app
+        )
+        let r = app.testable.response(to: req)
+        
+        testSingleTeamFail(r)
+    }
+    
+    func testUnlinkUserSingleTeamUpdateFail() {
+        ApiCoreBase.configuration.general.singleTeam = true
+        
+        var user = User(username: "luv", firstname: "Test", lastname: "User", email: "test.user1@liveui.io")
+        user = User.testable.create(user: user, on: app)
+        let fakeReq = app.testable.fakeRequest()
+        _ = try! team1.users.attach(user, on: fakeReq).wait()
+        
+        let postData = try! User.Id(id: user1.id!).asJson()
+        let req = HTTPRequest.testable.post(uri: "/teams/\(team1.id!.uuidString)/unlink", data: postData, headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ], authorizedUser: user1, on: app
+        )
+        let r = app.testable.response(to: req)
+        
+        r.response.testable.debug()
+        
+        testSingleTeamFail(r)
+    }
+    
+    func testValidTeamNameCheckSingleTeamUpdateFail() {
+        ApiCoreBase.configuration.general.singleTeam = true
+        
+        let postData = try! Team.Identifier(identifier: "unique-name").asJson()
+        let req = HTTPRequest.testable.post(uri: "/teams/check", data: postData, headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ]
+        )
+        
+        do {
+            let _ = try app.testable.response(throwingTo: req)
+            XCTFail("This should fail!")
+        } catch {
+            let error = error as! FrontendError
+            XCTAssertEqual(error.identifier, "team_error.single_team_configuration")
+            XCTAssertEqual(error.reason, "Server is running in a single team configuration")
+        }
+    }
+    
 }
 
 extension TeamsControllerTests {
+    
+    private func testSingleTeamFail(_ r: TestResponse) {
+        r.response.testable.debug()
+        
+        XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
+        
+        let message = r.response.testable.content(as: ErrorResponse.self)!
+        XCTAssertEqual(message.error, "team_error.single_team_configuration")
+        XCTAssertEqual(message.description, "Server is running in a single team configuration")
+    }
     
     @discardableResult private func testTeam(res: Response, originalTeam: Team? = nil) -> Team? {
         let data = res.testable.content(as: Team.self)

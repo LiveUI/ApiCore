@@ -39,15 +39,15 @@ public class InstallController: Controller {
     
     /// Setup routes
     public static func boot(router: Router) throws {
-        router.get("install") { (req)->Future<Response> in
+        router.get("install") { req->Future<Response> in
             return try install(on: req)
         }
         
-        router.get("uninstall") { (req)->Future<Response> in
+        router.get("uninstall") { req->Future<Response> in
             return try uninstall(on: req)
         }
         
-        router.get("reinstall") { (req)->Future<Response> in
+        router.get("reinstall") { req->Future<Response> in
             return try uninstall(on: req).flatMap(to: Response.self) { _ in
                 return try install(on: req).map(to: Response.self) { _ in
                     return try req.response.maintenanceFinished(message: "Re-installation finished, login as core@liveui.io/admin")

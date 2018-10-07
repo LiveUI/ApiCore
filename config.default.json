@@ -1,4 +1,12 @@
 {
+	"general": {
+		"single_team": false
+	},
+	"auth": {
+		"allow_registrations": true,
+		"allow_invitations": true,
+		"registration_domains": []
+	},
 	"server": {
 		"name": "Booster!",
 		"url": "http://localhost:8080",

@@ -57,7 +57,7 @@ extension String {
     }
     
     /// Convert string to boolean if possible
-    func asBool() -> Bool? {
+    public func asBool() -> Bool? {
         switch self.lowercased() {
         case "true", "yes", "1":
             return true
@@ -66,6 +66,17 @@ extension String {
         default:
             return nil
         }
+    }
+    
+    // MARK: Internal tools only (not worth exposing)
+    
+    /// Get domain from an email
+    func domainFromEmail() -> String? {
+        let parts = split(separator: "@")
+        guard parts.count == 2, let domain = parts.last else {
+            return nil
+        }
+        return String(domain.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
     }
     
 }

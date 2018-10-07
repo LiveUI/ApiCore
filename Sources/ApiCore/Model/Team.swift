@@ -164,9 +164,20 @@ extension Team {
     
     /// Does team exist? That is the question!
     public static func exists(identifier: String, on req: Request) throws -> Future<Bool> {
-        return Team.query(on: req).filter(\Team.identifier == identifier).count().map(to: Bool.self, { (count) -> Bool in
+        return query(on: req).filter(\Team.identifier == identifier).count().map(to: Bool.self, { (count) -> Bool in
             return count > 0
         })
+    }
+    
+    /// Returns admin team future
+    public static func adminTeam(on req: Request) -> Future<Team> {
+        return query(on: req).filter(\Team.admin == true).first().map(to: Team.self) { team in
+            guard let team = team else {
+                // TODO: Change to something more clear?!!!
+                throw ErrorsCore.HTTPError.notFound
+            }
+            return team
+        }
     }
     
 }

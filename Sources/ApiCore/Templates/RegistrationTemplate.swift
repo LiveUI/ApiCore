@@ -33,7 +33,7 @@ public class RegistrationTemplate: EmailTemplate {
         <p>&nbsp;</p>
         <p>Verification code is: <strong>#(verification)</strong></p>
         <p>&nbsp;</p>
-        <p>Boost team</p>
+        <p>ApiCore</p>
         """
     
 }

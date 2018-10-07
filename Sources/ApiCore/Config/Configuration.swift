@@ -18,6 +18,51 @@ public final class Configuration: Configurable {
         case invalidConfigurationData
     }
     
+    /// General
+    public final class General: Codable {
+        
+        /// Single team server (all team functionality will be disabled, all new users will be automatically assigned to the main team if enabled)
+        /// (disabled by default)
+        public internal(set) var singleTeam: Bool
+        
+        enum CodingKeys: String, CodingKey {
+            case singleTeam = "single_team"
+        }
+        
+        /// Initializer
+        init(singleTeam: Bool) {
+            self.singleTeam = singleTeam
+        }
+        
+    }
+    
+    /// Authentication
+    public final class Auth: Codable {
+        
+        /// Allow new registrations (enabled by default)
+        public internal(set) var allowRegistrations: Bool
+        
+        /// Allow new registrations (enabled by default)
+        public internal(set) var allowInvitations: Bool
+        
+        /// Domains allowed to go through a self-registration process
+        public internal(set) var allowedDomainsForRegistration: [String]
+        
+        enum CodingKeys: String, CodingKey {
+            case allowRegistrations = "allow_registrations"
+            case allowInvitations = "allow_invitations"
+            case allowedDomainsForRegistration = "registration_domains"
+        }
+        
+        /// Initializer
+        init(allowRegistrations: Bool, allowInvitations: Bool, allowedDomainsForRegistration: [String]) {
+            self.allowRegistrations = allowRegistrations
+            self.allowInvitations = allowInvitations
+            self.allowedDomainsForRegistration = allowedDomainsForRegistration
+        }
+        
+    }
+    
     /// Sertver info
     public final class Server: Codable {
         
@@ -183,6 +228,12 @@ public final class Configuration: Configurable {
         
     }
     
+    /// General settings
+    public internal(set) var general: General
+    
+    /// Authentication settings
+    public internal(set) var auth: Auth
+    
     /// Server info
     public internal(set) var server: Server
     
@@ -199,6 +250,8 @@ public final class Configuration: Configurable {
     public internal(set) var storage: Storage
     
     enum CodingKeys: String, CodingKey {
+        case general
+        case auth
         case server
         case jwtSecret = "jwt_secret"
         case database
@@ -207,7 +260,9 @@ public final class Configuration: Configurable {
     }
     
     /// Initialization
-    public init(server: Server, jwtSecret: String, database: Database, mail: Mail, storage: Storage) {
+    public init(general: General, auth: Auth, server: Server, jwtSecret: String, database: Database, mail: Mail, storage: Storage) {
+        self.general = general
+        self.auth = auth
         self.server = server
         self.jwtSecret = jwtSecret
         self.database = database
@@ -224,7 +279,14 @@ extension Configuration {
     public func loadEnv() {
         // Root
         load("apicore.jwt_secret", to: &jwtSecret)
-
+        
+        // General
+        load("apicore.general.single_team", to: &general.singleTeam)
+        
+        // Auth
+        load("apicore.auth.allow_registrations", to: &auth.allowRegistrations)
+        load("apicore.auth.allow_invitations", to: &auth.allowInvitations)
+        
         // Mail
         load("apicore.mail.email", to: &mail.email)
         

@@ -74,6 +74,14 @@ public class ApiCoreBase {
                     } else {
                         // Create default configuration
                         _configuration = Configuration(
+                            general: Configuration.General(
+                                singleTeam: false
+                            ),
+                            auth: Configuration.Auth(
+                                allowRegistrations: true,
+                                allowInvitations: true,
+                                allowedDomainsForRegistration: []
+                            ),
                             server: Configuration.Server(
                                 name: "API Core!",
                                 url: nil,

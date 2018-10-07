@@ -20,6 +20,9 @@ class TeamsController: Controller {
     enum Error: FrontendError {
         
         /// User has not been found
+        case singleTeamConfiguration
+        
+        /// User has not been found
         case userNotFound
         
         /// You can not add yourself to an unrelated team
@@ -41,6 +44,8 @@ class TeamsController: Controller {
         /// Erro code
         var identifier: String {
             switch self {
+            case .singleTeamConfiguration:
+                return "team_error.single_team_configuration"
             case .userNotFound:
                 return "team_error.user_not_found"
             case .cantAddYourself:
@@ -59,6 +64,8 @@ class TeamsController: Controller {
         /// Error reason
         var reason: String {
             switch self {
+            case .singleTeamConfiguration:
+                return "Server is running in a single team configuration"
             case .userNotFound:
                 return "User not found"
             case .cantAddYourself:
@@ -93,19 +100,22 @@ class TeamsController: Controller {
     
     /// Setup routes
     static func boot(router: Router) throws {
-        router.get("teams") { (req) -> Future<[Team]> in
+        router.get("teams") { req -> Future<[Team]> in
             let me = try req.me.user()
             return try me.teams.query(on: req).paginate(on: req).all().map({ teams in
                 return teams
             })
         }
         
-        router.get("teams", DbIdentifier.parameter) { (req) -> Future<Team> in
+        router.get("teams", DbIdentifier.parameter) { req -> Future<Team> in
             let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id)
         }
         
-        router.post("teams") { (req) -> Future<Response> in
+        router.post("teams") { req -> Future<Response> in
+            guard ApiCoreBase.configuration.general.singleTeam == false else {
+                throw Error.singleTeamConfiguration
+            }
             return try req.content.decode(Team.New.self).flatMap(to: Response.self) { newTeam in
                 return try Team.exists(identifier: newTeam.identifier, on: req).flatMap(to: Response.self) { identifierExists in
                     if identifierExists {
@@ -124,7 +134,10 @@ class TeamsController: Controller {
             }
         }   
         
-        router.post("teams", "check") { (req) -> Future<Response> in
+        router.post("teams", "check") { req -> Future<Response> in
+            guard ApiCoreBase.configuration.general.singleTeam == false else {
+                throw Error.singleTeamConfiguration
+            }
             return try req.content.decode(Team.Identifier.self).flatMap(to: Response.self) { identifierObject in
                 return try Team.exists(identifier: identifierObject.identifier, on: req).map(to: Response.self) { identifierExists in
                     if identifierExists {
@@ -135,7 +148,10 @@ class TeamsController: Controller {
             }
         }
         
-        router.put("teams", DbIdentifier.parameter) { (req) -> Future<Team> in
+        router.put("teams", DbIdentifier.parameter) { req -> Future<Team> in
+            guard ApiCoreBase.configuration.general.singleTeam == false else {
+                throw Error.singleTeamConfiguration
+            }
             let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: Team.self, { team in
                 return try req.content.decode(Team.New.self).flatMap(to: Team.self) { newTeam in
@@ -166,26 +182,46 @@ class TeamsController: Controller {
             }
         }
         
-        router.get("teams", DbIdentifier.parameter, "users") { (req) -> Future<[User]> in
+        router.get("teams", DbIdentifier.parameter, "users") { req -> Future<[User]> in
             let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: [User].self) { (team) -> Future<[User]> in
                 return try team.users.query(on: req).paginate(on: req).all()
             }
         }
         
-        router.post("teams", DbIdentifier.parameter, "link") { (req) -> Future<Response> in
+        router.post("teams", DbIdentifier.parameter, "link") { req -> Future<Response> in
+            guard ApiCoreBase.configuration.general.singleTeam == false else {
+                throw Error.singleTeamConfiguration
+            }
             return try processLinking(request: req, action: .link)
         }
         
-        router.post("teams", DbIdentifier.parameter, "unlink") { (req) -> Future<Response> in
+        router.post("teams", DbIdentifier.parameter, "unlink") { req -> Future<Response> in
+            guard ApiCoreBase.configuration.general.singleTeam == false else {
+                throw Error.singleTeamConfiguration
+            }
             return try processLinking(request: req, action: .unlink)
         }
         
-        router.delete("teams", DbIdentifier.parameter) { (req) -> Future<Response> in
+        router.delete("teams", DbIdentifier.parameter) { req -> Future<Response> in
+            guard ApiCoreBase.configuration.general.singleTeam == false else {
+                throw Error.singleTeamConfiguration
+            }
             // TODO: Reload JWT token if successful with new info
             // QUESTION: Should we make sure user has at least one team?
             let teamId = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: teamId).flatMap(to: Response.self) { (team) -> Future<Response> in
+                // Common delete function
+                func delete(team: Team, request req: Request) throws -> Future<Response> {
+                    if team.admin {
+                        throw Error.unableToDeleteAdminTeam
+                    }
+                    // TODO: Cascade through all team data (that is not shared with other teams, possibly delete users too?) !!!!!!
+                    return team.delete(on: req).map(to: Response.self, { (_) -> Response in
+                        return try req.response.deleted()
+                    })
+                }
+                
                 if let canDelete = ApiCoreBase.deleteTeamWarning {
                     return canDelete(team).flatMap(to: Response.self, { (error) -> Future<Response> in
                         guard let error = error else {
@@ -205,17 +241,6 @@ class TeamsController: Controller {
 
 
 extension TeamsController {
-    
-    /// Delete team
-    private static func delete(team: Team, request req: Request) throws -> Future<Response> {
-        if team.admin {
-            throw Error.unableToDeleteAdminTeam
-        }
-        // TODO: Cascade through all team data (that is not shared with other teams, possibly delete users too?) !!!!!!
-        return team.delete(on: req).map(to: Response.self, { (_) -> Response in
-            return try req.response.deleted()
-        })
-    }
     
     /// Process linking from a request
     private static func processLinking(request req: Request, action: TeamsController.LinkAction) throws -> Future<Response> {
