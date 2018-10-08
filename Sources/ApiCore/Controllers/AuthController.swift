@@ -105,7 +105,7 @@ public class AuthController: Controller {
                             case .success:
                                 return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
                             default:
-                                throw AuthError.recoveryEmailFailedToSend
+                                throw AuthError.emailFailedToSend
                             }
                         }
                     }

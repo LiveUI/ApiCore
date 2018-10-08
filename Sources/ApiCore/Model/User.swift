@@ -16,24 +16,37 @@ import FluentPostgreSQL
 public typealias Users = [User]
 
 
+/// Can create new user
+public protocol UserCreator: Content {
+    
+    /// Create new user
+    func newUser(on req: Request) throws -> User
+    
+}
+
+
 /// User object
 public final class User: DbCoreModel {
     
-    /// Registration object
-    public struct Registration: Content {
+    /// Template object
+    public struct EmailTemplate: Content {
         
-        /// Template object
-        public struct Template: Content {
-            
-            /// Verification
-            public var verification: String
-            
-            /// Server link
-            public var link: String
-            
-            /// User registration
-            public var user: Registration
-        }
+        /// Verification
+        public var verification: String
+        
+        /// Server link
+        public var link: String
+        
+        /// User registration
+        public var user: User
+        
+        /// Sender (for invitations only)
+        public var sender: User?
+        
+    }
+    
+    /// Registration object
+    public struct Registration: UserCreator {
         
         /// Username
         public var username: String
@@ -53,6 +66,26 @@ public final class User: DbCoreModel {
         /// Convert to user
         public func newUser(on req: Request) throws -> User {
             let user = try User(username: username, firstname: firstname, lastname: lastname, email: email, password: password.passwordHash(req), disabled: false, su: false)
+            return user
+        }
+        
+    }
+    
+    /// Invitation object
+    public struct Invitation: UserCreator {
+        
+        /// First name
+        public var firstname: String
+        
+        /// Last name
+        public var lastname: String
+        
+        /// Email
+        public var email: String
+        
+        /// Convert to user
+        public func newUser(on req: Request) throws -> User {
+            let user = User(username: "", firstname: firstname, lastname: lastname, email: email, disabled: false, su: false)
             return user
         }
         

@@ -75,6 +75,9 @@ final class JWTService: Service {
         /// Token for registration email
         case registration = "reg"
         
+        /// Token for invitation email
+        case invitation = "inv"
+        
         /// Password recovery token
         case passwordRecovery = "rec"
         

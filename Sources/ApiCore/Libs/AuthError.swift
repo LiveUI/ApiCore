@@ -82,8 +82,8 @@ public enum AuthError: FrontendError {
     /// Email already exists
     case emailExists
     
-    /// Recovery email failed to be send
-    case recoveryEmailFailedToSend
+    /// Email failed to be send
+    case emailFailedToSend
     
     /// Error code
     public var identifier: String {
@@ -92,8 +92,8 @@ public enum AuthError: FrontendError {
             return "auth_error.authentication_failed"
         case .serverError:
             return "auth_error.server_error"
-        case .recoveryEmailFailedToSend:
-            return "auth.recovery_email_failed"
+        case .emailFailedToSend:
+            return "auth.email_failed"
         case .unverifiedAccount:
             return "auth.unverified_account"
         case .disabledAccount:
@@ -132,8 +132,8 @@ public enum AuthError: FrontendError {
             return "Invalid email"
         case .invalidPassword(let reason):
             return "Invalid password (\(reason.description))"
-        case .recoveryEmailFailedToSend:
-            return "Failed to send password recovery email"
+        case .emailFailedToSend:
+            return "Failed to send an email, please try again or contact system administrator"
         case .unverifiedAccount:
             return "Account has not been verified yet"
         case .disabledAccount:

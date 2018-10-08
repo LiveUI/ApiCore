@@ -45,6 +45,7 @@ public class Templates {
     /// Available templates
     static var templates: [Template.Type] = [
         RegistrationTemplate.self, // Confirm registration email
+        InvitationTemplate.self, // Confirm invitation email
         PasswordRecoveryEmailTemplate.self, // Recovery email
         PasswordRecoveryTemplate.self, // Web page
         InfoWebTemplate.self // Info message (web)

@@ -129,6 +129,66 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
     }
     
+    func testInviteUser() {
+        let post = User.Invitation(firstname: "Lemmy", lastname: "Kilmister", email: "lemmy@liveui.io")
+        let req = try! HTTPRequest.testable.post(uri: "/users/invite", data: post.asJson(), headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ], authorizedUser: user1, on: app)
+        let r = app.testable.response(to: req)
+        
+        r.response.testable.debug()
+        
+        // Check returned data
+        let object = r.response.testable.content(as: User.Display.self)!
+        XCTAssertEqual(object.firstname, post.firstname, "Firstname doesn't match")
+        XCTAssertEqual(object.lastname, post.lastname, "Lastname doesn't match")
+        XCTAssertEqual(object.email, post.email, "Email doesn't match")
+        
+        // Check it has been actually saved
+        let user = app.testable.one(for: User.self, id: object.id!)!
+        XCTAssertEqual(user.username, "", "Username has to be empty")
+        XCTAssertEqual(user.firstname, post.firstname, "Firstname doesn't match")
+        XCTAssertEqual(user.lastname, post.lastname, "Lastname doesn't match")
+        XCTAssertEqual(user.email, post.email, "Email doesn't match")
+        XCTAssertNil(user.password, "Password has to be nil")
+        XCTAssertEqual(user.disabled, false, "Disabled should be false")
+        XCTAssertEqual(user.su, false, "SU should be false")
+        
+        // Test email has been sent (on a mock email client ... obviously)
+        let mailer = try! r.request.make(MailerService.self) as! MailerMock
+        XCTAssertEqual(mailer.receivedMessage!.from, "admin@apicore", "Email has a wrong sender")
+        XCTAssertEqual(mailer.receivedMessage!.to, "lemmy@liveui.io", "Email has a wrong recipient")
+        XCTAssertEqual(mailer.receivedMessage!.subject, "Invitation", "Email has a wrong subject")
+        
+        let token = String(mailer.receivedMessage!.text.split(separator: "|")[1])
+        
+        XCTAssertEqual(mailer.receivedMessage!.text, """
+            Hi Lemmy Kilmister
+            
+            You have been invited to one of our teams by Super Admin (core@liveui.io).
+            You can confirm your registration now by clicking on this link http://localhost:8080/users/accept-invite?token=\(token)
+            
+            Verification code is: |\(token)|
+            
+            ApiCore
+            """, "Email has a wrong text")
+        XCTAssertEqual(mailer.receivedMessage!.html, """
+            <h1>Hi Lemmy Kilmister</h1>
+            <p>&nbsp;</p>
+            <p>
+                You have been invited to one of our teams by Super Admin (core@liveui.io).<br />
+                You can confirm your registration now by clicking on this <a href=\"http://localhost:8080/users/accept-invite?token=\(token)\">link</a>
+            </p>
+            <p>&nbsp;</p>
+            <p>Verification code is: <strong>\(token)</strong></p>
+            <p>&nbsp;</p>
+            <p>ApiCore</p>
+            """, "Email has a wrong html")
+        
+        XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
+        XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+    }
+    
     func testSearchUsersWithoutParams() {
         let req = HTTPRequest.testable.get(uri: "/users/global", authorizedUser: user1, on: app)
         let r = app.testable.response(to: req)

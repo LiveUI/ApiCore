@@ -8,7 +8,7 @@
 import Foundation
 
 
-/// BAsic registration template
+/// Basic registration template
 public class RegistrationTemplate: EmailTemplate {
     
     /// Name of the template
