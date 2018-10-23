@@ -163,6 +163,36 @@ public class UsersController: Controller {
             }
             return try invite(req)
         }
+        
+        router.get("users", "input-invite") { req -> Future<Response> in
+            let jwtService: JWTService = try req.make()
+            
+            guard let token = req.query.token else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            // Get user payload
+            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            try resetPayload.exp.verifyNotExpired()
+            
+            return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+                guard let user = user else {
+                    throw ErrorsCore.HTTPError.notFound
+                }
+                
+                let templateModel = try User.Auth.RecoveryTemplate(
+                    verification: token,
+                    link: "?token=" + token,
+                    user: user,
+                    on: req
+                )
+                
+                let template = try InvitationInputTemplate.parsed(.html, model: templateModel, on: req)
+                return try template.asHtmlResponse(.ok, to: req)
+            }
+        }
     }
     
 }
@@ -209,7 +239,7 @@ extension UsersController {
                 sender: isInvite ? req.me.user() : nil
             )
             
-            let templateType: EmailTemplate.Type = isInvite ? InvitationTemplate.self : RegistrationTemplate.self
+            let templateType: EmailTemplate.Type = isInvite ? InvitationEmailTemplate.self : RegistrationEmailTemplate.self
             
             return try templateType.parsed(
                 model: templateModel,

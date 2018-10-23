@@ -138,7 +138,7 @@ public class AuthController: Controller {
                     on: req
                 )
                 
-                let template = try PasswordRecoveryTemplate.parsed(.html, model: templateModel, on: req)
+                let template = try PasswordRecoveryInputTemplate.parsed(.html, model: templateModel, on: req)
                 return try template.asHtmlResponse(.ok, to: req)
             }
         }

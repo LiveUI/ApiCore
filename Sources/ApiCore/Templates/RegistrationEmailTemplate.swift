@@ -1,5 +1,5 @@
 //
-//  RegistrationTemplate.swift
+//  RegistrationEmailTemplate.swift
 //  ApiCore
 //
 //  Created by Ondrej Rafaj on 23/03/2018.
@@ -9,7 +9,7 @@ import Foundation
 
 
 /// Basic registration template
-public class RegistrationTemplate: EmailTemplate {
+public class RegistrationEmailTemplate: EmailTemplate {
     
     /// Name of the template
     public static var name: String = "registration"

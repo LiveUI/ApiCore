@@ -1,5 +1,5 @@
 //
-//  RegistrationTemplate.swift
+//  PasswordRecoveryInputTemplate.swift
 //  ApiCore
 //
 //  Created by Ondrej Rafaj on 23/03/2018.
@@ -8,7 +8,7 @@
 import Foundation
 
 
-public class PasswordRecoveryTemplate: WebTemplate {
+public class PasswordRecoveryInputTemplate: WebTemplate {
     
     public static var name: String = "password-recovery-web"
     
@@ -101,32 +101,5 @@ public class PasswordRecoveryTemplate: WebTemplate {
     </body>
 </html>
 """
-    
-}
-
-
-public class PasswordRecoveryEmailTemplate: EmailTemplate {
-    
-    public static var name: String = "password-recovery-email"
-    
-    public static var string: String = """
-        Hi #(user.firstname) #(user.lastname)
-        
-        Please confirm your email #(user.email) by clicking on this link #(link)
-        
-        Recovery code is: |#(verification)|
-        
-        Boost team
-        """
-    
-    public static var html: String? = """
-        <h1>Hi #(user.firstname) #(user.lastname)</h1>
-        <p>&nbsp;</p>
-        <p>Please confirm your email #(user.email) by clicking on this <a href="#(link)">link</a></p>
-        <p>&nbsp;</p>
-        <p>Recovery code is: <strong>#(verification)</strong></p>
-        <p>&nbsp;</p>
-        <p>Boost team</p>
-        """
     
 }

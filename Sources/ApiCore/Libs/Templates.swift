@@ -44,11 +44,11 @@ public class Templates {
     
     /// Available templates
     static var templates: [Template.Type] = [
-        RegistrationTemplate.self, // Confirm registration email
-        InvitationTemplate.self, // Confirm invitation email
+        RegistrationEmailTemplate.self, // Confirm registration email
+        InvitationEmailTemplate.self, // Confirm invitation email
         InvitationInputTemplate.self, // Finish invitation web template
         PasswordRecoveryEmailTemplate.self, // Recovery email
-        PasswordRecoveryTemplate.self, // Web page
+        PasswordRecoveryInputTemplate.self, // Web page
         InfoWebTemplate.self // Info message (web)
     ]
     
