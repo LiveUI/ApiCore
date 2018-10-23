@@ -18,7 +18,7 @@ Base for API's that require user & team management including forgotten passwords
 
 #### Install (available in DEBUG mode only!)
 * `[GET] /install` - install base data (admin user, team, etc. Can be also run after `uninstall` to restore all tables)
-* `[GET] /uninstall` - delete all tables (apart from fluent table)
+* `[GET] /uninstall` - delete all tables (reversed migration)
 * `[GET] /database` - show content of the fluent table
 
 #### Authentication
