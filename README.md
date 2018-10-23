@@ -80,9 +80,66 @@ Just add following line package to your `Package.swift` file.
 There is a few ways to configure `ApiCore`. The easiest is through the Environmental variables.
 
 ```
-JWT_SECRET        // Set secret for signing JWT auth tokens. Default is "secret"
-SERVER_URL        // Define server's URL, overrides `X-Forwarded-Proto` header
+CONFIG_PATH            // Path to a configuration file (default one is included `config.default.json`)
+APICORE.JWT_SECRET     // Secret passphrase to sign JWT tokens (mandatory in production)
 ```
+
+Configuration file looks like this
+```json
+{
+	"general": {
+		"single_team": false
+	},
+	"auth": {
+		"allow_registrations": true,
+		"allow_invitations": true,
+		"registration_domains": []
+	},
+	"server": {
+		"name": "Booster!",
+		"url": "http://localhost:8080",
+		"max_upload": 50
+	},
+	"jwt_secret": "secret",
+	"database": {
+		"host": "localhost",
+		"port": 5432,
+		"user": "boost",
+		"password": "aaaaaa",
+		"database": "boost",
+		"logging": false
+	},
+	"mail": {
+		"email": "admin@apicore",
+		"mailgun": {
+			"domain": "sandbox-domain.mailgun.org",
+			"key": "secret-key"
+		}
+    },
+    "storage": {
+        "local": {
+	        "root": "/tmp/Boost"
+        },
+        "s3": {
+	        "enabled": false,
+			"bucket": "my-boost-appstore",
+			"access_key": "my-access-key",
+			"secret_key": "my-secret-key",
+			"region": "us-east-1",
+			"security_token": null
+        }
+    }
+}
+```
+
+Each value can be set through a corresponding environmental variable in a number of formats
+```
+1) apicore.jwt_secret
+2) APICORE.JWT_SECRET
+3) apicore_jwt_secret
+4) APICORE_JWT_SECRET
+```
+
 
 ### Integrationg ApiCore into a Vapor 3 app
 
