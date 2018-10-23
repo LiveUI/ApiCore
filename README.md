@@ -45,6 +45,9 @@ Base for API's that require user & team management including forgotten passwords
 * `[POST] /users` - register new user
 * `[GET] /users/verify` - verify regitered email (registration email/link is send to the user)
 * `[POST] /users/disable` - disable or enable a user (admin team members only)  
+* `[POST] /users/invite` - Invite a user to join the system  
+* `[GET] /users/input-invite` - HTML (templatable) based new user input
+* `[POST] /users/finish-invitation` - Processes data received from the above form  
 
 #### Teams
 * `[GET] /teams` - list all available teams
