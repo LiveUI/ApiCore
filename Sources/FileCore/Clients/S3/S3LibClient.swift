@@ -32,7 +32,7 @@ class S3LibClient: FileManagement, Service {
         })
     }
     
-    /// Save local file
+    /// Save local file to an S3 bucket
     func copy(file path: String, to destination: String, on container: Container) throws -> EventLoopFuture<Void> {
         let url = URL(fileURLWithPath: path)
         let data: Data
@@ -47,10 +47,12 @@ class S3LibClient: FileManagement, Service {
         return try save(file: data, to: destination, mime: (MediaType.fileExtension(url.pathExtension) ?? .plainText), on: container)
     }
     
-    /// Move file
+    /// Move local file to an S3 bucket
     public func move(file path: String, to destination: String, on container: Container) throws -> EventLoopFuture<Void> {
-        // TODO: Implement move on S3 library first!
-        throw Error.notImplemented
+        return try copy(file: path, to: destination, on: container).map(to: Void.self) { void in
+            try FileManager.default.removeItem(atPath: path)
+            return void
+        }
     }
     
     /// Retrieve file
