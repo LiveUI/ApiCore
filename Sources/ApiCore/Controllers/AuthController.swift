@@ -90,9 +90,10 @@ public class AuthController: Controller {
                     
                     let inputLink = req.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery"
                     
-                    let templateModel = try User.Auth.RecoveryTemplate(
+                    let templateModel = try User.Auth.InputTemplate(
                         verification: jwtToken,
                         link: (recoveryData.targetUri ?? inputLink) + "?token=" + jwtToken,
+                        type: .passwordRecovery,
                         user: user,
                         on: req
                     )
@@ -121,19 +122,23 @@ public class AuthController: Controller {
             }
             
             // Get user payload
-            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let jwtPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
-            try resetPayload.exp.verifyNotExpired()
+            try jwtPayload.exp.verifyNotExpired()
+            guard jwtPayload.type == .passwordRecovery else {
+                throw AuthError.invalidToken
+            }
             
-            return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+            return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
                 guard let user = user else {
                     throw ErrorsCore.HTTPError.notFound
                 }
                 
-                let templateModel = try User.Auth.RecoveryTemplate(
+                let templateModel = try User.Auth.InputTemplate(
                     verification: token,
                     link: "?token=" + token,
+                    type: .passwordRecovery,
                     user: user,
                     on: req
                 )
@@ -143,6 +148,7 @@ public class AuthController: Controller {
             }
         }
         
+        // Finish password recovery process
         router.post("auth", "finish-recovery") { req -> Future<Response> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
@@ -150,16 +156,16 @@ public class AuthController: Controller {
             }
             
             // Get user payload
-            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let jwtPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
-            try resetPayload.exp.verifyNotExpired()
-            guard resetPayload.type == .passwordRecovery else {
+            try jwtPayload.exp.verifyNotExpired()
+            guard jwtPayload.type == .passwordRecovery else {
                 throw AuthError.invalidToken
             }
             
             return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
-                return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+                return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
                     // Validate user
                     guard let user = user else {
                         throw ErrorsCore.HTTPError.notFound
@@ -177,14 +183,14 @@ public class AuthController: Controller {
                     
                     // If there is no error, save
                     if passwordError == nil {
-                        user.password = try password.password.passwordHash(req)
+                        user.password = try password.value.passwordHash(req)
                         user.verified = true
                     }
                     
                     // Save new password
                     return user.save(on: req).flatMap(to: Response.self) { user in
-                        if !resetPayload.redirectUri.isEmpty {
-                            return req.redirect(to: resetPayload.redirectUri).asFuture(on: req)
+                        if !jwtPayload.redirectUri.isEmpty {
+                            return req.redirect(to: jwtPayload.redirectUri).asFuture(on: req)
                         } else {
                             let templateModel = try InfoWebTemplate.Model(
                                 title: "Success", // TODO: Translate!!!!

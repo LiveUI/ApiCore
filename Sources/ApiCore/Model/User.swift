@@ -121,14 +121,35 @@ public final class User: DbCoreModel {
         public struct Password: Content {
             
             /// Password
-            public let password: String
+            public let value: String
             
             /// Initializer (optional)
-            public init?(password: String) throws {
-                guard try password.validatePassword() else {
+            public init?(value: String) throws {
+                guard try value.validatePassword() else {
                     throw AuthError.invalidPassword(reason: .generic)
                 }
-                self.password = password
+                self.value = value
+            }
+            
+            enum CodingKeys: String, CodingKey {
+                case value = "password"
+            }
+            
+        }
+        
+        /// Username input
+        public struct Username: Content {
+            
+            /// Password
+            public let value: String
+            
+            /// Initializer (optional)
+            public init?(value: String) throws {
+                self.value = value
+            }
+            
+            enum CodingKeys: String, CodingKey {
+                case value = "username"
             }
             
         }
@@ -165,8 +186,19 @@ public final class User: DbCoreModel {
             
         }
         
-        /// Recovery email template object
-        public struct RecoveryTemplate: Content {
+        /// Input template data model
+        public struct InputTemplate: Content {
+            
+            /// Template type
+            public enum TemplateType {
+                
+                /// Password recovery
+                case passwordRecovery
+                
+                // Invitation
+                case invitation
+                
+            }
             
             /// Verification hash (JWT token)
             public let verification: String
@@ -189,13 +221,14 @@ public final class User: DbCoreModel {
             ///   - verification: Verification token
             ///   - link: Full verification link
             ///   - user: User model
+            ///   - type: Template type (passwordRecovery or invitation)
             ///   - req: Request
             /// - Throws: whatever comes it's way
-            public init(verification: String, link: String? = nil, user: User, on req: Request) throws {
+            public init(verification: String, link: String? = nil, type: TemplateType, user: User, on req: Request) throws {
                 self.verification = verification
                 self.link = link
                 self.user = user
-                finish = req.serverURL().absoluteString.finished(with: "/") + "auth/finish-recovery?token=" + verification
+                finish = req.serverURL().absoluteString.finished(with: "/") + "\(type == .passwordRecovery ? "auth/finish-recovery" : "users/finish-invitation")?token=" + verification
                 system = try FrontendSystemData(req)
             }
             
@@ -227,17 +260,21 @@ public final class User: DbCoreModel {
         /// User disabled
         public var disabled: Bool
         
+        /// User verified
+        public var verified: Bool
+        
         /// Super user
         public var su: Bool
         
         /// Initializer
-        public init(username: String, firstname: String, lastname: String, email: String, disabled: Bool = true, su: Bool = false) {
+        public init(username: String, firstname: String, lastname: String, email: String, disabled: Bool = true, verified: Bool = false, su: Bool = false) {
             self.username = username
             self.firstname = firstname
             self.lastname = lastname
             self.email = email
             self.registered = Date()
             self.disabled = disabled
+            self.verified = verified
             self.su = su
         }
         
@@ -250,6 +287,7 @@ public final class User: DbCoreModel {
             self.email = user.email
             self.registered = user.registered
             self.disabled = user.disabled
+            self.verified = user.verified
             self.su = user.su
         }
         
@@ -425,7 +463,7 @@ extension User {
 extension User.Auth.Password {
     
     public func validate() throws -> Bool {
-        return try password.validatePassword()
+        return try value.validatePassword()
     }
     
 }

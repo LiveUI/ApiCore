@@ -58,6 +58,9 @@ public class InvitationInputTemplate: WebTemplate {
                 margin-top: 6px;
                 font-size: small;
             }
+            input[disabled] {
+                background-color: #F6F6F6;
+            }
             button {
                 margin-top: 22px;
                 color: white;
@@ -89,9 +92,12 @@ public class InvitationInputTemplate: WebTemplate {
             Target is an optional value and if not set a JSON (API) result will be returned.
         */
         <form method="post" action="#(finish)">
-            <h2>Please finish your #(system.info.name) details here:</h2>
+            <h2>Please finish your #(system.info.name) registration here:</h2>
             <p class="input">
-                <label>Username:</label> <input id="username" name="username" type="text" value="" />
+                <label>Email:</label> <input id="email" name="email" type="email" value="#(user.email)" disabled />
+            </p>
+            <p class="input">
+                <label>Username:</label> <input id="username" name="username" type="text" value="#(user.username)" />
             </p>
             <p class="input">
                 <label>Firstname:</label> <input id="firstname" name="firstname" type="text" value="#(user.firstname)" />
@@ -99,6 +105,7 @@ public class InvitationInputTemplate: WebTemplate {
             <p class="input">
                 <label>Lastname:</label> <input id="lastname" name="lastname" type="text" value="#(user.lastname)" />
             </p>
+            <!-- TODO: Check password is valid against the validation endpoint + check the verification password matches it -->
             <p class="input">
                 <label>Password:</label> <input id="password" name="password" type="password" value="" />
             </p>

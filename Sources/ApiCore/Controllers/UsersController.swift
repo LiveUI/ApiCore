@@ -164,6 +164,7 @@ public class UsersController: Controller {
             return try invite(req)
         }
         
+        // Input invitation data
         router.get("users", "input-invite") { req -> Future<Response> in
             let jwtService: JWTService = try req.make()
             
@@ -172,25 +173,95 @@ public class UsersController: Controller {
             }
             
             // Get user payload
-            guard let resetPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+            guard let jwtPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
                 throw ErrorsCore.HTTPError.notAuthorized
             }
-            try resetPayload.exp.verifyNotExpired()
+            try jwtPayload.exp.verifyNotExpired()
+            guard jwtPayload.type == .invitation else {
+                throw AuthError.invalidToken
+            }
             
-            return User.query(on: req).filter(\User.id == resetPayload.userId).first().flatMap(to: Response.self) { user in
+            return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
                 guard let user = user else {
                     throw ErrorsCore.HTTPError.notFound
                 }
                 
-                let templateModel = try User.Auth.RecoveryTemplate(
+                let nick = String(user.email.split(separator: "@")[0])
+                user.username = nick
+                
+                let templateModel = try User.Auth.InputTemplate(
                     verification: token,
                     link: "?token=" + token,
+                    type: .invitation,
                     user: user,
                     on: req
                 )
                 
                 let template = try InvitationInputTemplate.parsed(.html, model: templateModel, on: req)
                 return try template.asHtmlResponse(.ok, to: req)
+            }
+        }
+        
+        // Finish invitation
+        router.post("users", "finish-invitation") { req -> Future<Response> in
+            let jwtService: JWTService = try req.make()
+            guard let token = req.query.token else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            // Get user payload
+            guard let jwtPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            try jwtPayload.exp.verifyNotExpired()
+            guard jwtPayload.type == .invitation else {
+                throw AuthError.invalidToken
+            }
+            
+            return try User.Auth.Username.fill(post: req).flatMap(to: Response.self) { username in
+                return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
+                    return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
+                        // Validate user
+                        guard let user = user else {
+                            throw ErrorsCore.HTTPError.notFound
+                        }
+                        
+                        user.username = username.value
+                        
+                        // Validate new password
+                        var passwordError: FrontendError? = nil
+                        do {
+                            if try !password.validate() {
+                                passwordError = AuthError.invalidPassword(reason: .generic)
+                            }
+                        } catch {
+                            passwordError = (error as? FrontendError) ?? AuthError.invalidPassword(reason: .generic)
+                        }
+                        
+                        // If there is no error, save
+                        if passwordError == nil {
+                            user.password = try password.value.passwordHash(req)
+                            user.verified = true
+                        }
+                        
+                        // Save new password
+                        return user.save(on: req).flatMap(to: Response.self) { user in
+                            if !jwtPayload.redirectUri.isEmpty {
+                                return req.redirect(to: jwtPayload.redirectUri).asFuture(on: req)
+                            } else {
+                                let templateModel = try InfoWebTemplate.Model(
+                                    title: "Success", // TODO: Translate!!!!
+                                    text: "Your account has been created",
+                                    user: user,
+                                    //action: InfoWebTemplate.Model.Action(link: "link", title: "title", text: "text"),
+                                    on: req
+                                )
+                                let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
+                                return try template.asHtmlResponse(.ok, to: req)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -212,12 +283,12 @@ extension UsersController {
         }
     }
     
-    private static func checkExistingUser(email: String, on req: Request) throws -> Future<Bool> {
-        return User.query(on: req).filter(\User.email == email).first().map(to: Bool.self) { existingUser in
-            guard existingUser == nil else {
-                throw AuthError.emailExists
+    private static func checkExistingUser(email: String, on req: Request) -> Future<User?> {
+        return User.query(on: req).filter(\User.email == email).first().map(to: User?.self) { existingUser in
+            guard let existingUser = existingUser else {
+                return nil
             }
-            return true
+            return existingUser
         }
     }
     
@@ -226,7 +297,7 @@ extension UsersController {
             let jwtService = try req.make(JWTService.self)
             let jwtToken = try jwtService.signEmailConfirmation(
                 user: user,
-                type: .registration,
+                type: (isInvite ? .invitation : .registration),
                 redirectUri: targetUri,
                 on: req
             )
@@ -234,7 +305,7 @@ extension UsersController {
             // TODO: Add base64 encoded server image to the template!!!
             let templateModel = try User.EmailTemplate(
                 verification: jwtToken,
-                link: req.serverURL().absoluteString.finished(with: "/") + "users/\(isInvite ? "accept-invite" : "verify")?token=" + jwtToken,
+                link: req.serverURL().absoluteString.finished(with: "/") + "users/\(isInvite ? "input-invite" : "verify")?token=" + jwtToken,
                 user: user,
                 sender: isInvite ? req.me.user() : nil
             )
@@ -265,8 +336,18 @@ extension UsersController {
             try checkDomain(email: emailConfirmation.email) // Check if domain is allowed in the system
             
             return try User.Invitation.fill(post: req).flatMap(to: Response.self) { data in
-                return try checkExistingUser(email: data.email, on: req).flatMap(to: Response.self) { _ in
-                    let user = try data.newUser(on: req)
+                return checkExistingUser(email: data.email, on: req).flatMap(to: Response.self) { existingUser in
+                    let user: User
+                    if let existingUser = existingUser {
+                        if existingUser.verified == true {
+                            // QUESTION: Do we want a more specific error? In this case no need to re-send invite as user is already registered
+                            throw AuthError.emailExists
+                        } else {
+                            user = existingUser
+                        }
+                    } else {
+                        user = try data.newUser(on: req)
+                    }
                     
                     if ApiCoreBase.configuration.general.singleTeam == true { // Single team scenario
                         return Team.adminTeam(on: req).flatMap(to: Response.self) { singleTeam in
@@ -291,7 +372,10 @@ extension UsersController {
             try checkDomain(email: emailConfirmation.email) // Check if domain is allowed in the system
             
             return try User.Registration.fill(post: req).flatMap(to: Response.self) { data in
-                return try checkExistingUser(email: data.email, on: req).flatMap(to: Response.self) { _ in
+                return checkExistingUser(email: data.email, on: req).flatMap(to: Response.self) { user in
+                    guard user == nil else {
+                        throw AuthError.emailExists
+                    }
                     let user = try data.newUser(on: req)
                     
                     if ApiCoreBase.configuration.general.singleTeam == true { // Single team scenario

@@ -32,6 +32,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         "/auth/input-recovery",
         "/token",
         "/users/verify",
+        "/users/input-invite",
         
         // Helpers
         "/ping",
@@ -60,6 +61,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
         
         // User management
         "/users",
+        "/users/finish-invitation",
         "/teams/check"
     ]
     
