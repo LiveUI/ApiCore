@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
-          "revision": "30b6cf38322838d1e973e0626c6abf9602b03cf5",
-          "version": "1.0.9"
+          "revision": "a960efc2759c8816b00baed5db7b3d903a402e78",
+          "version": "1.0.14"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
         "state": {
           "branch": null,
-          "revision": "ce36f72f2c36b88f847de50c8c0ed8021ff80097",
-          "version": "1.0.16"
+          "revision": "fb4e74cd8eb3ce4a2b860fbf727b2dada796d77d",
+          "version": "1.0.22"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
         "state": {
           "branch": null,
-          "revision": "a8e24ec6db452ed202502ebae885b39f43e34d98",
-          "version": "1.0.16"
+          "revision": "e2af36601f91b3cefa371c00ecdcb62fef1d000a",
+          "version": "1.0.22"
         }
       },
       {
@@ -35,15 +35,6 @@
           "branch": null,
           "revision": "2e370814715c3557bb1cbdcd96e610ce29e83e45",
           "version": "0.2.0"
-        }
-      },
-      {
-        "package": "CommonCrypto",
-        "repositoryURL": "https://github.com/IBM-Swift/CommonCrypto.git",
-        "state": {
-          "branch": null,
-          "revision": "9156d238dbc4c15455b77b45e721b2bb0b995e31",
-          "version": "1.0.0"
         }
       },
       {
@@ -60,8 +51,8 @@
         "repositoryURL": "https://github.com/vapor/core.git",
         "state": {
           "branch": null,
-          "revision": "eb876a758733166a4fb20f3f0a17b480c5ea563e",
-          "version": "3.4.3"
+          "revision": "96ce86ebf9198328795c4b9cb711489460be083c",
+          "version": "3.4.4"
         }
       },
       {
@@ -69,8 +60,8 @@
         "repositoryURL": "https://github.com/vapor/crypto.git",
         "state": {
           "branch": null,
-          "revision": "4b85405430df1892ee3aa1554bdb477e96cf46ad",
-          "version": "3.2.0"
+          "revision": "5605334590affd4785a5839806b4504407e054ac",
+          "version": "3.3.0"
         }
       },
       {
@@ -96,8 +87,8 @@
         "repositoryURL": "https://github.com/vapor/fluent.git",
         "state": {
           "branch": null,
-          "revision": "270b6fa372f03809b9795e8f8b9d1c31267a0ff3",
-          "version": "3.0.0"
+          "revision": "dc258fe53880f80508df317df3c903ee2c2b9317",
+          "version": "3.1.0"
         }
       },
       {
@@ -123,8 +114,8 @@
         "repositoryURL": "https://github.com/vapor/http.git",
         "state": {
           "branch": null,
-          "revision": "9e3eff9dfa4df7fc282bf27f801c72b3ffbfd984",
-          "version": "3.1.4"
+          "revision": "272b22be8cb3364e42a4701c2e0676e37480ec5a",
+          "version": "3.1.5"
         }
       },
       {
@@ -177,8 +168,8 @@
         "repositoryURL": "https://github.com/vapor/postgresql.git",
         "state": {
           "branch": null,
-          "revision": "dffb708a82b09f30c2ebc3268e9117da87a3364f",
-          "version": "1.0.2"
+          "revision": "c8b01a35efae6737e8d896440f5eec9b219571d9",
+          "version": "1.1.0"
         }
       },
       {
@@ -195,7 +186,7 @@
         "repositoryURL": "https://github.com/LiveUI/S3.git",
         "state": {
           "branch": "master",
-          "revision": "9a7e7aa5486396665a792eed6489499ef33c344b",
+          "revision": "438923a6fa0a61723d9066eeecb066dbd290c3ec",
           "version": null
         }
       },
@@ -222,8 +213,8 @@
         "repositoryURL": "https://github.com/vapor/sql.git",
         "state": {
           "branch": null,
-          "revision": "bfbaa048f9e655218611b65da470efa7deb16616",
-          "version": "2.0.2"
+          "revision": "a35cf1dced4ddd32bb2dc8b6e765aea7bcf8d6e0",
+          "version": "2.1.0"
         }
       },
       {
@@ -339,8 +330,8 @@
         "repositoryURL": "https://github.com/vapor/websocket.git",
         "state": {
           "branch": null,
-          "revision": "149af03348f60ac8b84defdf277112d62fd8c704",
-          "version": "1.0.2"
+          "revision": "eb4277f75f1d96a3d15c852cdd89af1799093dcd",
+          "version": "1.1.0"
         }
       },
       {

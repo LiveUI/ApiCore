@@ -47,14 +47,6 @@ public class InstallController: Controller {
             return try uninstall(on: req)
         }
         
-        router.get("reinstall") { req->Future<Response> in
-            return try uninstall(on: req).flatMap(to: Response.self) { _ in
-                return try install(on: req).map(to: Response.self) { _ in
-                    return try req.response.maintenanceFinished(message: "Re-installation finished, login as core@liveui.io/admin")
-                }
-            }
-        }
-        
         router.get("database") { req in
             // TODO: Show table names and other info
             return FluentDesign.query(on: req).all()
@@ -82,12 +74,8 @@ extension InstallController {
     private static func uninstall(on req: Request) throws -> Future<Response> {
         var futures: [Future<Void>] = []
         return req.requestPooledConnection(to: .db).flatMap(to: Response.self) { connection in
-            for model in ApiCoreBase.models {
-                futures.append(connection.query(PostgreSQLQuery.raw("DROP TABLE IF EXISTS \(model.entity)", binds: [])).flatten())
-            }
-            return futures.flatten(on: req).flatMap(to: Void.self) { _ in
-                return FluentDesign.query(on: req).delete()
-            }.map(to: Response.self) { _ in
+            futures.append(ApiCoreBase.migrationConfig.revertAll(on: req))
+            return futures.flatten(on: req).map(to: Response.self) { _ in
                 return try req.response.maintenanceFinished(message: "Uninstall finished, there are no data nor tables in the database; Please run `/install` before you continue")
             }
         }

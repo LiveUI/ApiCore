@@ -7,7 +7,7 @@ import MailCore
 
 public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ services: inout Services) throws {
     print("Starting ApiCore by LiveUI")
-    sleep(10)
+    sleep(3)
     Env.print()
     
     // Register routes
