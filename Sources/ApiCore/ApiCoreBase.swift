@@ -269,7 +269,7 @@ public class ApiCoreBase {
     }
     
     /// Boot routes for all registered controllers
-    static func boot(router: Router) throws {
+    public static func boot(router: Router) throws {
         let secureRouter = router.grouped(ApiAuthMiddleware.self)
         let debugRouter = router.grouped(DebugCheckMiddleware.self)
         
