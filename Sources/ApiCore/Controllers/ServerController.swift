@@ -16,7 +16,7 @@ import ImageCore
 public class ServerController: Controller {
     
     /// Setup routes
-    public static func boot(router: Router) throws {
+    public static func boot(router: Router, secure: Router, debug: Router) throws {
         // Get server info
         router.get("info") { req -> Info in
             let info = try Info(req)

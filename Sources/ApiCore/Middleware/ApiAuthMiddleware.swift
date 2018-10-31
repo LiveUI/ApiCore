@@ -18,83 +18,9 @@ import JWT
 /// API authentication  middleware
 public final class ApiAuthMiddleware: Middleware, Service {
     
-    /// Security types
-    enum Security: String {
-        case unsecured = "Unsecured"
-        case secured = "Secured"
-        case maintenance = "Maintenance"
-    }
-    
-    /// GET URL's allowed to run without authorization
-    public static var allowedGetUri: [String] = [
-        // Authentication
-        "/auth",
-        "/auth/input-recovery",
-        "/token",
-        "/users/verify",
-        "/users/input-invite",
-        
-        // Helpers
-        "/ping",
-        "/teapot",
-        
-        /// Server info
-        "/info",
-        "/server/favicon",
-        "/server/image",
-        "/server/image/16",
-        "/server/image/64",
-        "/server/image/128",
-        "/server/image/192",
-        "/server/image/256",
-        "/server/image/512",
-    ]
-    
-    /// POST URL's allowed to run without authorization
-    public static var allowedPostUri: [String] = [
-        // Authentication
-        "/auth",
-        "/auth/start-recovery",
-        "/auth/finish-recovery",
-        "/auth/password-check",
-        "/token",
-        
-        // User management
-        "/users",
-        "/users/finish-invitation",
-        "/teams/check"
-    ]
-    
-    /// URL's allowed to run only in debug/developement mode
-    public static var debugUri: [String] = [
-        "/demo",
-        "/install",
-        "/database",
-        "/reinstall",
-        "/uninstall"
-    ]
-    
     /// Respond to method of the middleware
     public func respond(to req: Request, chainingTo next: Responder) throws -> Future<Response> {
         debug(request: req)
-        
-        // Maintenance URI
-        if ApiAuthMiddleware.debugUri.contains(req.http.url.path) {
-            self.printUrl(req: req, type: .maintenance)
-            if req.environment == .production {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            return try next.respond(to: req)
-        }
-        
-        // Unsecured URI
-        if self.allowed(request: req) {
-            self.printUrl(req: req, type: .unsecured)
-            return try next.respond(to: req)
-        }
-        
-        // Secured
-        self.printUrl(req: req, type: .secured)
         
         guard let userPayload = try? jwtPayload(request: req) else {
             return try req.response.notAuthorized().asFuture(on: req)
@@ -130,7 +56,7 @@ public final class ApiAuthMiddleware: Middleware, Service {
     
     /// Debug
     private func debug(request req: Request) {
-        if ApiCoreBase.debugRequests {
+        if req.environment != .production, ApiCoreBase.debugRequests {
             req.http.body.consumeData(max: 500, on: req).addAwaiter { (d) in
                 print("Debugging response:")
                 print("HTTP [\(req.http.version.major).\(req.http.version.minor)] with status code [\(req.http)]")
@@ -143,25 +69,6 @@ public final class ApiAuthMiddleware: Middleware, Service {
                     print("\tContent:\n\(s)")
                 }
             }
-        }
-    }
-    
-    /// Is request allowed un-authenticated?
-    private func allowed(request req: Request) -> Bool {
-        if req.http.method == .GET {
-            return ApiAuthMiddleware.allowedGetUri.contains(req.http.url.path)
-        } else if req.http.method == .POST {
-            return ApiAuthMiddleware.allowedPostUri.contains(req.http.url.path)
-        } else if req.http.method == .OPTIONS {
-            return true
-        }
-        return false
-    }
-    
-    /// Print URL
-    private func printUrl(req: Request, type: Security) {
-        if req.environment != .production {
-            print("\(type.rawValue): [\(req.http.method)] \(req.http.url.path)")
         }
     }
     

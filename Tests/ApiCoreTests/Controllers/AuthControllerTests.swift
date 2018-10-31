@@ -192,7 +192,7 @@ class AuthControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     }
     
     func testSuccessfulPasswordCheck() {
-        let data = try! User.Auth.Password(password: "p4sswoRd!")
+        let data = try! User.Auth.Password(value: "p4sswoRd!")
         let req = try! HTTPRequest.testable.post(uri: "/auth/password-check", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         do {
             let r = try app.testable.response(throwingTo: req)

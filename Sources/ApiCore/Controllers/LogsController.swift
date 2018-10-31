@@ -19,14 +19,14 @@ import FluentPostgreSQL
 public class LogsController: Controller {
     
     /// Setup routes
-    public static func boot(router: Router) throws {
+    public static func boot(router: Router, secure: Router, debug: Router) throws {
         // Print out logged errors
-        router.get("errors") { req -> Future<[ErrorLog]> in
+        secure.get("errors") { req -> Future<[ErrorLog]> in
             return ErrorLog.query(on: req).sort(\ErrorLog.added, .descending).all()
         }
         
         // Flush system logs
-        router.get("flush") { req -> Response in
+        debug.get("flush") { req -> Response in
             fflush(stdout)
             return try req.response.success(status: .ok, code: "system", description: "Flushed")
         }

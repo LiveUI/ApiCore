@@ -38,18 +38,20 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         ("testUpdateSingleTeam", testUpdateSingleTeam),
         ("testDeleteSingleTeam", testDeleteSingleTeam),
         ("testDeleteAdminTeam", testDeleteAdminTeam),
-        ("testUnableToDeleteOtherPeoplesTeam", testUnableToDeleteOtherPeoplesTeam),
+        ("testGetTeamUsers", testGetTeamUsers),
         ("testLinkUser", testLinkUser),
         ("testTryLinkUserWhereHeIs", testTryLinkUserWhereHeIs),
         ("testLinkUserThatDoesntExist", testLinkUserThatDoesntExist),
         ("testUnlinkYourselfWhenLastUser", testUnlinkYourselfWhenLastUser),
         ("testUnlinkUser", testUnlinkUser),
         ("testUnlinkUserThatDoesntExist", testUnlinkUserThatDoesntExist),
+        ("testUnableToDeleteOtherPeoplesTeam", testUnableToDeleteOtherPeoplesTeam),
+        ("testSingleTeamDeleteFail", testSingleTeamDeleteFail),
+        ("testSingleTeamUpdateFail", testSingleTeamUpdateFail),
         ("testTryUnlinkUserWhereHeIsNot", testTryUnlinkUserWhereHeIsNot),
         ("testLinkUserSingleTeamUpdateFail", testLinkUserSingleTeamUpdateFail),
         ("testUnlinkUserSingleTeamUpdateFail", testUnlinkUserSingleTeamUpdateFail),
-        ("testValidTeamNameCheckSingleTeamUpdateFail", testValidTeamNameCheckSingleTeamUpdateFail),
-        ("testGetTeamUsers", testGetTeamUsers)
+        ("testValidTeamNameCheckSingleTeamUpdateFail", testValidTeamNameCheckSingleTeamUpdateFail)
     ]
     
     func testLinuxTests() {
@@ -62,6 +64,8 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         super.setUp()
         
         app = Application.testable.newApiCoreTestApp()
+        
+        ApiCoreBase.configuration.general.singleTeam = false
         
         setupTeams()
     }

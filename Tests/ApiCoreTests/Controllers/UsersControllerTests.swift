@@ -31,6 +31,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testLinuxTests", testLinuxTests),
         ("testGetUsers", testGetUsers),
         ("testRegisterUser", testRegisterUser),
+        ("testInviteUser", testInviteUser),
         ("testSearchUsersWithoutParams", testSearchUsersWithoutParams),
         ("testRegistrationsHaveBeenDisabled", testRegistrationsHaveBeenDisabled),
         ("testRegisterUserValidDomain", testRegisterUserValidDomain),
@@ -48,6 +49,8 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         super.setUp()
         
         app = Application.testable.newApiCoreTestApp()
+        
+        ApiCoreBase.configuration.mail.email = "admin@apicore"
         
         setupUsers()
     }
@@ -166,7 +169,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             Hi Lemmy Kilmister
             
             You have been invited to one of our teams by Super Admin (core@liveui.io).
-            You can confirm your registration now by clicking on this link http://localhost:8080/users/accept-invite?token=\(token)
+            You can confirm your registration now by clicking on this link http://localhost:8080/users/input-invite?token=\(token)
             
             Verification code is: |\(token)|
             
@@ -177,7 +180,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             <p>&nbsp;</p>
             <p>
                 You have been invited to one of our teams by Super Admin (core@liveui.io).<br />
-                You can confirm your registration now by clicking on this <a href=\"http://localhost:8080/users/accept-invite?token=\(token)\">link</a>
+                You can confirm your registration now by clicking on this <a href=\"http://localhost:8080/users/input-invite?token=\(token)\">link</a>
             </p>
             <p>&nbsp;</p>
             <p>Verification code is: <strong>\(token)</strong></p>

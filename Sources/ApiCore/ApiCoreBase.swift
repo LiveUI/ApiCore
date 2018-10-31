@@ -248,8 +248,13 @@ public class ApiCoreBase {
         services.register(ErrorsCoreMiddleware(environment: env, log: PrintLogger()))
         
         // Authentication
-        middlewareConfig.use(ApiAuthMiddleware.self)
         services.register(ApiAuthMiddleware())
+        
+        // Debugging
+        if !env.isRelease {
+            middlewareConfig.use(UrlPrinterMiddleware.self)
+            services.register(UrlPrinterMiddleware())
+        }
         
         services.register { _ in
             JWTService(secret: configuration.jwtSecret)
@@ -265,8 +270,11 @@ public class ApiCoreBase {
     
     /// Boot routes for all registered controllers
     public static func boot(router: Router) throws {
+        let secureRouter = router.grouped(ApiAuthMiddleware.self)
+        let debugRouter = router.grouped(DebugCheckMiddleware.self)
+        
         for c in controllers {
-            try c.boot(router: router)
+            try c.boot(router: router, secure: secureRouter, debug: debugRouter)
         }
     }
     

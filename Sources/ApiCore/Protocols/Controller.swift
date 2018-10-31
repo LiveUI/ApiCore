@@ -13,6 +13,6 @@ import Vapor
 public protocol Controller {
     
     /// Boot controller and register all it's routes
-    static func boot(router: Router) throws
+    static func boot(router: Router, secure: Router, debug: Router) throws
     
 }

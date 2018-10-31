@@ -20,7 +20,7 @@ import Leaf
 public class AuthController: Controller {
     
     /// Setup routes
-    public static func boot(router: Router) throws {
+    public static func boot(router: Router, secure: Router, debug: Router) throws {
         // Authenticate with username and password in an Authorization header
         router.get("auth") { req -> Future<Response> in
             guard let token = req.http.headers.authorizationToken, let decoded = token.base64Decoded else {

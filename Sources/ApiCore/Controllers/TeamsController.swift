@@ -99,20 +99,20 @@ class TeamsController: Controller {
     }
     
     /// Setup routes
-    static func boot(router: Router) throws {
-        router.get("teams") { req -> Future<[Team]> in
+    static func boot(router: Router, secure: Router, debug: Router) throws {
+        secure.get("teams") { req -> Future<[Team]> in
             let me = try req.me.user()
             return try me.teams.query(on: req).paginate(on: req).all().map({ teams in
                 return teams
             })
         }
         
-        router.get("teams", DbIdentifier.parameter) { req -> Future<Team> in
+        secure.get("teams", DbIdentifier.parameter) { req -> Future<Team> in
             let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id)
         }
         
-        router.post("teams") { req -> Future<Response> in
+        secure.post("teams") { req -> Future<Response> in
             guard ApiCoreBase.configuration.general.singleTeam == false else {
                 throw Error.singleTeamConfiguration
             }
@@ -148,7 +148,7 @@ class TeamsController: Controller {
             }
         }
         
-        router.put("teams", DbIdentifier.parameter) { req -> Future<Team> in
+        secure.put("teams", DbIdentifier.parameter) { req -> Future<Team> in
             guard ApiCoreBase.configuration.general.singleTeam == false else {
                 throw Error.singleTeamConfiguration
             }
@@ -182,28 +182,28 @@ class TeamsController: Controller {
             }
         }
         
-        router.get("teams", DbIdentifier.parameter, "users") { req -> Future<[User]> in
+        secure.get("teams", DbIdentifier.parameter, "users") { req -> Future<[User]> in
             let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: [User].self) { (team) -> Future<[User]> in
                 return try team.users.query(on: req).paginate(on: req).all()
             }
         }
         
-        router.post("teams", DbIdentifier.parameter, "link") { req -> Future<Response> in
+        secure.post("teams", DbIdentifier.parameter, "link") { req -> Future<Response> in
             guard ApiCoreBase.configuration.general.singleTeam == false else {
                 throw Error.singleTeamConfiguration
             }
             return try processLinking(request: req, action: .link)
         }
         
-        router.post("teams", DbIdentifier.parameter, "unlink") { req -> Future<Response> in
+        secure.post("teams", DbIdentifier.parameter, "unlink") { req -> Future<Response> in
             guard ApiCoreBase.configuration.general.singleTeam == false else {
                 throw Error.singleTeamConfiguration
             }
             return try processLinking(request: req, action: .unlink)
         }
         
-        router.delete("teams", DbIdentifier.parameter) { req -> Future<Response> in
+        secure.delete("teams", DbIdentifier.parameter) { req -> Future<Response> in
             guard ApiCoreBase.configuration.general.singleTeam == false else {
                 throw Error.singleTeamConfiguration
             }

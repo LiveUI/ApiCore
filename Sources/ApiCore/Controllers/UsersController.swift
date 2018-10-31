@@ -53,8 +53,8 @@ public class UsersController: Controller {
     }
     
     /// Setup routes
-    public static func boot(router: Router) throws {
-        router.get("users") { req -> Future<[User.Display]> in
+    public static func boot(router: Router, secure: Router, debug: Router) throws {
+        secure.get("users") { req -> Future<[User.Display]> in
             if let search = req.query.search {
                 // TODO: MVP! Display only users in my team or within my reach as there are emails available here!!!!!!!!!!!!!!!!!!!!!!!!!!
                 return try User.query(on: req).decode(User.Display.self).group(.or) { or in
@@ -68,7 +68,7 @@ public class UsersController: Controller {
             }
         }
         
-        router.get("users", "global") { req -> Future<[User.AllSearch]> in
+        secure.get("users", "global") { req -> Future<[User.AllSearch]> in
             if let search = req.query.search {
                 return try User.query(on: req).group(.or) { or in
                     or.filter(\User.firstname ~~ search)
@@ -88,7 +88,7 @@ public class UsersController: Controller {
             }
         }
         
-        router.post("users", "disable") { req -> Future<User> in
+        secure.post("users", "disable") { req -> Future<User> in
             return try User.Disable.fill(post: req).flatMap(to: User.self) { disable in
                 return User.query(on: req).filter(\User.id == disable.id).first().flatMap(to: User.self) { user in
                     guard let user = user else {
@@ -107,7 +107,7 @@ public class UsersController: Controller {
             }
         }
     
-        router.get("users", "verify") { req -> Future<Response> in
+        secure.get("users", "verify") { req -> Future<Response> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -157,7 +157,7 @@ public class UsersController: Controller {
         }
         
         // Invitation
-        router.post("users", "invite") { req -> Future<Response> in
+        secure.post("users", "invite") { req -> Future<Response> in
             guard ApiCoreBase.configuration.auth.allowInvitations == true else {
                 throw Error.invitationsNotPermitted
             }

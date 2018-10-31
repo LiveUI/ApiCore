@@ -38,16 +38,16 @@ public class InstallController: Controller {
     }
     
     /// Setup routes
-    public static func boot(router: Router) throws {
-        router.get("install") { req->Future<Response> in
+    public static func boot(router: Router, secure: Router, debug: Router) throws {
+        debug.get("install") { req->Future<Response> in
             return try install(on: req)
         }
         
-        router.get("uninstall") { req->Future<Response> in
+        debug.get("uninstall") { req->Future<Response> in
             return try uninstall(on: req)
         }
         
-        router.get("database") { req in
+        debug.get("database") { req in
             // TODO: Show table names and other info
             return FluentDesign.query(on: req).all()
         }

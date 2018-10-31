@@ -13,7 +13,7 @@ import Vapor
 public class GenericController: Controller {
     
     /// Setup routes
-    public static func boot(router: Router) throws {
+    public static func boot(router: Router, secure: Router, debug: Router) throws {
         // Any uknown GET URL
         router.get(PathComponent.anything) { req in
             return try req.response.badUrl()
