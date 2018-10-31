@@ -147,7 +147,7 @@ public class ApiCoreBase {
     public static var installFutures: [InstallFutureClosure] = []
     
     /// Registered Controllers with the API, these need to have a boot method to setup their routing
-    static var controllers: [Controller.Type] = [
+    public static var controllers: [Controller.Type] = [
         GenericController.self,
         InstallController.self,
         AuthController.self,
@@ -269,7 +269,7 @@ public class ApiCoreBase {
     }
     
     /// Boot routes for all registered controllers
-    public static func boot(router: Router) throws {
+    static func boot(router: Router) throws {
         let secureRouter = router.grouped(ApiAuthMiddleware.self)
         let debugRouter = router.grouped(DebugCheckMiddleware.self)
         
