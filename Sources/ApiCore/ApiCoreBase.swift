@@ -249,6 +249,7 @@ public class ApiCoreBase {
         
         // Authentication
         services.register(ApiAuthMiddleware())
+        services.register(DebugCheckMiddleware())
         
         // Debugging
         if !env.isRelease {
