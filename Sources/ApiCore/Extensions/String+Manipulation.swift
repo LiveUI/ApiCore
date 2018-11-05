@@ -85,7 +85,7 @@ extension String {
 extension Optional where Wrapped == String {
     
     /// Convert optional string to boolean
-    func asBool() -> Bool {
+    public func asBool() -> Bool {
         switch self?.lowercased() {
         case "true", "yes", "1":
             return true
