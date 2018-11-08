@@ -1009,7 +1009,7 @@ public struct Logo {
 extension Logo {
     
     /// Create logo from data
-    public static func create(from data: Data, mime: MediaType? = nil, on req: Request) throws -> Future<Void> {
+    public static func create(from data: Data, mime: MediaType? = nil, path: String = "server/image/", minSize: UInt = 512, on req: Request) throws -> Future<Void> {
         guard let mime = mime ?? data.imageFileMediaType(), let gdMime = mime.gdMime() else {
             throw ImageError.invalidImageFormat
         }
@@ -1023,7 +1023,7 @@ extension Logo {
         }
         
         // Image too small
-        if size.width < 512 {
+        if size.width < minSize {
             throw Error.imageTooSmall(size)
         }
         
@@ -1039,12 +1039,12 @@ extension Logo {
         
         // Save all images
         let fm = try req.makeFileCore()
-        return try fm.save(file: faviconData, to: "server/image/\(IconSize.favicon.rawValue)", mime: mime, on: req).flatMap({ _ in
-            return try fm.save(file: at1xData, to: "server/image/\(IconSize.at1x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                return try fm.save(file: at2xData, to: "server/image/\(IconSize.at2x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                    return try fm.save(file: at3xData, to: "server/image/\(IconSize.at3x.rawValue)", mime: mime, on: req).flatMap({ _ in
-                        return try fm.save(file: regData, to: "server/image/\(IconSize.regular.rawValue)", mime: mime, on: req).flatMap({ _ in
-                            return try fm.save(file: largeData, to: "server/image/\(IconSize.large.rawValue)", mime: mime, on: req)
+        return try fm.save(file: faviconData, to: "\(path)\(IconSize.favicon.rawValue)", mime: mime, on: req).flatMap({ _ in
+            return try fm.save(file: at1xData, to: "\(path)\(IconSize.at1x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                return try fm.save(file: at2xData, to: "\(path)\(IconSize.at2x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                    return try fm.save(file: at3xData, to: "\(path)\(IconSize.at3x.rawValue)", mime: mime, on: req).flatMap({ _ in
+                        return try fm.save(file: regData, to: "\(path)\(IconSize.regular.rawValue)", mime: mime, on: req).flatMap({ _ in
+                            return try fm.save(file: largeData, to: "\(path)\(IconSize.large.rawValue)", mime: mime, on: req)
                         })
                     })
                 })

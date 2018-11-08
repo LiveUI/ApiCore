@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-//import DbCore
+import ImageCore
 import ErrorsCore
 
 
@@ -201,6 +201,67 @@ class TeamsController: Controller {
                 throw Error.singleTeamConfiguration
             }
             return try processLinking(request: req, action: .unlink)
+        }
+        
+        // Retrieve a team image of specific size
+        router.get("teams", DbIdentifier.parameter, "icon", Int.parameter) { req -> Future<Response> in
+            let id = try req.parameters.next(DbIdentifier.self)
+            let sizeString = try req.parameters.next(Int.self)
+            
+            guard let size = IconSize(rawValue: sizeString) else {
+                throw Logo.Error.invalidSize
+            }
+            let fm = try req.makeFileCore()
+            return try fm.get(file: "team/\(id.uuidString)/image/\(size.rawValue)", on: req).map(to: Response.self) { data in
+                let response = try req.response.image(data)
+                return response
+            }
+        }
+        
+        // Retrieve a team image (favicon)
+        router.get("teams", DbIdentifier.parameter, "favicon") { req -> Future<Response> in
+            let id = try req.parameters.next(DbIdentifier.self)
+            
+            let fm = try req.makeFileCore()
+            return try fm.get(file: "team/\(id.uuidString)/image/\(IconSize.favicon.rawValue)", on: req).map(to: Response.self) { data in
+                let response = try req.response.image(data)
+                return response
+            }
+        }
+        
+        // Retrieve a team image (large)
+        router.get("teams", DbIdentifier.parameter, "icon") { req -> Future<Response> in
+            let id = try req.parameters.next(DbIdentifier.self)
+            
+            let fm = try req.makeFileCore()
+            return try fm.get(file: "team/\(id.uuidString)/image/\(IconSize.at3x.rawValue)", on: req).map(to: Response.self) { data in
+                let response = try req.response.image(data)
+                return response
+            }
+        }
+
+        
+        secure.post("teams", DbIdentifier.parameter, "icon") { req -> Future<Response> in
+            let id = try req.parameters.next(DbIdentifier.self)
+            
+            // Accept image max 1Mb
+            return req.http.body.consumeData(max: 1_000_000, on: req).flatMap({ data in
+                guard data.isWebImage() else {
+                    throw ImageError.invalidImageFormat
+                }
+                
+                return try Logo.create(from: data, path: "team/\(id.uuidString)/image/", minSize: 50, on: req).map({ _ in
+                    return try req.response.noContent()
+                })
+            })
+        }
+        
+        secure.delete("teams", DbIdentifier.parameter, "icon") { req -> Future<Response> in
+            let id = try req.parameters.next(DbIdentifier.self)
+            let fm = try req.makeFileCore()
+            return try fm.delete(file: "team/\(id.uuidString)/image", on: req).map(to: Response.self) { data in
+                return try req.response.noContent()
+            }
         }
         
         secure.delete("teams", DbIdentifier.parameter) { req -> Future<Response> in

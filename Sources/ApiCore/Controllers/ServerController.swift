@@ -29,7 +29,7 @@ public class ServerController: Controller {
                 guard isAdmin else {
                     throw ErrorsCore.HTTPError.notAuthorizedAsAdmin
                 }
-                // Accept image max 500Kb
+                // Accept image max 1Mb
                 return req.http.body.consumeData(max: 1_000_000, on: req).flatMap({ data in
                     guard data.isWebImage() else {
                         throw ImageError.invalidImageFormat
