@@ -239,7 +239,6 @@ class TeamsController: Controller {
                 return response
             }
         }
-
         
         secure.post("teams", DbIdentifier.parameter, "icon") { req -> Future<Response> in
             let id = try req.parameters.next(DbIdentifier.self)

@@ -71,6 +71,9 @@ public final class Configuration: Configurable {
         
         /// Server URL
         public internal(set) var url: String?
+
+        ///
+        public internal(set) var pathPrefix: String?
         
         /// Max upload filesize (in Mb, default is 2Mb)
         public internal(set) var maxUploadFilesize: Double?
@@ -79,6 +82,7 @@ public final class Configuration: Configurable {
             case name
             case url
             case maxUploadFilesize = "max_upload"
+            case pathPrefix = "path_prefix"
         }
         
         /// Initializer
@@ -305,6 +309,7 @@ extension Configuration {
         // Server
         load("apicore.server.name", to: &server.name)
         load("apicore.server.url", to: &server.url)
+        load("apicore.server.path_prefix", to: &server.pathPrefix)
         load("apicore.server.max_upload_filesize", to: &server.maxUploadFilesize)
 
         // Storage (Local)

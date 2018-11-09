@@ -271,11 +271,18 @@ public class ApiCoreBase {
     
     /// Boot routes for all registered controllers
     public static func boot(router: Router) throws {
-        let secureRouter = router.grouped(ApiAuthMiddleware.self)
-        let debugRouter = router.grouped(DebugCheckMiddleware.self)
+        let group: Router
+        if let prefix = configuration.server.pathPrefix {
+            group = router.grouped(prefix)
+        } else {
+            group = router
+        }
+        
+        let secureRouter = group.grouped(ApiAuthMiddleware.self)
+        let debugRouter = group.grouped(DebugCheckMiddleware.self)
         
         for c in controllers {
-            try c.boot(router: router, secure: secureRouter, debug: debugRouter)
+            try c.boot(router: group, secure: secureRouter, debug: debugRouter)
         }
     }
     
