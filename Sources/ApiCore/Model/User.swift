@@ -236,6 +236,20 @@ public final class User: DbCoreModel {
         
     }
     
+    /// Update input
+    public struct Update: Content {
+        
+        /// First name
+        public var firstname: String?
+        
+        /// Last name
+        public var lastname: String?
+        
+        /// Password
+        public var password: String?
+        
+    }
+    
     /// User displayable object
     public final class Display: DbCoreModel {
         

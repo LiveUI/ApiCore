@@ -156,6 +156,32 @@ public class UsersController: Controller {
             return try register(req)
         }
         
+        // Modify user
+        // TODO: TESTS!!!!!!!!!!!!!!!!
+        router.put("users", DbIdentifier.parameter) { req -> Future<User.Display> in
+            let userId = try req.parameters.next(DbIdentifier.self)
+            guard try req.me.user().id == userId else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            return try req.content.decode(User.Update.self).flatMap(to: User.Display.self) { data in
+                let user = try req.me.user()
+                if let firstname = data.firstname {
+                    user.firstname = firstname
+                }
+                if let lastname = data.lastname {
+                    user.lastname = lastname
+                }
+                if let password = data.password {
+                    user.password = try password.passwordHash(req)
+                }
+                
+                return user.save(on: req).map(to: User.Display.self) { user in
+                    return user.asDisplay()
+                }
+            }
+        }
+        
         // Invitation
         secure.post("users", "invite") { req -> Future<Response> in
             guard ApiCoreBase.configuration.auth.allowInvitations == true else {
