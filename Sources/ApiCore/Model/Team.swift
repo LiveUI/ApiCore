@@ -9,7 +9,6 @@ import Foundation
 import Vapor
 import Fluent
 import FluentPostgreSQL
-//import DbCore
 import ErrorsCore
 import ImageCore
 
@@ -27,9 +26,17 @@ public final class Team: DbCoreModel {
         /// Team identifier already exists
         case identifierAlreadyExists
         
+        /// Invalid team
+        case invalidTeam
+        
         /// Error identifier
         public var identifier: String {
-            return "app_error.identifier_already_exists"
+            switch self {
+            case .identifierAlreadyExists:
+                return "team_error.identifier_already_exists"
+            case .invalidTeam:
+                return "team_error.invalid_team"
+            }
         }
         
         /// Error HTTP status code
@@ -42,6 +49,8 @@ public final class Team: DbCoreModel {
             switch self {
             case .identifierAlreadyExists:
                 return "Team identifier already exists"
+            case .invalidTeam:
+                return "Invalid team"
             }
         }
         
