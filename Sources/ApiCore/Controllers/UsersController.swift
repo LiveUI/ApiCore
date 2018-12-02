@@ -156,6 +156,12 @@ public class UsersController: Controller {
             return try register(req)
         }
         
+        // Me
+        secure.get("users", "me") { req -> User.Display in
+            let user = try req.me.user()
+            return user.asDisplay()
+        }
+        
         // Modify user
         // TODO: TESTS!!!!!!!!!!!!!!!!
         router.put("users", DbIdentifier.parameter) { req -> Future<User.Display> in
