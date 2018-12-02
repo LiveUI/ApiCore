@@ -8,7 +8,8 @@
 		"registration_domains": []
 	},
 	"server": {
-		"name": "Booster!",
+		"name": "ApiCore!",
+		"subtitle": "API core functionality!",
 		"url": "http://localhost:8080",
 		"max_upload": 50
 	},
