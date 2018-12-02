@@ -69,6 +69,9 @@ public final class Configuration: Configurable {
         /// Server name
         public internal(set) var name: String
         
+        /// Server subtitle (motto, etc)
+        public internal(set) var subtitle: String?
+        
         /// Server URL
         public internal(set) var url: String?
 
@@ -80,14 +83,16 @@ public final class Configuration: Configurable {
         
         enum CodingKeys: String, CodingKey {
             case name
+            case subtitle
             case url
             case maxUploadFilesize = "max_upload"
             case pathPrefix = "path_prefix"
         }
         
         /// Initializer
-        init(name: String, url: String?, maxUploadFilesize: Double?) {
+        init(name: String, subtitle: String? = nil, url: String?, maxUploadFilesize: Double?) {
             self.name = name
+            self.subtitle = subtitle
             self.url = url
             self.maxUploadFilesize = maxUploadFilesize
         }
@@ -308,6 +313,7 @@ extension Configuration {
 
         // Server
         load("apicore.server.name", to: &server.name)
+        load("apicore.server.subtitle", to: &server.subtitle)
         load("apicore.server.url", to: &server.url)
         load("apicore.server.path_prefix", to: &server.pathPrefix)
         load("apicore.server.max_upload_filesize", to: &server.maxUploadFilesize)
