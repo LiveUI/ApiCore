@@ -122,6 +122,9 @@ public final class Team: DbCoreModel {
     /// Admin team
     public var admin: Bool
     
+    /// Has icon
+    public var icon: Bool
+    
     /// Initializer
     public init(id: DbIdentifier? = nil, name: String, identifier: String, color: String? = nil, initials: String? = nil, admin: Bool = false) {
         self.name = name
@@ -129,6 +132,7 @@ public final class Team: DbCoreModel {
         self.color = color ?? Color.randomColor().hexValue
         self.initials = initials ?? name.initials
         self.admin = admin
+        self.icon = false
     }
     
 }
@@ -151,12 +155,13 @@ extension Team: Migration {
     /// Migration preparations
     public static func prepare(on connection: ApiCoreConnection) -> Future<Void> {
         return Database.create(self, on: connection) { (schema) in
-            schema.field(for: \.id, isIdentifier: true)
-            schema.field(for: \.name, type: .varchar(40), .notNull)
-            schema.field(for: \.identifier, type: .varchar(40), .notNull)
-            schema.field(for: \.color, type: .varchar(6), .notNull)
-            schema.field(for: \.initials, type: .varchar(2), .notNull)
-            schema.field(for: \.admin, type: .bool, .notNull)
+            schema.field(for: \Team.id, isIdentifier: true)
+            schema.field(for: \Team.name, type: .varchar(40), .notNull)
+            schema.field(for: \Team.identifier, type: .varchar(40), .notNull)
+            schema.field(for: \Team.color, type: .varchar(6), .notNull)
+            schema.field(for: \Team.initials, type: .varchar(2), .notNull)
+            schema.field(for: \Team.admin, type: .bool, .notNull)
+            schema.field(for: \Team.icon, type: .bool, .notNull)
         }
     }
     
