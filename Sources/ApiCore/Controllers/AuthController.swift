@@ -63,13 +63,13 @@ public class AuthController: Controller {
             guard let tokenString = req.http.headers.authorizationToken else {
                 throw AuthError.authenticationFailed
             }
-            return try AuthManager.logout(request: req, token: tokenString)
+            return try AuthManager.logout(allFor: tokenString, on: req)
         }
         
         // Logout and delete ALL active tokens for the user (POST)
         router.post("logout", "all") { req -> Future<Response> in
             return try req.content.decode(User.Auth.Token.self).flatMap(to: Response.self) { (loginData) -> Future<Response> in
-                return try AuthManager.logout(request: req, token: loginData.token)
+                return try AuthManager.logout(allFor: loginData.token, on: req)
             }
         }
         

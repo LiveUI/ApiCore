@@ -12,7 +12,7 @@ import FluentPostgreSQL
 
 public class AuthManager {
     
-    public static func logout(request req: Request, token: String) throws -> Future<Response> {
+    public static func logout(allFor token: String, on req: Request) throws -> Future<Response> {
         return try get(userFor: token, on: req).flatMap(to: Response.self) { token in
             return try Token.query(on: req).filter(\Token.userId == token.userId).delete().asResponse(to: req)
         }
