@@ -26,6 +26,8 @@ Base for API's that require user & team management including forgotten passwords
 * `[POST] /auth` - POST based authentication
 * `[GET] /token` - header based JWT token refresh
 * `[POST] /token` - POST based JWT token refresh
+* `[GET] /logout` - logout and delete ALL active tokens for the user
+* `[POST] /logout` - Logout and delete ALL active tokens for the user (POST)
 * `[POST] /auth/password-check` - Check password validity (is the password strong enough)
 * `[POST] /auth/start-recovery` - Start password recovery
 * `[GET] /auth/input-recovery` - HTML (templatable) based new password input
