@@ -89,10 +89,10 @@ public class ServerController: Controller {
                 if user != nil {
                     security.issues.append(
                         ServerSecurity.Issue(
-                        category: .danger,
-                        code: "default_user_exists",
-                        issue: "Default user with publicly known username and password exists (core@liveui.io/sup3rS3cr3t). Please change the password or delete the user."
-                    )
+                            category: .danger,
+                            code: "default_user_exists",
+                            issue: "Default user with publicly known username and password exists (core@liveui.io/sup3rS3cr3t). Please change the password or delete the user."
+                        )
                     )
                 }
                 return security

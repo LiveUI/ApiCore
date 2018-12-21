@@ -38,6 +38,8 @@ Base for API's that require user & team management including forgotten passwords
 * `[GET] /server/image` - 512px large icon
 * `[DELETE] /server/image` - delete server icon, default one will be used instead
 * `[GET] /server/favicon` - 16x16 px favicon (PNG format)
+* `[GET] /server/security` - Shows an array of security concerns ready to be displayed in user dialogs
+* `[GET] /server/commit` - Shows the content of a file `./Resources/commit.txt` which can be edited during an automated deployment
 
 #### Users
 * `[GET] /users` - get list of connected users within your teams (searchable)
