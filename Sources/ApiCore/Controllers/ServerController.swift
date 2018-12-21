@@ -24,7 +24,7 @@ public class ServerController: Controller {
         }
         
         // Upload a server image (admin only)
-        router.post("server", "image") { req -> Future<Response> in
+        secure.post("server", "image") { req -> Future<Response> in
             return try req.me.isSystemAdmin().flatMap(to: Response.self) { isAdmin in
                 guard isAdmin else {
                     throw ErrorsCore.HTTPError.notAuthorizedAsAdmin
@@ -75,10 +75,27 @@ public class ServerController: Controller {
         }
         
         // Remove server images (all sizes)
-        router.delete("server", "image") { req -> Future<Response> in
+        secure.delete("server", "image") { req -> Future<Response> in
             let fm = try req.makeFileCore()
             return try fm.delete(file: "server/image", on: req).map(to: Response.self) { data in
                 return try req.response.noContent()
+            }
+        }
+        
+        // Check server security
+        secure.get("server", "security") { req -> Future<ServerSecurity> in
+            return UsersManager.get(user: "core@liveui.io", password: "sup3rS3cr3t", on: req).map(to: ServerSecurity.self) { user in
+                let security = ServerSecurity()
+                if user != nil {
+                    security.issues.append(
+                        ServerSecurity.Issue(
+                        category: .danger,
+                        code: "default_user_exists",
+                        issue: "Default user with publicly known username and password exists (core@liveui.io/sup3rS3cr3t). Please change the password or delete the user."
+                    )
+                    )
+                }
+                return security
             }
         }
     }

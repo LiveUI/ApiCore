@@ -8,7 +8,6 @@
 import Foundation
 import Vapor
 import FluentPostgreSQL
-//import DbCore
 import Crypto
 import ErrorsCore
 import Random
@@ -244,14 +243,11 @@ extension AuthController {
         guard !login.email.isEmpty, !login.password.isEmpty else {
             throw AuthError.authenticationFailed
         }
-        return User.query(on: req).filter(\User.email == login.email).first().flatMap(to: Response.self) { user in
-            guard let user = user, let password = user.password, login.password.verify(against: password) else {
+        return UsersManager.get(user: login.email, password: login.password, on: req).flatMap(to: Response.self) { user in
+            guard let user = user else {
                 throw AuthError.authenticationFailed
             }
-            guard user.verified == true else {
-                throw AuthError.unverifiedAccount
-            }
-            guard user.disabled == false else {
+            guard user.verified == true, user.disabled == false else {
                 throw AuthError.unverifiedAccount
             }
             
