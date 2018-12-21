@@ -10,7 +10,7 @@
 [![Vapor 3](https://img.shields.io/badge/vapor-3.0-blue.svg?style=flat)](https://vapor.codes)
 
 
-Base for API's that require user & team management including forgotten passwords, etc. This library should contain all the basic endpoints neccessary to make your own SaaS platform similar to a github's own user management.
+Base for API's that require user & team management including forgotten passwords, etc. This library should contain all the basic endpoints necessary to make your own SaaS platform similar to a github's own user management.
 
 > ***Warning!**: This system is only designed to work with **PostgreSQL** at the moment!*
 
@@ -45,9 +45,9 @@ Base for API's that require user & team management including forgotten passwords
 
 #### Users
 * `[GET] /users` - get list of connected users within your teams (searchable)
-* `[GET] /users/global` - search users globally, personal info ommited, email MD5 added for gravatar 
+* `[GET] /users/global` - search users globally, personal info omitted, email MD5 added for Gravatar 
 * `[POST] /users` - register new user
-* `[GET] /users/verify` - verify regitered email (registration email/link is send to the user)
+* `[GET] /users/verify` - verify registered email (registration email/link is send to the user)
 * `[POST] /users/disable` - disable or enable a user (admin team members only)  
 * `[POST] /users/invite` - Invite a user to join the system  
 * `[GET] /users/input-invite` - HTML (templatable) based new user input
@@ -231,7 +231,7 @@ Ondrej Rafaj (@rafiki270 on [Github](https://github.com/rafiki270), [Twitter](ht
 ## License
 
 ApiCore is distributed under an Apache 2 license and can be shared or used freely within the bounds of the license itself.
-Most third party components used (like Vapor framework and all it’s components) in this software are MIT licensed.
+Most third party components used (like Vapor framework and all its components) in this software are MIT licensed.
 List of all used software is listed in the repository. All components are available in the dependencies folder.
 
 See the LICENSE file for more info.
