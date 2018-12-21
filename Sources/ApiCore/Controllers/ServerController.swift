@@ -102,7 +102,7 @@ public class ServerController: Controller {
         // Get the current commit (if available)
         debug.get("server", "commit") { req -> String in
             let config = DirectoryConfig.detect()
-            let url = URL(fileURLWithPath: config.workDir).appendingPathComponent("Resources")
+            let url = URL(fileURLWithPath: config.workDir).appendingPathComponent("Resources").appendingPathComponent("commit.txt")
             if FileManager.default.fileExists(atPath: url.path), let commit = try? String(contentsOfFile: url.path) {
                 return commit
             } else {
