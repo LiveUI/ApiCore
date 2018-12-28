@@ -159,7 +159,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         r.response.testable.debug()
         
         let data = r.response.testable.content(as: ErrorResponse.self)!
-        XCTAssertEqual(data.error, "app_error.identifier_already_exists")
+        XCTAssertEqual(data.error, "team_error.identifier_already_exists")
         XCTAssertEqual(data.description, "Team identifier already exists")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
