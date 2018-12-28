@@ -11,6 +11,12 @@ import ErrorsCore
 import FileCore
 import ImageCore
 
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
 
 /// Server routes
 public class ServerController: Controller {
@@ -108,6 +114,12 @@ public class ServerController: Controller {
             } else {
                 throw ErrorsCore.HTTPError.notFound
             }
+        }
+        
+        // Flush stdout
+        debug.get("server", "flush") { req -> String in
+            fflush(stdout)
+            return "done"
         }
     }
     
