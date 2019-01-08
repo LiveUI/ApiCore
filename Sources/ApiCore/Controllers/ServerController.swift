@@ -55,29 +55,17 @@ public class ServerController: Controller {
             guard let size = IconSize(rawValue: sizeString) else {
                 throw Logo.Error.invalidSize
             }
-            let fm = try req.makeFileCore()
-            return try fm.get(file: "server/image/\(size.rawValue)", on: req).map(to: Response.self) { data in
-                let response = try req.response.image(data)
-                return response
-            }
+            return try ServerIcon.icon(size: size, on: req).mapToImageResponse(on: req)
         }
         
         // Retrieve a server image (favicon)
         router.get("server", "favicon") { req -> Future<Response> in
-            let fm = try req.makeFileCore()
-            return try fm.get(file: "server/image/\(IconSize.favicon.rawValue)", on: req).map(to: Response.self) { data in
-                let response = try req.response.image(data)
-                return response
-            }
+            return try ServerIcon.icon(size: .favicon, on: req).mapToImageResponse(on: req)
         }
         
         // Retrieve a server image (large)
         router.get("server", "image") { req -> Future<Response> in
-            let fm = try req.makeFileCore()
-            return try fm.get(file: "server/image/\(IconSize.large.rawValue)", on: req).map(to: Response.self) { data in
-                let response = try req.response.image(data)
-                return response
-            }
+            return try ServerIcon.icon(size: .large, on: req).mapToImageResponse(on: req)
         }
         
         // Remove server images (all sizes)
@@ -90,18 +78,15 @@ public class ServerController: Controller {
         
         // Check server security
         secure.get("server", "security") { req -> Future<ServerSecurity> in
-            return UsersManager.get(user: "core@liveui.io", password: "sup3rS3cr3t", on: req).map(to: ServerSecurity.self) { user in
-                let security = ServerSecurity()
-                if user != nil {
-                    security.issues.append(
-                        ServerSecurity.Issue(
-                            category: .danger,
-                            code: "default_user_exists",
-                            issue: "Default user with publicly known username and password exists (core@liveui.io/sup3rS3cr3t). Please change the password or delete the user."
-                        )
-                    )
+            let security = try SecurityAudit.issues(for: req)
+            let configuration = try ConfigurationAudit.issues(for: req)
+            return security.flatMap(to: ServerSecurity.self) { issues in
+                let sec = ServerSecurity()
+                sec.issues = issues
+                return configuration.map(to: ServerSecurity.self) { issues in
+                    sec.issues.append(contentsOf: issues)
+                    return sec
                 }
-                return security
             }
         }
         

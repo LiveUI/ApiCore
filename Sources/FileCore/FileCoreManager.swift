@@ -165,6 +165,11 @@ public class FileCoreManager: CoreManager, Service {
         return try client.delete(file: path, on: container)
     }
     
+    /// Check if file exists
+    public func exists(file path: String, on container: Container) throws -> EventLoopFuture<Bool> {
+        return try client.exists(file: path, on: container)
+    }
+    
     /// Initializer
     ///
     /// - parameters:

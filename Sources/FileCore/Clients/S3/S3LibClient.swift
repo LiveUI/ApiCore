@@ -71,6 +71,15 @@ class S3LibClient: FileManagement, Service {
         })
     }
     
+    /// Check if file exists
+    public func exists(file path: String, on container: Container) throws -> EventLoopFuture<Bool> {
+        return try s3.get(file: path, on: container).map(to: Bool.self) { file in
+            return true
+        }.catchMap({ error in
+            return false
+        })
+    }
+    
     /// Initializer
     init(_ config: S3Signer.Config, bucket: String) throws {
         self.config = config

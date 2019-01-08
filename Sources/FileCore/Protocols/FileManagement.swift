@@ -61,6 +61,16 @@ public protocol FileManagement {
     ///     - Future<Void>
     func delete(file: String, on: Container) throws -> Future<Void>
     
+    
+    /// Check if file exists
+    ///
+    /// - Parameters:
+    ///   - file: Path to the file
+    ///     - on: Container to execure the operation on
+    /// - returns:
+    ///     - Future<Bool>
+    func exists(file: String, on: Container) throws -> Future<Bool>
+    
 }
 
 // MARK: - Private helpers

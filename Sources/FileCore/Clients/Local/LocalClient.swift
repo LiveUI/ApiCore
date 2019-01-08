@@ -126,6 +126,17 @@ public class LocalClient: FileManagement, Service {
         return promise.futureResult
     }
     
+    /// Check if file exists
+    public func exists(file path: String, on container: Container) throws -> EventLoopFuture<Bool> {
+        let url = self.path(file: path)
+        let promise = container.eventLoop.newPromise(Bool.self)
+        Async.dispatchQueue.async {
+            let fileExists = FileManager.default.fileExists(atPath: url.path)
+            promise.succeed(result: fileExists)
+        }
+        return promise.futureResult
+    }
+    
     /// Initializer
     init(_ config: LocalConfig) {
         self.config = config
