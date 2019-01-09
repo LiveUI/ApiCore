@@ -79,8 +79,9 @@ public class ApiCoreBase {
                             ),
                             auth: Configuration.Auth(
                                 allowRegistrations: true,
+                                allowedDomainsForRegistration: [],
                                 allowInvitations: true,
-                                allowedDomainsForRegistration: []
+                                allowedDomainsForInvitations: []
                             ),
                             server: Configuration.Server(
                                 name: "API Core!",

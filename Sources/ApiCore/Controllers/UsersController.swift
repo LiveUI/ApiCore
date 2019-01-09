@@ -304,12 +304,12 @@ public class UsersController: Controller {
 
 extension UsersController {
     
-    private static func checkDomain(email: String) throws {
-        if !ApiCoreBase.configuration.auth.allowedDomainsForRegistration.isEmpty {
+    private static func checkDomain(email: String, for allowedDomains: [String]) throws {
+        if !allowedDomains.isEmpty {
             guard let domain = email.domainFromEmail(), !domain.isEmpty else {
                 throw Error.domainNotAllowedForRegistration
             }
-            guard ApiCoreBase.configuration.auth.allowedDomainsForRegistration.contains(domain) else {
+            guard allowedDomains.contains(domain) else {
                 throw Error.domainNotAllowedForRegistration
             }
         }
@@ -365,7 +365,15 @@ extension UsersController {
     
     private static func invite(_ req: Request) throws -> Future<Response> {
         return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { emailConfirmation in
-            try checkDomain(email: emailConfirmation.email) // Check if domain is allowed in the system
+            if !ApiCoreBase.configuration.auth.allowedDomainsForInvitations.isEmpty {
+                guard ApiCoreBase.configuration.auth.allowInvitations == true else {
+                    throw Error.invitationsNotPermitted
+                }
+            }
+            try checkDomain(
+                email: emailConfirmation.email,
+                for: ApiCoreBase.configuration.auth.allowedDomainsForInvitations
+            ) // Check if domain is allowed in the system
             
             return try User.Invitation.fill(post: req).flatMap(to: Response.self) { data in
                 return checkExistingUser(email: data.email, on: req).flatMap(to: Response.self) { existingUser in
@@ -401,7 +409,10 @@ extension UsersController {
     
     private static func register(_ req: Request) throws -> Future<Response> {
         return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { emailConfirmation in
-            try checkDomain(email: emailConfirmation.email) // Check if domain is allowed in the system
+            try checkDomain(
+                email: emailConfirmation.email,
+                for: ApiCoreBase.configuration.auth.allowedDomainsForRegistration
+            ) // Check if domain is allowed in the system
             
             return try User.Registration.fill(post: req).flatMap(to: Response.self) { data in
                 return checkExistingUser(email: data.email, on: req).flatMap(to: Response.self) { user in

@@ -42,23 +42,28 @@ public final class Configuration: Configurable {
         /// Allow new registrations (enabled by default)
         public internal(set) var allowRegistrations: Bool
         
+        /// Domains allowed to go through a self-registration process
+        public internal(set) var allowedDomainsForRegistration: [String]
+        
         /// Allow new registrations (enabled by default)
         public internal(set) var allowInvitations: Bool
         
         /// Domains allowed to go through a self-registration process
-        public internal(set) var allowedDomainsForRegistration: [String]
+        public internal(set) var allowedDomainsForInvitations: [String]
         
         enum CodingKeys: String, CodingKey {
             case allowRegistrations = "allow_registrations"
-            case allowInvitations = "allow_invitations"
             case allowedDomainsForRegistration = "registration_domains"
+            case allowInvitations = "allow_invitations"
+            case allowedDomainsForInvitations = "invitation_domains"
         }
         
         /// Initializer
-        init(allowRegistrations: Bool, allowInvitations: Bool, allowedDomainsForRegistration: [String]) {
+        init(allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String]) {
             self.allowRegistrations = allowRegistrations
             self.allowInvitations = allowInvitations
             self.allowedDomainsForRegistration = allowedDomainsForRegistration
+            self.allowedDomainsForInvitations = allowedDomainsForInvitations
         }
         
     }
@@ -294,7 +299,9 @@ extension Configuration {
         
         // Auth
         load("apicore.auth.allow_registrations", to: &auth.allowRegistrations)
-        load("apicore.auth.allow_invitations", to: &auth.allowInvitations)
+        load("apicore.auth.registration_domains", to: &auth.allowedDomainsForRegistration)
+        load("apicore.auth.allow_registrations", to: &auth.allowInvitations)
+        load("apicore.auth.invitation_domains", to: &auth.allowedDomainsForInvitations)
         
         // Mail
         load("apicore.mail.email", to: &mail.email)

@@ -4,8 +4,9 @@
 	},
 	"auth": {
 		"allow_registrations": true,
+		"registration_domains": [],
 		"allow_invitations": true,
-		"registration_domains": []
+		"invitation_domains": []
 	},
 	"server": {
 		"name": "ApiCore!",

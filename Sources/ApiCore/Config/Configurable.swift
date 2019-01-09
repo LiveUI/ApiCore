@@ -71,6 +71,13 @@ extension Configurable {
         }
     }
     
+    /// Load an array of comma separated strings from ENW
+    public func load(_ key: String, to property: inout [String]) {
+        if let value = self.property(key: key) {
+            property = value.replacingOccurrences(of: ", ", with: ",").split(separator: ",").map({ String($0) })
+        }
+    }
+    
     /// Read property
     public func property(key: String) -> String? {
         let value = (Environment.get(key) ?? Environment.get(key.uppercased()) ?? Environment.get(key.snake_cased()) ?? Environment.get(key.snake_cased().uppercased()))
