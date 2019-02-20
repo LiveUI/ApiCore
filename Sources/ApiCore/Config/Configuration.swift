@@ -307,7 +307,6 @@ extension Configuration {
         load("apicore.mail.email", to: &mail.email)
         
         load("apicore.mail.mailgun.domain", to: &mail.mailgun.domain)
-        load("apicore.mail.mailgun.domain", to: &mail.mailgun.domain)
         load("apicore.mail.mailgun.key", to: &mail.mailgun.key)
 
         // Database
