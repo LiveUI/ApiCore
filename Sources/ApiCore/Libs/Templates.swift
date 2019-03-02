@@ -43,7 +43,7 @@ public class Templates {
     }
     
     /// Available templates
-    static var templates: [Template.Type] = [
+    public static var templates: [Template.Type] = [
         RegistrationEmailTemplate.self, // Confirm registration email
         InvitationEmailTemplate.self, // Confirm invitation email
         InvitationInputTemplate.self, // Finish invitation web template
