@@ -85,7 +85,7 @@ extension InstallController {
     private static func install(on req: Request) throws -> Future<Response> {
         return try install(files: req).flatMap({
             return try install(migrations: req).map({
-                return try req.response.maintenanceFinished(message: "Installation finished, login as core@liveui.io/admin")
+                return try req.response.maintenanceFinished(message: "Installation finished, login as core@liveui.io with password sup3rS3cr3t")
             })
         })
     }
