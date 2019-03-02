@@ -56,6 +56,7 @@ extension TestableProperty where TestableType: Application {
             
             // Set mailer mock
             MailerMock(services: &services)
+            config.prefer(MailerMock.self, for: MailerService.self)
             
             configClosure?(&config, &env, &services)
         }) { (router) in
