@@ -73,48 +73,7 @@ public class ApiCoreBase {
                         fatalError("Invalid configuration file: \(error.reason)")
                     } else {
                         // Create default configuration
-                        _configuration = Configuration(
-                            general: Configuration.General(
-                                singleTeam: false
-                            ),
-                            auth: Configuration.Auth(
-                                allowRegistrations: true,
-                                allowedDomainsForRegistration: [],
-                                allowInvitations: true,
-                                allowedDomainsForInvitations: []
-                            ),
-                            server: Configuration.Server(
-                                name: "API Core!",
-                                url: nil,
-                                maxUploadFilesize: 2 // 2Mb
-                            ),
-                            jwtSecret: "secret",
-                            database: Configuration.Database(
-                                host: nil,
-                                port: nil,
-                                user: "apicore",
-                                password: "aaaaaa",
-                                database: "apicore",
-                                logging: false
-                            ),
-                            mail: Configuration.Mail(
-                                mailgun: Configuration.Mail.MailGun(
-                                    domain: "",
-                                    key: ""
-                                )
-                            ),
-                            storage: Configuration.Storage(
-                                local: Configuration.Storage.Local(root: "/tmp/Boost"),
-                                s3: Configuration.Storage.S3(
-                                    enabled: false,
-                                    bucket: "",
-                                    accessKey: "",
-                                    secretKey: "",
-                                    region: .apSoutheast1,
-                                    securityToken: nil
-                                )
-                            )
-                        )
+                        _configuration = Configuration.default
                         
                         // Override any properties with ENV
                         _configuration?.loadEnv()

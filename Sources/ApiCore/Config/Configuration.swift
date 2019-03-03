@@ -79,7 +79,10 @@ public final class Configuration: Configurable {
         
         /// Server URL
         public internal(set) var url: String?
-
+        
+        /// Server interface URL (optional)
+        public internal(set) var interface: String?
+        
         ///
         public internal(set) var pathPrefix: String?
         
@@ -321,6 +324,7 @@ extension Configuration {
         load("apicore.server.name", to: &server.name)
         load("apicore.server.subtitle", to: &server.subtitle)
         load("apicore.server.url", to: &server.url)
+        load("apicore.server.interface", to: &server.interface)
         load("apicore.server.path_prefix", to: &server.pathPrefix)
         load("apicore.server.max_upload_filesize", to: &server.maxUploadFilesize)
 
@@ -336,6 +340,56 @@ extension Configuration {
             storage.s3.region = converted
         }
         load("apicore.storage.s3.security_token", to: &storage.s3.securityToken)
+    }
+    
+}
+
+
+extension Configuration {
+    
+    public static var `default`: Configuration {
+        return Configuration(
+            general: Configuration.General(
+                singleTeam: false
+            ),
+            auth: Configuration.Auth(
+                allowRegistrations: true,
+                allowedDomainsForRegistration: [],
+                allowInvitations: true,
+                allowedDomainsForInvitations: []
+            ),
+            server: Configuration.Server(
+                name: "API Core!",
+                url: nil,
+                maxUploadFilesize: 2 // 2Mb
+            ),
+            jwtSecret: "secret",
+            database: Configuration.Database(
+                host: nil,
+                port: nil,
+                user: "apicore",
+                password: "aaaaaa",
+                database: "apicore",
+                logging: false
+            ),
+            mail: Configuration.Mail(
+                mailgun: Configuration.Mail.MailGun(
+                    domain: "",
+                    key: ""
+                )
+            ),
+            storage: Configuration.Storage(
+                local: Configuration.Storage.Local(root: "/tmp/Boost"),
+                s3: Configuration.Storage.S3(
+                    enabled: false,
+                    bucket: "",
+                    accessKey: "",
+                    secretKey: "",
+                    region: .apSoutheast1,
+                    securityToken: nil
+                )
+            )
+        )
     }
     
 }
