@@ -336,7 +336,9 @@ extension Configuration {
         load("apicore.storage.s3.bucket", to: &storage.s3.bucket)
         load("apicore.storage.s3.access_key", to: &storage.s3.accessKey)
         load("apicore.storage.s3.secret_key", to: &storage.s3.secretKey)
-        if let value = self.property(key: "apicore.storage.s3.region"), let converted = Region(rawValue: value) {
+        if let value = self.property(key: "apicore.storage.s3.region") {
+            let name = Region.Name(value)
+            let converted = Region(name: name)
             storage.s3.region = converted
         }
         load("apicore.storage.s3.security_token", to: &storage.s3.securityToken)
