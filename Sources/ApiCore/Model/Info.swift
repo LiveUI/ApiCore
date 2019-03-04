@@ -48,7 +48,6 @@ public struct Info: Content {
             case allowInvitations = "allow_invitations"
             case domainInvitationsRestricted = "domain_invitations_restricted"
         }
-
         
     }
     
@@ -60,6 +59,9 @@ public struct Info: Content {
     
     /// Server URL
     public let url: String
+    
+    /// Server URL
+    public let interface: String?
     
     /// Server icons
     public let icons: [Icon]
@@ -77,6 +79,7 @@ public struct Info: Content {
         name = ApiCoreBase.configuration.server.name
         subtitle = ApiCoreBase.configuration.server.subtitle
         url = req.serverURL().absoluteString
+        interface = ApiCoreBase.configuration.server.interface
         icons = try IconSize.all.sorted(by: { $0.rawValue < $1.rawValue }).map({
             let url = try fm.url(for: "server/image/\($0.rawValue)", on: req)
             return Info.Icon(size: $0, url: url)

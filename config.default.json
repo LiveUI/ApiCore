@@ -12,6 +12,7 @@
 		"name": "ApiCore!",
 		"subtitle": "API core functionality!",
 		"url": "http://localhost:8080",
+		"interface": "http://localhost:3000",
 		"max_upload": 50
 	},
 	"jwt_secret": "secret",
