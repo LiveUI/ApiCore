@@ -29,7 +29,8 @@ let package = Package(
             name: "ApiCoreApp",
             dependencies: [
                 "Vapor",
-                "ApiCore"
+                "ApiCore",
+                "GithubLogin"
             ]
         ),
         .target(name: "ApiCoreRun", dependencies: [
@@ -54,6 +55,10 @@ let package = Package(
             "Vapor",
             "ErrorsCore",
             "S3"
+            ]
+        ),
+        .target(name: "GithubLogin", dependencies: [
+            "Vapor"
             ]
         ),
         .target(name: "ImageCore", dependencies: [
