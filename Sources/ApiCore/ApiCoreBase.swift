@@ -40,6 +40,12 @@ public class ApiCoreBase {
     /// Databse config
     public static var databaseConfig: DatabasesConfig?
     
+    /// Blocks of code executed when new user registers
+    public static var userDidRegister: [(User) -> ()] = []
+    
+    /// Blocks of code executed when new user tries to register
+    public static var userShouldRegister: [(User) -> (Bool)] = []
+    
     /// Add / register model
     public static func add<Model>(model: Model.Type, database: DatabaseIdentifier<Model.Database>) where Model: Fluent.Migration, Model: Fluent.Model, Model.Database: SchemaSupporting & QuerySupporting {
         models.append(model)
