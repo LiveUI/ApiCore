@@ -14,6 +14,19 @@ import MailCore
 
 public class UsersManager {
     
+    public static func userFromExternalAuthenticationService(_ source: UserSource, on req: Request) throws -> EventLoopFuture<User> {
+        return User.query(on: req).filter(\User.email == source.email).first().flatMap(to: User.self) { user in
+            guard let user = user else {
+                let user = try source.asUser(on: req)
+                user.verified = true
+                return user.save(on: req).map(to: User.self) { _ in
+                    return user
+                }
+            }
+            return req.eventLoop.newSucceededFuture(result: user)
+        }
+    }
+    
     public static func get(user email: String, password: String, on req: Request) -> EventLoopFuture<User?> {
         return User.query(on: req).filter(\User.email == email).first().map(to: User?.self) { user in
             guard let user = user, let userPassword = user.password, password.verify(against: userPassword) else {

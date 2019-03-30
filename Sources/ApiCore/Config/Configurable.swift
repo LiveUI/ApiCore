@@ -80,7 +80,8 @@ extension Configurable {
     
     /// Read property
     public func property(key: String) -> String? {
-        let value = (Environment.get(key) ?? Environment.get(key.uppercased()) ?? Environment.get(key.snake_cased()) ?? Environment.get(key.snake_cased().uppercased()))
+        // TODO: Convert all internal syntax to upper cased ssnake case so this method becomes obsolete!!!
+        let value = Environment.get(key.snake_cased().uppercased())
         return value
     }
     

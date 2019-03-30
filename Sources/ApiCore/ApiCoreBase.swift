@@ -7,8 +7,8 @@
 
 import Foundation
 import Vapor
+import Fluent
 import FluentPostgreSQL
-//import DbCore
 import ErrorsCore
 import MailCore
 import Leaf
@@ -124,7 +124,7 @@ public class ApiCoreBase {
     ]
     
     /// Main configure method for ApiCore
-    public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+    public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services, _ router: Router) throws {
         // Set max upload filesize
         let mb = Double(configuration.server.maxUploadFilesize ?? 50)
         let maxBodySize = Int(Filesize.megabyte(mb).value)
@@ -186,6 +186,22 @@ public class ApiCoreBase {
         let cors = CORSMiddleware(configuration: corsConfig)
         middlewareConfig.use(cors)
         
+        // Github login
+        if ApiCoreBase.configuration.auth.github.enabled {
+            let githubLogin = try GithubLoginManager(
+                GithubConfig(
+                    server: ApiCoreBase.configuration.auth.github.host,
+                    api: ApiCoreBase.configuration.auth.github.api
+                ),
+                router: router,
+                services: &services,
+                jwtSecret: ApiCoreBase.configuration.jwtSecret
+            )
+            services.register { _ in
+                githubLogin
+            }
+        }
+        
         // Templates
         try services.register(LeafProvider())
         
@@ -230,6 +246,10 @@ public class ApiCoreBase {
             JWTService(secret: configuration.jwtSecret)
         }
         services.register(AuthenticationCache.self)
+        
+        // Sessions middleware
+        config.prefer(MemoryKeyedCache.self, for: KeyedCache.self)
+        middlewareConfig.use(SessionsMiddleware.self)
         
         // Register middlewares
         services.register(middlewareConfig)

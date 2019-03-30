@@ -22,15 +22,15 @@ let package = Package(
         .package(url: "https://github.com/LiveUI/MailCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/ErrorsCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/VaporTestTools.git", from: "0.1.5"),
-        .package(url: "https://github.com/LiveUI/FluentTestTools.git", .branch("master"))
+        .package(url: "https://github.com/LiveUI/FluentTestTools.git", .branch("master")),
+        .package(url: "https://github.com/vapor-community/Imperial.git", from: "0.11.0")
     ],
     targets: [
         .target(
             name: "ApiCoreApp",
             dependencies: [
                 "Vapor",
-                "ApiCore",
-                "GithubLogin"
+                "ApiCore"
             ]
         ),
         .target(name: "ApiCoreRun", dependencies: [
@@ -48,17 +48,14 @@ let package = Package(
             "MailCore",
             "Leaf",
             "FileCore",
-            "ImageCore"
+            "ImageCore",
+            "Imperial"
             ]
         ),
         .target(name: "FileCore", dependencies: [
             "Vapor",
             "ErrorsCore",
             "S3"
-            ]
-        ),
-        .target(name: "GithubLogin", dependencies: [
-            "Vapor"
             ]
         ),
         .target(name: "ImageCore", dependencies: [
