@@ -23,7 +23,7 @@ let package = Package(
         .package(url: "https://github.com/LiveUI/ErrorsCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/VaporTestTools.git", from: "0.1.5"),
         .package(url: "https://github.com/LiveUI/FluentTestTools.git", .branch("master")),
-        .package(url: "https://github.com/vapor-community/Imperial.git", from: "0.11.0")
+        .package(url: "https://github.com/vapor-community/Imperial.git", from: "0.11.2")
     ],
     targets: [
         .target(
