@@ -2,21 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "Auth",
-        "repositoryURL": "https://github.com/vapor/auth.git",
-        "state": {
-          "branch": null,
-          "revision": "ed402783942af1d40b5c9e537e956aea51618f0e",
-          "version": "2.0.3"
-        }
-      },
-      {
         "package": "Cryptor",
         "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
         "state": {
           "branch": null,
-          "revision": "187dbf53f70e9d1dc4fb8bcd3087e89f58170f46",
-          "version": "1.0.25"
+          "revision": "3730de858ac464ce0d3f8e604e21fcaaf2fb4e33",
+          "version": "1.0.26"
         }
       },
       {
@@ -110,15 +101,6 @@
         }
       },
       {
-        "package": "FluentSQLite",
-        "repositoryURL": "https://github.com/vapor/fluent-sqlite.git",
-        "state": {
-          "branch": null,
-          "revision": "c32f5bda84bf4ea691d19afe183d40044f579e11",
-          "version": "3.0.0"
-        }
-      },
-      {
         "package": "FluentTestTools",
         "repositoryURL": "https://github.com/LiveUI/FluentTestTools.git",
         "state": {
@@ -141,8 +123,8 @@
         "repositoryURL": "https://github.com/vapor-community/Imperial.git",
         "state": {
           "branch": null,
-          "revision": "e5b3b54d7dfd3fe648e787b5d59809531582ec20",
-          "version": "0.11.0"
+          "revision": "25ec325a75021ae763fe7357aa47b80efd45b4c9",
+          "version": "0.11.2"
         }
       },
       {
@@ -213,7 +195,7 @@
         "repositoryURL": "https://github.com/LiveUI/S3.git",
         "state": {
           "branch": "master",
-          "revision": "0bf152c1a604e7dbfd34662c4d77fe7c417fc3bb",
+          "revision": "cf0cb451d120bda484022afe3083006e4af2f2d1",
           "version": null
         }
       },
@@ -242,15 +224,6 @@
           "branch": null,
           "revision": "50eaeb8f52a1ce63f1ff3880e1114dd8757a78a6",
           "version": "2.3.2"
-        }
-      },
-      {
-        "package": "SQLite",
-        "repositoryURL": "https://github.com/vapor/sqlite.git",
-        "state": {
-          "branch": null,
-          "revision": "314d9cd21165bcf14215e336a23ff8214f40e411",
-          "version": "3.2.1"
         }
       },
       {
