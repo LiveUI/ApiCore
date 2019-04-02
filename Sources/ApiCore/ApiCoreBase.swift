@@ -7,8 +7,8 @@
 
 import Foundation
 import Vapor
+import Fluent
 import FluentPostgreSQL
-//import DbCore
 import ErrorsCore
 import MailCore
 import Leaf
@@ -109,7 +109,7 @@ public class ApiCoreBase {
     public internal(set) static var middlewareConfig = MiddlewareConfig()
     
     /// Add futures to be executed during an installation process
-    public typealias InstallFutureClosure = (_ req: Request) throws -> Future<Void>
+    public typealias InstallFutureClosure = (_ worker: BasicWorker) throws -> Future<Void>
     public static var installFutures: [InstallFutureClosure] = []
     
     /// Registered Controllers with the API, these need to have a boot method to setup their routing
@@ -124,7 +124,7 @@ public class ApiCoreBase {
     ]
     
     /// Main configure method for ApiCore
-    public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+    public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services, _ router: Router) throws {
         // Set max upload filesize
         let mb = Double(configuration.server.maxUploadFilesize ?? 50)
         let maxBodySize = Int(Filesize.megabyte(mb).value)
@@ -132,11 +132,14 @@ public class ApiCoreBase {
         services.register(serverConfig)
         
         // Migrate models / tables
-        add(model: Token.self, database: .db)
         add(model: Team.self, database: .db)
         add(model: User.self, database: .db)
         add(model: TeamUser.self, database: .db)
+        add(model: Token.self, database: .db)
         add(model: ErrorLog.self, database: .db)
+        
+        // Data migrations
+        migrationConfig.add(migration: BaseMigration.self, database: .db)
         
         // Set database on tables that don't have migration
         FluentDesign.defaultDatabase = .db
@@ -186,6 +189,22 @@ public class ApiCoreBase {
         let cors = CORSMiddleware(configuration: corsConfig)
         middlewareConfig.use(cors)
         
+        // Github login
+        if ApiCoreBase.configuration.auth.github.enabled {
+            let githubLogin = try GithubLoginManager(
+                GithubConfig(
+                    server: ApiCoreBase.configuration.auth.github.host,
+                    api: ApiCoreBase.configuration.auth.github.api
+                ),
+                router: router,
+                services: &services,
+                jwtSecret: ApiCoreBase.configuration.jwtSecret
+            )
+            services.register { _ in
+                githubLogin
+            }
+        }
+        
         // Templates
         try services.register(LeafProvider())
         
@@ -231,6 +250,10 @@ public class ApiCoreBase {
         }
         services.register(AuthenticationCache.self)
         
+        // Sessions middleware
+        config.prefer(MemoryKeyedCache.self, for: KeyedCache.self)
+        middlewareConfig.use(SessionsMiddleware.self)
+        
         // Register middlewares
         services.register(middlewareConfig)
         
@@ -239,7 +262,7 @@ public class ApiCoreBase {
     }
     
     /// Boot routes for all registered controllers
-    public static func boot(router: Router) throws {
+    @discardableResult public static func boot(router: Router) throws -> (router: Router, secure: Router, debug: Router) {
         let group: Router
         if let prefix = configuration.server.pathPrefix {
             group = router.grouped(prefix)
@@ -253,6 +276,8 @@ public class ApiCoreBase {
         for c in controllers {
             try c.boot(router: group, secure: secureRouter, debug: debugRouter)
         }
+        
+        return (group, secureRouter, debugRouter)
     }
     
 }

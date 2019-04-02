@@ -472,6 +472,12 @@ extension User {
         return User.Display(self)
     }
     
+    /// Return a signed JWT token
+    public func asJWTToken(on req: Request) throws -> String {
+        let jwtService = try req.make(JWTService.self)
+        return try jwtService.signUserToToken(user: self)
+    }
+    
 }
 
 extension User.Auth.Password {

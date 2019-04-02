@@ -1,13 +1,12 @@
 import Foundation
 import Vapor
-//import DbCore
 import ApiCore
 import MailCore
 
 
-public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ services: inout Services) throws {
+public func configure(_ config: inout Vapor.Config, _ env: inout Vapor.Environment, _ services: inout Services) throws {
     print("Starting ApiCore by LiveUI")
-    sleep(3)
+    sleep(1)
     Env.print()
     
     // Register routes
@@ -16,5 +15,5 @@ public func configure(_ config: inout Config, _ env: inout Vapor.Environment, _ 
     services.register(router, as: Router.self)
     
     // Go!
-    try ApiCoreBase.configure(&config, &env, &services)
+    try ApiCoreBase.configure(&config, &env, &services, router)
 }

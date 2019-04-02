@@ -51,34 +51,49 @@ public class AuthManager {
     }
     
     /// Login helper
-    public static func login(request req: Request, login: User.Auth.Login) throws -> Future<Response> {
+    public static func authData(request req: Request, user: User) throws -> Future<(Token.PublicFull, User)> {
+        typealias ResultTupple = (Token.PublicFull, User)
+        
+        guard user.verified == true, user.disabled == false else {
+            throw AuthError.unverifiedAccount
+        }
+        
+        let token = try Token(user: user, type: .authentication)
+        let tokenBackup = token.token
+        token.token = try token.token.sha()
+        return token.save(on: req).map(to: ResultTupple.self) { token in
+            guard let _ = token.id else {
+                throw AuthError.serverError
+            }
+            let publicToken = Token.PublicFull(token: token, user: user)
+            publicToken.token = tokenBackup
+            return (publicToken, user)
+        }
+    }
+    
+    /// Login helper
+    public static func loginData(request req: Request, login: User.Auth.Login) throws -> Future<(Token.PublicFull, User)> {
+        typealias ResultTupple = (Token.PublicFull, User)
         guard !login.email.isEmpty, !login.password.isEmpty else {
             throw AuthError.authenticationFailed
         }
-        return UsersManager.get(user: login.email, password: login.password, on: req).flatMap(to: Response.self) { user in
+        return UsersManager.get(user: login.email, password: login.password, on: req).flatMap(to: ResultTupple.self) { user in
             guard let user = user else {
                 throw AuthError.authenticationFailed
             }
-            guard user.verified == true, user.disabled == false else {
-                throw AuthError.unverifiedAccount
-            }
-            
-            let token = try Token(user: user, type: .authentication)
-            let tokenBackup = token.token
-            token.token = try token.token.sha()
-            return token.save(on: req).flatMap(to: Response.self) { token in
-                guard let _ = token.id else {
-                    throw AuthError.serverError
-                }
-                let publicToken = Token.PublicFull(token: token, user: user)
-                publicToken.token = tokenBackup
-                return try publicToken.asResponse(.ok, to: req).map(to: Response.self) { response in
-                    let jwtService = try req.make(JWTService.self)
-                    try response.http.headers.replaceOrAdd(name: "Authorization", value: "Bearer \(jwtService.signUserToToken(user: user))")
-                    return response
-                }
+            return try authData(request: req, user: user)
+        }
+    }
+    
+    /// Login helper
+    public static func login(request req: Request, login: User.Auth.Login) throws -> Future<Response> {
+        return try loginData(request: req, login: login).flatMap(to: Response.self) { (publicToken, user) in
+            return try publicToken.asResponse(.ok, to: req).map(to: Response.self) { response in
+                try response.http.headers.replaceOrAdd(name: "Authorization", value: "Bearer \(user.asJWTToken(on: req))")
+                return response
             }
         }
+        
     }
     
 }

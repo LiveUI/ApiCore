@@ -39,6 +39,35 @@ public final class Configuration: Configurable {
     /// Authentication
     public final class Auth: Codable {
         
+        /// Github
+        public struct Github: Codable {
+            
+            /// Enable Github login
+            public internal(set) var enabled: Bool
+            
+            /// Client / app ID
+            public internal(set) var client: String
+            
+            /// Client secret
+            public internal(set) var secret: String
+            
+            /// URL for github auth service (default is https://github.com)
+            public internal(set) var host: String
+            
+            /// URL for the github API (default is https://api.github.com)
+            public internal(set) var api: String
+            
+            /// Initializer
+            init(enabled: Bool, client: String, secret: String, host: String = "https://github.com", api: String = "https://api.github.com") {
+                self.enabled = enabled
+                self.client = client
+                self.secret = secret
+                self.host = host
+                self.api = api
+            }
+            
+        }
+        
         /// Allow new registrations (enabled by default)
         public internal(set) var allowRegistrations: Bool
         
@@ -51,19 +80,24 @@ public final class Configuration: Configurable {
         /// Domains allowed to go through a self-registration process
         public internal(set) var allowedDomainsForInvitations: [String]
         
+        /// Github login settings
+        public internal(set) var github: Github
+        
         enum CodingKeys: String, CodingKey {
             case allowRegistrations = "allow_registrations"
             case allowedDomainsForRegistration = "registration_domains"
             case allowInvitations = "allow_invitations"
             case allowedDomainsForInvitations = "invitation_domains"
+            case github
         }
         
         /// Initializer
-        init(allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String]) {
+        init(allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String], github: Github) {
             self.allowRegistrations = allowRegistrations
             self.allowInvitations = allowInvitations
             self.allowedDomainsForRegistration = allowedDomainsForRegistration
             self.allowedDomainsForInvitations = allowedDomainsForInvitations
+            self.github = github
         }
         
     }
@@ -306,6 +340,12 @@ extension Configuration {
         load("apicore.auth.allow_registrations", to: &auth.allowInvitations)
         load("apicore.auth.invitation_domains", to: &auth.allowedDomainsForInvitations)
         
+        load("apicore.auth.github.enabled", to: &auth.github.enabled)
+        load("apicore.auth.github.client", to: &auth.github.client)
+        load("apicore.auth.github.secret", to: &auth.github.secret)
+        load("apicore.auth.github.host", to: &auth.github.host)
+        load("apicore.auth.github.api", to: &auth.github.api)
+        
         // Mail
         load("apicore.mail.email", to: &mail.email)
         
@@ -358,7 +398,12 @@ extension Configuration {
                 allowRegistrations: true,
                 allowedDomainsForRegistration: [],
                 allowInvitations: true,
-                allowedDomainsForInvitations: []
+                allowedDomainsForInvitations: [],
+                github: Configuration.Auth.Github(
+                    enabled: false,
+                    client: "",
+                    secret: ""
+                )
             ),
             server: Configuration.Server(
                 name: "API Core!",
