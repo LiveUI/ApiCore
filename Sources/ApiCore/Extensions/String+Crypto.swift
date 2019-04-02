@@ -14,8 +14,8 @@ import ErrorsCore
 extension String {
     
     /// Hashed password
-    public func passwordHash(_ req: Request) throws -> String {
-        let cost = (req.environment == .production) ? 12 : 4
+    public func passwordHash(_ worker: BasicWorker) throws -> String {
+        let cost = try Environment.detect().isRelease ? 12 : 4
         let hashedString = try BCrypt.hash(self, cost: cost)
         return hashedString
     }

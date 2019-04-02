@@ -109,7 +109,7 @@ public class ApiCoreBase {
     public internal(set) static var middlewareConfig = MiddlewareConfig()
     
     /// Add futures to be executed during an installation process
-    public typealias InstallFutureClosure = (_ req: Request) throws -> Future<Void>
+    public typealias InstallFutureClosure = (_ worker: BasicWorker) throws -> Future<Void>
     public static var installFutures: [InstallFutureClosure] = []
     
     /// Registered Controllers with the API, these need to have a boot method to setup their routing
@@ -132,11 +132,14 @@ public class ApiCoreBase {
         services.register(serverConfig)
         
         // Migrate models / tables
-        add(model: Token.self, database: .db)
         add(model: Team.self, database: .db)
         add(model: User.self, database: .db)
         add(model: TeamUser.self, database: .db)
+        add(model: Token.self, database: .db)
         add(model: ErrorLog.self, database: .db)
+        
+        // Data migrations
+        migrationConfig.add(migration: BaseMigration.self, database: .db)
         
         // Set database on tables that don't have migration
         FluentDesign.defaultDatabase = .db

@@ -59,14 +59,14 @@ public class InstallController: Controller {
 extension InstallController {
     
     /// New super user
-    private static func su(on req: Request) throws -> User {
-        let user = try User(username: "admin", firstname: "Super", lastname: "Admin", email: "core@liveui.io", password: "sup3rS3cr3t".passwordHash(req), disabled: false, su: true)
+    static func su(on worker: BasicWorker) throws -> User {
+        let user = try User(username: "admin", firstname: "Super", lastname: "Admin", email: "core@liveui.io", password: "sup3rS3cr3t".passwordHash(worker), disabled: false, su: true)
         user.verified = true
         return user
     }
     
     /// New admin team
-    private static var adminTeam: Team {
+    static var adminTeam: Team {
         return Team(name: "Admin team", identifier: "admin-team", admin: true)
     }
     
