@@ -17,7 +17,7 @@ extension Request {
         guard var url = URL(string: stringUrl) else {
             fatalError("Invalid server URL: \(stringUrl)")
         }
-        if let prefix = ApiCoreBase.configuration.server.pathPrefix {
+        if let prefix = ApiCoreBase.configuration.server.pathPrefix, !prefix.isEmpty {
             url.appendPathComponent(prefix)
         }
         return url
