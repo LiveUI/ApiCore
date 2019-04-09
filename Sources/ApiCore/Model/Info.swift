@@ -29,7 +29,7 @@ public struct Info: Content {
         /// Team configuration (single or multi)
         public let singleTeam: Bool
         
-        /// New registrattions are enabled/disabled
+        /// New registrations are enabled/disabled
         public let allowRegistrations: Bool
         
         /// Is system registrations restricted to certain domains only?
@@ -41,12 +41,20 @@ public struct Info: Content {
         /// Users are restricted to send invitations to certain domains only
         public let domainInvitationsRestricted: Bool
         
+        /// Github login enabled
+        public let githubEnabled: Bool
+        
+        /// Github teams
+        public let allowedGithubTeams: [String]
+        
         enum CodingKeys: String, CodingKey {
             case singleTeam = "single_team"
             case allowRegistrations = "allow_registrations"
             case allowedRegistrationDomains = "allowed_registration_domains"
             case allowInvitations = "allow_invitations"
             case domainInvitationsRestricted = "domain_invitations_restricted"
+            case githubEnabled = "github_enabled"
+            case allowedGithubTeams = "allowed_github_teams"
         }
         
     }
@@ -89,7 +97,9 @@ public struct Info: Content {
             allowRegistrations: ApiCoreBase.configuration.auth.allowRegistrations,
             allowedRegistrationDomains: ApiCoreBase.configuration.auth.allowedDomainsForRegistration,
             allowInvitations: ApiCoreBase.configuration.auth.allowInvitations,
-            domainInvitationsRestricted: !ApiCoreBase.configuration.auth.allowedDomainsForInvitations.isEmpty
+            domainInvitationsRestricted: !ApiCoreBase.configuration.auth.allowedDomainsForInvitations.isEmpty,
+            githubEnabled: ApiCoreBase.configuration.auth.github.enabled,
+            allowedGithubTeams: ApiCoreBase.configuration.auth.github.teams
         )
     }
     

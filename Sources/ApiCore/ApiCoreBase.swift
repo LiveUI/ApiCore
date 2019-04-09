@@ -191,6 +191,7 @@ public class ApiCoreBase {
         
         // Github login
         if ApiCoreBase.configuration.auth.github.enabled {
+            print("Enabling Github login for \(configuration.auth.github.host)")
             let githubLogin = try GithubLoginManager(
                 GithubConfig(
                     server: ApiCoreBase.configuration.auth.github.host,
@@ -203,6 +204,8 @@ public class ApiCoreBase {
             services.register { _ in
                 githubLogin
             }
+        } else {
+            print("Github login disabled")
         }
         
         // Templates

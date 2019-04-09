@@ -113,6 +113,7 @@ class GithubLoginController {
                             else {
                                 throw Error.missingRedirectLink
                         }
+                        // Add company check
                         return try UsersManager.userFromExternalAuthenticationService(info, on: req).flatMap(to: Response.self) { apiCoreUser in
                             return try AuthManager.authData(request: req, user: apiCoreUser).map(to: Response.self) { authData in
                                 info.token = authData.0.token
