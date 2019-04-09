@@ -59,32 +59,11 @@ public class ApiCoreBase {
     public static var configuration: Configuration {
         get {
             if _configuration == nil {
-                do {
-                    guard let path = Environment.get("CONFIG_PATH") else {
-                        let conf = try Configuration.load(fromFile: "config.default.json")
-                        conf.loadEnv()
-                        _configuration = conf
-                        return conf
-                    }
-                    let conf = try Configuration.load(fromFile: path)
-                    
-                    // Override any properties with ENV
-                    conf.loadEnv()
-                    
-                    _configuration = conf
-                    return conf
-                } catch {
-                    if let error = error as? DecodingError {
-                        // Should config exist but is invalid, crash
-                        fatalError("Invalid configuration file: \(error.reason)")
-                    } else {
-                        // Create default configuration
-                        _configuration = Configuration.default
-                        
-                        // Override any properties with ENV
-                        _configuration?.loadEnv()
-                    }
-                }
+                // Create default configuration
+                _configuration = Configuration.default
+                
+                // Override any properties with ENV
+                _configuration?.loadEnv()
             }
             guard let configuration = _configuration else {
                 fatalError("Configuration couldn't be loaded!")
