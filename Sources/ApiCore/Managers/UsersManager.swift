@@ -19,6 +19,7 @@ public class UsersManager {
             guard let user = user else {
                 let user = try source.asUser(on: req)
                 user.verified = true
+                user.disabled = false
                 return user.save(on: req).map(to: User.self) { _ in
                     return user
                 }
