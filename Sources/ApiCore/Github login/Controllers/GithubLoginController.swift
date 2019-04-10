@@ -11,7 +11,7 @@ import Imperial
 import ErrorsCore
 
 
-class GithubLoginController {
+class GithubLoginController: Controller {
     
     public enum Error: FrontendError {
         
@@ -52,7 +52,9 @@ class GithubLoginController {
         
     }
     
-    static func boot(router: Router, config: GithubConfig) throws {
+    public static var config: GithubConfig?
+    
+    static func boot(router: Router, secure: Router, debug: Router) throws {
         let redirectKey: String = "github-session-redirect"
         
         struct Redirect: Codable {
@@ -60,6 +62,10 @@ class GithubLoginController {
         }
         
         let sessions = router.grouped("auth", "github").grouped(SessionsMiddleware.self)
+        
+        guard let config = self.config else {
+            fatalError("Github config not set")
+        }
         
         // Redirect to the login
         try sessions.oAuth(

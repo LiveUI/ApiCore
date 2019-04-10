@@ -103,7 +103,7 @@ public class ApiCoreBase {
     ]
     
     /// Main configure method for ApiCore
-    public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services, _ router: Router = EngineRouter.default()) throws {
+    public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
         // Set max upload filesize
         let mb = Double(configuration.server.maxUploadFilesize ?? 50)
         let maxBodySize = Int(Filesize.megabyte(mb).value)
@@ -176,7 +176,6 @@ public class ApiCoreBase {
                     server: ApiCoreBase.configuration.auth.github.host,
                     api: ApiCoreBase.configuration.auth.github.api
                 ),
-                router: router,
                 services: &services,
                 jwtSecret: ApiCoreBase.configuration.jwtSecret
             )

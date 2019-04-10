@@ -15,11 +15,8 @@ public class GithubLoginManager: Service {
     
     public let config: GithubConfig
     
-    public let router: Router
-    
-    public init(_ config: GithubConfig, router: Router, services: inout Services, jwtSecret: String) throws {
+    public init(_ config: GithubConfig, services: inout Services, jwtSecret: String) throws {
         self.config = config
-        self.router = router
         
         Imperial.GitHubRouter.baseURL = ApiCoreBase.configuration.auth.github.host.finished(with: "/")
         Imperial.GitHubAuth.idEnvKey = "APICORE_AUTH_GITHUB_CLIENT"
@@ -29,7 +26,9 @@ public class GithubLoginManager: Service {
             GithubJWTService(secret: jwtSecret)
         }
         
-        try GithubLoginController.boot(router: router, config: config)
+        GithubLoginController.config = config
+        
+        ApiCoreBase.controllers.append(GithubLoginController.self)
     }
     
 }
