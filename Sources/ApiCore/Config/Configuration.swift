@@ -333,60 +333,60 @@ extension Configuration {
     /// Update from environmental variables
     public func loadEnv() {
         // Root
-        load("apicore_jwt_secret", to: &jwtSecret)
+        load("APICORE_JWT_SECRET", to: &jwtSecret)
         
         // General
-        load("apicore_general.single_team", to: &general.singleTeam)
+        load("APICORE_GENERAL_SINGLE_TEAM", to: &general.singleTeam)
         
         // Auth
-        load("apicore_auth_allow_registrations", to: &auth.allowRegistrations)
-        load("apicore_auth_registration_domains", to: &auth.allowedDomainsForRegistration)
-        load("apicore_auth_allow_registrations", to: &auth.allowInvitations)
-        load("apicore_auth_invitation_domains", to: &auth.allowedDomainsForInvitations)
+        load("APICORE_AUTH_ALLOW_REGISTRATIONS", to: &auth.allowRegistrations)
+        load("APICORE_AUTH_REGISTRATION_DOMAINS", to: &auth.allowedDomainsForRegistration)
+        load("APICORE_AUTH_ALLOW_REGISTRATIONS", to: &auth.allowInvitations)
+        load("APICORE_AUTH_INVITATION_DOMAINS", to: &auth.allowedDomainsForInvitations)
         
-        load("apicore_auth_github_enabled", to: &auth.github.enabled)
-        load("apicore_auth_github_client", to: &auth.github.client)
-        load("apicore_auth_github_secret", to: &auth.github.secret)
-        load("apicore_auth_github_host", to: &auth.github.host)
-        load("apicore_auth_github_api", to: &auth.github.api)
-        load("apicore_auth_github_teams", to: &auth.github.teams)
+        load("APICORE_AUTH_GITHUB_ENABLED", to: &auth.github.enabled)
+        load("APICORE_AUTH_GITHUB_CLIENT", to: &auth.github.client)
+        load("APICORE_AUTH_GITHUB_SECRET", to: &auth.github.secret)
+        load("APICORE_AUTH_GITHUB_HOST", to: &auth.github.host)
+        load("APICORE_AUTH_GITHUB_API", to: &auth.github.api)
+        load("APICORE_AUTH_GITHUB_TEAMS", to: &auth.github.teams)
         
         // Mail
-        load("apicore_mail.email", to: &mail.email)
+        load("APICORE_MAIL_EMAIL", to: &mail.email)
         
-        load("apicore_mail.mailgun.domain", to: &mail.mailgun.domain)
-        load("apicore_mail.mailgun.key", to: &mail.mailgun.key)
+        load("APICORE_MAIL_MAILGUN_DOMAIN", to: &mail.mailgun.domain)
+        load("APICORE_MAIL_MAILGUN_KEY", to: &mail.mailgun.key)
 
         // Database
-        load("apicore_database.host", to: &database.host)
-        load("apicore_database.user", to: &database.user)
-        load("apicore_database.password", to: &database.password)
-        load("apicore_database.port", to: &database.port)
-        load("apicore_database.database", to: &database.database)
-        load("apicore_database.logging", to: &database.logging)
+        load("APICORE_DATABASE_HOST", to: &database.host)
+        load("APICORE_DATABASE_USER", to: &database.user)
+        load("APICORE_DATABASE_PASSWORD", to: &database.password)
+        load("APICORE_DATABASE_PORT", to: &database.port)
+        load("APICORE_DATABASE_DATABASE", to: &database.database)
+        load("APICORE_DATABASE_LOGGING", to: &database.logging)
 
         // Server
-        load("apicore_server.name", to: &server.name)
-        load("apicore_server.subtitle", to: &server.subtitle)
-        load("apicore_server.url", to: &server.url)
-        load("apicore_server.interface", to: &server.interface)
-        load("apicore_server.path_prefix", to: &server.pathPrefix)
-        load("apicore_server.max_upload_filesize", to: &server.maxUploadFilesize)
+        load("APICORE_SERVER_NAME", to: &server.name)
+        load("APICORE_SERVER_SUBTITLE", to: &server.subtitle)
+        load("APICORE_SERVER_URL", to: &server.url)
+        load("APICORE_SERVER_INTERFACE", to: &server.interface)
+        load("APICORE_SERVER_PATH_PREFIX", to: &server.pathPrefix)
+        load("APICORE_SERVER_MAX_UPLOAD_FILESIZE", to: &server.maxUploadFilesize)
 
         // Storage (Local)
-        load("apicore_storage.local.root", to: &storage.local.root)
+        load("APICORE_STORAGE_LOCAL_ROOT", to: &storage.local.root)
 
         // Storage (S3)
-        load("apicore_storage.s3.enabled", to: &storage.s3.enabled)
-        load("apicore_storage.s3.bucket", to: &storage.s3.bucket)
-        load("apicore_storage.s3.access_key", to: &storage.s3.accessKey)
-        load("apicore_storage.s3.secret_key", to: &storage.s3.secretKey)
-        if let value = self.property(key: "apicore_storage.s3.region") {
+        load("APICORE_STORAGE_S3_ENABLED", to: &storage.s3.enabled)
+        load("APICORE_STORAGE_S3_BUCKET", to: &storage.s3.bucket)
+        load("APICORE_STORAGE_S3_ACCESS_KEY", to: &storage.s3.accessKey)
+        load("APICORE_STORAGE_S3_SECRET_KEY", to: &storage.s3.secretKey)
+        if let value = self.property(key: "APICORE_STORAGE_S3_REGION") {
             let name = Region.Name(value)
             let converted = Region(name: name)
             storage.s3.region = converted
         }
-        load("apicore_storage.s3.security_token", to: &storage.s3.securityToken)
+        load("APICORE_STORAGE_S3_SECURITY_TOKEN", to: &storage.s3.securityToken)
     }
     
 }
