@@ -18,6 +18,7 @@ class GithubLoginController: Controller {
         case missingRedirectLink
         case unableToProcessUserData
         case unableToGenerateRedirectLink
+        case invalidOrganization
         
         public var status: HTTPStatus {
             switch self {
@@ -25,6 +26,8 @@ class GithubLoginController: Controller {
                 return .badRequest
             case .unableToProcessUserData, .unableToGenerateRedirectLink:
                 return .internalServerError
+            case .invalidOrganization:
+                return .unauthorized
             }
         }
         
@@ -36,6 +39,8 @@ class GithubLoginController: Controller {
                 return "github.bad_user_data"
             case .unableToGenerateRedirectLink:
                 return "github.callback_link_error"
+            case .invalidOrganization:
+                return "github.invalid_organizations"
             }
         }
         
@@ -47,6 +52,8 @@ class GithubLoginController: Controller {
                 return "Unable to process user data"
             case .unableToGenerateRedirectLink:
                 return "Unable to generate the redirect link"
+            case .invalidOrganization:
+                return "Not a member of any connected Github organization"
             }
         }
         
@@ -119,7 +126,18 @@ class GithubLoginController: Controller {
                             else {
                                 throw Error.missingRedirectLink
                         }
-                        // Add company check
+                        if !ApiCoreBase.configuration.auth.github.teams.isEmpty {
+                            var ok = false
+                            let companies = user.company?.split(separator: ",").map({ String($0).trimmingCharacters(in: .whitespacesAndNewlines) })
+                            ApiCoreBase.configuration.auth.github.teams.forEach({ company in
+                                if companies?.contains(company) ?? false {
+                                    ok = true
+                                }
+                            })
+                            guard ok else {
+                                throw Error.invalidOrganization
+                            }
+                        }
                         return try UsersManager.userFromExternalAuthenticationService(info, on: req).flatMap(to: Response.self) { apiCoreUser in
                             return try AuthManager.authData(request: req, user: apiCoreUser).map(to: Response.self) { authData in
                                 info.token = authData.0.token
