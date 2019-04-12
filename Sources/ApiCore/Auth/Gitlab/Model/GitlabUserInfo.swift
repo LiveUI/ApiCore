@@ -1,6 +1,6 @@
 //
 //  UserInfo.swift
-//  GithubLogin
+//  GitlabLogin
 //
 //  Created by Ondrej Rafaj on 27/03/2019.
 //
@@ -9,7 +9,7 @@ import Foundation
 import JWT
 
 
-public struct UserInfo: Codable, JWTPayload, UserSource {
+public struct GitlabUserInfo: Codable, JWTPayload, UserSource {
     
     public enum Error: Swift.Error {
         case missingEmail
@@ -26,15 +26,15 @@ public struct UserInfo: Codable, JWTPayload, UserSource {
     public let companies: [String]
     
     public var token: String?
-    public let githubToken: String
+    public let gitlabToken: String
     
     /// Initializer
-    init(user: GithubUser, emails: Emails, githubToken: String, token: String? = nil) throws {
-        username = user.login
+    init(user: GitlabUser, gitlabToken: String, token: String? = nil) throws {
+        username = user.username
         
         let name = user.name ?? ""
         if name.isEmpty {
-            firstname = user.login
+            firstname = user.username
             lastname = ""
         } else {
             let parts = name.split(separator: " ")
@@ -46,16 +46,13 @@ public struct UserInfo: Codable, JWTPayload, UserSource {
             }
         }
         
-        guard let email = emails.filter({ $0.primary ?? false }).first?.email else {
-            throw Error.missingEmail
-        }
-        self.email = email
+        email = user.email
         avatar = user.avatarURL
-        companies = user.company?.split(separator: ",").map({ String($0).trimmingCharacters(in: .whitespacesAndNewlines) }) ?? []
+        companies = user.organization?.split(separator: ",").map({ String($0).trimmingCharacters(in: .whitespacesAndNewlines) }) ?? []
         
         exp = ExpirationClaim(value: Date().addingTimeInterval(120))
         
-        self.githubToken = githubToken
+        self.gitlabToken = gitlabToken
         self.token = token
     }
     

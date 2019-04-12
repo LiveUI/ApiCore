@@ -47,6 +47,12 @@ public struct Info: Content {
         /// Github teams
         public let allowedGithubTeams: [String]
         
+        /// Gitlab login enabled
+        public let gitlabEnabled: Bool
+        
+        /// Gitlab teams
+        public let allowedGitlabGroups: [String]
+        
         enum CodingKeys: String, CodingKey {
             case singleTeam = "single_team"
             case allowRegistrations = "allow_registrations"
@@ -55,6 +61,8 @@ public struct Info: Content {
             case domainInvitationsRestricted = "domain_invitations_restricted"
             case githubEnabled = "github_enabled"
             case allowedGithubTeams = "allowed_github_teams"
+            case gitlabEnabled = "gitlab_enabled"
+            case allowedGitlabGroups = "allowed_gitlab_groups"
         }
         
     }
@@ -99,7 +107,9 @@ public struct Info: Content {
             allowInvitations: ApiCoreBase.configuration.auth.allowInvitations,
             domainInvitationsRestricted: !ApiCoreBase.configuration.auth.allowedDomainsForInvitations.isEmpty,
             githubEnabled: ApiCoreBase.configuration.auth.github.enabled,
-            allowedGithubTeams: ApiCoreBase.configuration.auth.github.teams
+            allowedGithubTeams: ApiCoreBase.configuration.auth.github.teams,
+            gitlabEnabled: ApiCoreBase.configuration.auth.gitlab.enabled,
+            allowedGitlabGroups: ApiCoreBase.configuration.auth.gitlab.groups
         )
     }
     

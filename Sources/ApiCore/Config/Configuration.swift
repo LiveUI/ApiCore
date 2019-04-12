@@ -72,6 +72,39 @@ public final class Configuration: Configurable {
             
         }
         
+        /// Gitlab
+        public struct Gitlab: Codable {
+            
+            /// Enable Github login
+            public internal(set) var enabled: Bool
+            
+            /// Client / app ID
+            public internal(set) var application: String
+            
+            /// Client secret
+            public internal(set) var secret: String
+            
+            /// URL for github auth service (default is https://gitlab.com)
+            public internal(set) var host: String
+            
+            /// URL for the github API (default is https://gitlab.com/api/v4/)
+            public internal(set) var api: String
+            
+            /// Allowed teams
+            public internal(set) var groups: [String]
+            
+            /// Initializer
+            init(enabled: Bool, application: String, secret: String, host: String = "https://gitlab.com", api: String = "https://gitlab.com/api/v4/", groups: [String] = []) {
+                self.enabled = enabled
+                self.application = application
+                self.secret = secret
+                self.host = host
+                self.api = api
+                self.groups = groups
+            }
+            
+        }
+        
         /// Allow new registrations (enabled by default)
         public internal(set) var allowRegistrations: Bool
         
@@ -87,21 +120,26 @@ public final class Configuration: Configurable {
         /// Github login settings
         public internal(set) var github: Github
         
+        /// Gitlab login settings
+        public internal(set) var gitlab: Gitlab
+        
         enum CodingKeys: String, CodingKey {
             case allowRegistrations = "allow_registrations"
             case allowedDomainsForRegistration = "registration_domains"
             case allowInvitations = "allow_invitations"
             case allowedDomainsForInvitations = "invitation_domains"
             case github
+            case gitlab
         }
         
         /// Initializer
-        init(allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String], github: Github) {
+        init(allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String], github: Github, gitlab: Gitlab) {
             self.allowRegistrations = allowRegistrations
             self.allowInvitations = allowInvitations
             self.allowedDomainsForRegistration = allowedDomainsForRegistration
             self.allowedDomainsForInvitations = allowedDomainsForInvitations
             self.github = github
+            self.gitlab = gitlab
         }
         
     }
@@ -373,6 +411,13 @@ extension Configuration {
         load("APICORE_AUTH_GITHUB_API", to: &auth.github.api)
         load("APICORE_AUTH_GITHUB_TEAMS", to: &auth.github.teams)
         
+        load("APICORE_AUTH_GITLAB_ENABLED", to: &auth.gitlab.enabled)
+        load("APICORE_AUTH_GITLAB_APPLICATION", to: &auth.gitlab.application)
+        load("APICORE_AUTH_GITLAB_SECRET", to: &auth.gitlab.secret)
+        load("APICORE_AUTH_GITLAB_HOST", to: &auth.gitlab.host)
+        load("APICORE_AUTH_GITLAB_API", to: &auth.gitlab.api)
+        load("APICORE_AUTH_GITLAB_GROUPS", to: &auth.gitlab.groups)
+        
         // Templates
         load("APICORE_TEMPLATES_ENABLED", to: &templates.enabled)
         load("APICORE_TEMPLATES_ROOT", to: &templates.root)
@@ -433,6 +478,11 @@ extension Configuration {
                 github: Configuration.Auth.Github(
                     enabled: false,
                     client: "",
+                    secret: ""
+                ),
+                gitlab: Configuration.Auth.Gitlab(
+                    enabled: false,
+                    application: "",
                     secret: ""
                 )
             ),

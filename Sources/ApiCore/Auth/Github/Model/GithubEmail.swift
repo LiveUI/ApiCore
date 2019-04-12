@@ -1,5 +1,5 @@
 //
-//  Email.swift
+//  GitlabEmail.swift
 //  GithubLogin
 //
 //  Created by Ondrej Rafaj on 27/03/2019.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-public typealias Emails = [Email]
+public typealias GithubEmails = [GithubEmail]
 
-public struct Email: Codable {
+public struct GithubEmail: Codable {
     
     public let email: String
     public let primary: Bool?

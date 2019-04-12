@@ -110,17 +110,13 @@ class GithubLoginController: Controller {
                         let decoder = JSONDecoder()
                         
                         guard
-                            let userData = userResponse.http.body.data, let user = try? decoder.decode(GithubUser.self, from: userData)
+                            let userData = userResponse.http.body.data, let user = try? decoder.decode(GithubUser.self, from: userData),
+                            let emailsData = emailsResponse.http.body.data, let emails = try? decoder.decode(GithubEmails.self, from: emailsData)
                             else {
                                 throw Error.unableToProcessUserData
                         }
                         guard
-                            let emailsData = emailsResponse.http.body.data, let emails = try? decoder.decode(Emails.self, from: emailsData)
-                            else {
-                                throw Error.unableToProcessUserData
-                        }
-                        guard
-                            var info = try? UserInfo(user: user, emails: emails, githubToken: githubToken),
+                            var info = try? GithubUserInfo(user: user, emails: emails, githubToken: githubToken),
                             let redirectLink = try? req.session().get(redirectKey, as: Redirect.self),
                             let redirectUrl = URL(string: redirectLink.link)
                             else {

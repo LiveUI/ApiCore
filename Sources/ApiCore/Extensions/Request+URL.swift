@@ -13,14 +13,7 @@ extension Request {
     
     /// Server's public URL
     public func serverURL() -> URL {
-        let stringUrl = ApiCoreBase.configuration.server.url ?? "http://localhost:8080"
-        guard var url = URL(string: stringUrl) else {
-            fatalError("Invalid server URL: \(stringUrl)")
-        }
-        if let prefix = ApiCoreBase.configuration.server.pathPrefix, !prefix.isEmpty {
-            url.appendPathComponent(prefix)
-        }
-        return url
+        return Me.serverURL()
     }
     
     /// Server's public base URL
