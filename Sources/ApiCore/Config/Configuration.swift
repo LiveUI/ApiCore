@@ -283,6 +283,23 @@ public final class Configuration: Configurable {
         
     }
     
+    /// Templates configuration
+    public final class Templates: Codable {
+        
+        /// Enable or disable templates endpoint
+        public internal(set) var enabled: Bool
+        
+        /// Root path
+        public internal(set) var root: String
+        
+        /// Initializer
+        init(enabled: Bool, root: String) {
+            self.enabled = enabled
+            self.root = root
+        }
+        
+    }
+    
     /// General settings
     public internal(set) var general: General
     
@@ -301,6 +318,9 @@ public final class Configuration: Configurable {
     /// Email information
     public internal(set) var mail: Mail
     
+    /// Templates information
+    public internal(set) var templates: Templates
+    
     /// Storage information
     public internal(set) var storage: Storage
     
@@ -311,17 +331,19 @@ public final class Configuration: Configurable {
         case jwtSecret = "jwt_secret"
         case database
         case mail
+        case templates
         case storage
     }
     
     /// Initialization
-    public init(general: General, auth: Auth, server: Server, jwtSecret: String, database: Database, mail: Mail, storage: Storage) {
+    public init(general: General, auth: Auth, server: Server, jwtSecret: String, database: Database, mail: Mail, templates: Templates, storage: Storage) {
         self.general = general
         self.auth = auth
         self.server = server
         self.jwtSecret = jwtSecret
         self.database = database
         self.mail = mail
+        self.templates = templates
         self.storage = storage
     }
     
@@ -350,6 +372,10 @@ extension Configuration {
         load("APICORE_AUTH_GITHUB_HOST", to: &auth.github.host)
         load("APICORE_AUTH_GITHUB_API", to: &auth.github.api)
         load("APICORE_AUTH_GITHUB_TEAMS", to: &auth.github.teams)
+        
+        // Templates
+        load("APICORE_TEMPLATES_ENABLED", to: &templates.enabled)
+        load("APICORE_TEMPLATES_ROOT", to: &templates.root)
         
         // Mail
         load("APICORE_MAIL_EMAIL", to: &mail.email)
@@ -429,6 +455,10 @@ extension Configuration {
                     domain: "",
                     key: ""
                 )
+            ),
+            templates: Templates(
+                enabled: true,
+                root: "templates"
             ),
             storage: Configuration.Storage(
                 local: Configuration.Storage.Local(root: "/tmp/Boost"),

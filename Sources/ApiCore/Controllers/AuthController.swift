@@ -14,6 +14,7 @@ import Random
 import MailCore
 import JWT
 import Leaf
+import Templator
 
 
 public class AuthController: Controller {
@@ -111,16 +112,20 @@ public class AuthController: Controller {
                         user: user,
                         on: req
                     )
-                    return try PasswordRecoveryEmailTemplate.parsed(model: templateModel, on: req).flatMap(to: Response.self) { template in
-                        let from = ApiCoreBase.configuration.mail.email
-                        let subject = "Password recovery" // TODO: Localize!!!!!!
-                        let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: template.string, html: template.html)
-                        return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
-                            switch mailResult {
-                            case .success:
-                                return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
-                            default:
-                                throw AuthError.emailFailedToSend
+                    let templator = try req.make(Templates<ApiCoreDatabase>.self)
+                    return try templator.get(EmailTemplatePasswordRecoveryHTML.self, data: templateModel, on: req).flatMap(to: Response.self) { htmlTemplate in
+                        return try templator.get(EmailTemplatePasswordRecoveryPlain.self, data: templateModel, on: req).flatMap(to: Response.self) { plainTemplate in
+                            let from = ApiCoreBase.configuration.mail.email
+                            let subject = "Password recovery" // TODO: Localize!!!!!!
+                            // FIX: HTML/Plain
+                            let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: plainTemplate, html: htmlTemplate)
+                            return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
+                                switch mailResult {
+                                case .success:
+                                    return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
+                                default:
+                                    throw AuthError.emailFailedToSend
+                                }
                             }
                         }
                     }
@@ -156,9 +161,8 @@ public class AuthController: Controller {
                     user: user,
                     on: req
                 )
-                
-                let template = try PasswordRecoveryInputTemplate.parsed(.html, model: templateModel, on: req)
-                return try template.asHtmlResponse(.ok, to: req)
+                let templator = try req.make(Templates<ApiCoreDatabase>.self)
+                return try templator.get(WebTemplatePasswordRecoveryInputScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
             }
         }
         
@@ -206,15 +210,15 @@ public class AuthController: Controller {
                         if !jwtPayload.redirectUri.isEmpty {
                             return req.redirect(to: jwtPayload.redirectUri).asFuture(on: req)
                         } else {
-                            let templateModel = try InfoWebTemplate.Model(
+                            let templateModel = try WebTemplateInfoScreen.Model(
                                 title: "Success", // TODO: Translate!!!!
                                 text: "Your password has been changed",
                                 user: user,
-                                //action: InfoWebTemplate.Model.Action(link: "link", title: "title", text: "text"),
+                                //action: WebTemplateInfoScreen.Model.Action(link: "link", title: "title", text: "text"),
                                 on: req
                             )
-                            let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
-                            return try template.asHtmlResponse(.ok, to: req)
+                            let templator = try req.make(Templates<ApiCoreDatabase>.self)
+                            return try templator.get(WebTemplateInfoScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
                         }
                     }
                 }

@@ -186,6 +186,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             <p>Verification code is: <strong>\(token)</strong></p>
             <p>&nbsp;</p>
             <p>ApiCore</p>
+            
             """, "Email has a wrong html")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")

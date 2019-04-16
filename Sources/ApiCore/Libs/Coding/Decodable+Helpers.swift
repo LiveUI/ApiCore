@@ -56,7 +56,7 @@ public protocol DecodableHelper {
 }
 
 
-public extension DecodableHelper {
+extension DecodableHelper {
     
     /// Quick access to the decodable functionality
     public static var decode: DecodableProperty<ModelType>.Type {

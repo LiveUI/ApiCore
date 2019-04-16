@@ -1,22 +1,7 @@
-//
-//  PasswordRecoveryInputTemplate.swift
-//  ApiCore
-//
-//  Created by Ondrej Rafaj on 23/03/2018.
-//
-
-import Foundation
-
-
-public class PasswordRecoveryInputTemplate: WebTemplate {
-    
-    public static var name: String = "password-recovery-web"
-    
-    public static var html: String = """
 <!DOCTYPE html>
 <html>
     <head>
-        <title>#(system.info.name) - Password recovery</title>#// Translate all copy!!!!!
+        <title>#(system.info.name) - Accept invitation</title>#// Translate all copy!!!!!
         <style>
             * {
                 font-family: Helvetica, Arial, sans-serif;
@@ -58,6 +43,9 @@ public class PasswordRecoveryInputTemplate: WebTemplate {
                 margin-top: 6px;
                 font-size: small;
             }
+            input[disabled] {
+                background-color: #F6F6F6;
+            }
             button {
                 margin-top: 22px;
                 color: white;
@@ -74,7 +62,7 @@ public class PasswordRecoveryInputTemplate: WebTemplate {
         </style>
         <script type="text/javascript">
             window.onload = function () {
-                var input = document.getElementById('password');
+                var input = document.getElementById('username');
                 input.focus();
                 input.select();
             }
@@ -89,17 +77,27 @@ public class PasswordRecoveryInputTemplate: WebTemplate {
             Target is an optional value and if not set a JSON (API) result will be returned.
         */
         <form method="post" action="#(finish)">
-            <h2>Please set your new #(system.info.name) password here:</h2>
+            <h2>Please finish your #(system.info.name) registration here:</h2>
+            <p class="input">
+                <label>Email:</label> <input id="email" name="email" type="email" value="#(user.email)" disabled />
+            </p>
+            <p class="input">
+                <label>Username:</label> <input id="username" name="username" type="text" value="#(user.username)" />
+            </p>
+            <p class="input">
+                <label>Firstname:</label> <input id="firstname" name="firstname" type="text" value="#(user.firstname)" />
+            </p>
+            <p class="input">
+                <label>Lastname:</label> <input id="lastname" name="lastname" type="text" value="#(user.lastname)" />
+            </p>
+            <!-- TODO: Check password is valid against the validation endpoint + check the verification password matches it -->
             <p class="input">
                 <label>Password:</label> <input id="password" name="password" type="password" value="" />
             </p>
             <p class="input">
                 <label>Password again:</label> <input id="verification" name="verification" type="password" value="" />
             </p>
-            <p><button type="submit">Save password</button></p>
+            <p><button type="submit">Save</button></p>
         </form>
     </body>
 </html>
-"""
-    
-}

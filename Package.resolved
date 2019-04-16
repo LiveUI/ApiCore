@@ -123,8 +123,8 @@
         "repositoryURL": "https://github.com/vapor-community/Imperial.git",
         "state": {
           "branch": null,
-          "revision": "25ec325a75021ae763fe7357aa47b80efd45b4c9",
-          "version": "0.11.2"
+          "revision": "a73e3274032d295b406b4e9700e8a571a5fea041",
+          "version": "0.12.0"
         }
       },
       {

@@ -13,6 +13,7 @@ import ErrorsCore
 import MailCore
 import Leaf
 import FileCore
+import Templator
 
 
 /// Default database typealias
@@ -45,32 +46,9 @@ public class ApiCoreBase {
     
     /// Blocks of code executed when new user tries to register
     public static var userShouldRegister: [(User) -> (Bool)] = []
-    
-    /// Add / register model
-    public static func add<Model>(model: Model.Type, database: DatabaseIdentifier<Model.Database>) where Model: Fluent.Migration, Model: Fluent.Model, Model.Database: SchemaSupporting & QuerySupporting {
-        models.append(model)
-        migrationConfig.add(model: model, database: database)
-    }
-    
+        
     /// Configuration cache
     static var _configuration: Configuration?
-    
-    /// Main system configuration
-    public static var configuration: Configuration {
-        get {
-            if _configuration == nil {
-                // Create default configuration
-                _configuration = Configuration.default
-                
-                // Override any properties with ENV
-                _configuration?.loadEnv()
-            }
-            guard let configuration = _configuration else {
-                fatalError("Configuration couldn't be loaded!")
-            }
-            return configuration
-        }
-    }
     
     /// Enable detailed request debugging
     public static var debugRequests: Bool = false
@@ -110,41 +88,12 @@ public class ApiCoreBase {
         let serverConfig = NIOServerConfig.default(maxBodySize: maxBodySize)
         services.register(serverConfig)
         
-        // Migrate models / tables
-        add(model: Team.self, database: .db)
-        add(model: User.self, database: .db)
-        add(model: TeamUser.self, database: .db)
-        add(model: Token.self, database: .db)
-        add(model: ErrorLog.self, database: .db)
-        
-        // Data migrations
-        migrationConfig.add(migration: BaseMigration.self, database: .db)
-        
-        // Set database on tables that don't have migration
-        FluentDesign.defaultDatabase = .db
-        
-        // Configuration
-        // Load configuration
-        let c = configuration
+        try setupDatabase(&services)
         
         // Setup mailing
         // TODO: MVP! Support SendGrid and SMTP!!!!!!
-        let mail = Mailer.Config.mailgun(key: c.mail.mailgun.key, domain: c.mail.mailgun.domain)
+        let mail = Mailer.Config.mailgun(key: configuration.mail.mailgun.key, domain: configuration.mail.mailgun.domain)
         try Mailer(config: mail, registerOn: &services)
-        
-        // Database - Load database details
-        let host = c.database.host ?? "localhost"
-        let port = c.database.port ?? 5432
-        let databaseConfig = ApiCoreDb.config(hostname: host, user: c.database.user, password: c.database.password, database: c.database.database, port: port)
-        
-        print("Configuring database '\(c.database.database)' on \(c.database.user)@\(host):\(port)")
-        
-        try services.register(FluentPostgreSQLProvider())
-        
-        self.databaseConfig = databaseConfig
-        
-        services.register(databaseConfig)
-        services.register(migrationConfig)
         
         // Check JWT secret's security
         if env.isRelease && configuration.jwtSecret == "secret" {
@@ -152,21 +101,7 @@ public class ApiCoreBase {
         }
         
         // CORS
-        let corsConfig = CORSMiddleware.Configuration(
-            allowedOrigin: .all,
-            allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
-            allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent],
-            exposedHeaders: [
-                HTTPHeaderName.authorization.description,
-                HTTPHeaderName.contentLength.description,
-                HTTPHeaderName.contentType.description,
-                HTTPHeaderName.contentDisposition.description,
-                HTTPHeaderName.cacheControl.description,
-                HTTPHeaderName.expires.description
-            ]
-        )
-        let cors = CORSMiddleware(configuration: corsConfig)
-        middlewareConfig.use(cors)
+        setupCORS()
         
         // Github login
         if ApiCoreBase.configuration.auth.github.enabled {
@@ -187,78 +122,15 @@ public class ApiCoreBase {
         }
         
         // Templates
-        try services.register(LeafProvider())
+        try Templates<ApiCoreDatabase>.setup(services: &services)
         
         // Filesystem
-        // TODO: Refactor following to cleanup this method!
-        if configuration.storage.s3.enabled {
-            let config = S3Signer.Config(accessKey: configuration.storage.s3.accessKey,
-                                         secretKey: configuration.storage.s3.secretKey,
-                                         region: configuration.storage.s3.region,
-                                         securityToken: configuration.storage.s3.securityToken
-            )
-            try services.register(s3: config, defaultBucket: configuration.storage.s3.bucket)
-            try services.register(fileCoreManager: .s3(
-                config,
-                configuration.storage.s3.bucket
-            ))
-        } else {
-            try services.register(fileCoreManager: .local(LocalConfig(root: configuration.storage.local.root)))
-        }
+        try setupStorage(&services)
         
         // UUID service
         services.register(RequestIdService.self)
         
-        // Errors
-        middlewareConfig.use(ErrorLoggingMiddleware.self)
-        services.register(ErrorLoggingMiddleware())
-        
-        middlewareConfig.use(ErrorsCoreMiddleware.self)
-        services.register(ErrorsCoreMiddleware(environment: env, log: PrintLogger()))
-        
-        // Authentication
-        services.register(ApiAuthMiddleware())
-        services.register(DebugCheckMiddleware())
-        
-        // Debugging
-        if !env.isRelease {
-            middlewareConfig.use(UrlPrinterMiddleware.self)
-            services.register(UrlPrinterMiddleware())
-        }
-        
-        services.register { _ in
-            JWTService(secret: configuration.jwtSecret)
-        }
-        services.register(AuthenticationCache.self)
-        
-        // Sessions middleware
-        config.prefer(MemoryKeyedCache.self, for: KeyedCache.self)
-        middlewareConfig.use(SessionsMiddleware.self)
-        
-        // Register middlewares
-        services.register(middlewareConfig)
-        
-        // Install default templates
-        Templates.installMissing()
+        try setupMiddlewares(&services, &env, &config)
     }
-    
-    /// Boot routes for all registered controllers
-    @discardableResult public static func boot(router: Router) throws -> (router: Router, secure: Router, debug: Router) {
-        let group: Router
-        if let prefix = configuration.server.pathPrefix {
-            group = router.grouped(prefix)
-        } else {
-            group = router
-        }
         
-        let secureRouter = group.grouped(ApiAuthMiddleware.self)
-        let debugRouter = group.grouped(DebugCheckMiddleware.self)
-        
-        for c in controllers {
-            try c.boot(router: group, secure: secureRouter, debug: debugRouter)
-        }
-        
-        return (group, secureRouter, debugRouter)
-    }
-    
 }
