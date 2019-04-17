@@ -13,5 +13,4 @@ DerivedData/
 *_Info.plist
 
 *.xcodeproj
-/Resources/Templates/*
 !empty

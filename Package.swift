@@ -49,7 +49,13 @@ let package = Package(
             "Leaf",
             "FileCore",
             "ImageCore",
-            "Imperial"
+            "Imperial",
+            "Templator"
+            ]
+        ),
+        .target(name: "Templator", dependencies: [
+            "Vapor",
+            "Fluent"
             ]
         ),
         .target(name: "FileCore", dependencies: [

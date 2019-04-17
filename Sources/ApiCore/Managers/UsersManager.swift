@@ -10,6 +10,7 @@ import Vapor
 import FluentPostgreSQL
 import ErrorsCore
 import MailCore
+import Templator
 
 
 public class UsersManager {
@@ -75,15 +76,19 @@ public class UsersManager {
                 sender: isInvite ? req.me.user() : nil
             )
             
-            let templateType: EmailTemplate.Type = isInvite ? InvitationEmailTemplate.self : RegistrationEmailTemplate.self
+            let templator = try req.make(Templates<ApiCoreDatabase>.self)
             
-            return try templateType.parsed(
-                model: templateModel,
-                on: req
-                ).flatMap(to: User.self) { double in
+            let htmlFuture = try isInvite ?
+                templator.get(EmailTemplateInvitationHTML.self, data: templateModel, on: req) :
+                templator.get(EmailTemplateRegistrationHTML.self, data: templateModel, on: req)
+            return htmlFuture.flatMap(to: User.self) { htmlTemplate in
+                let plainFuture = try isInvite ?
+                    templator.get(EmailTemplateInvitationPlain.self, data: templateModel, on: req) :
+                    templator.get(EmailTemplateRegistrationPlain.self, data: templateModel, on: req)
+                return plainFuture.flatMap(to: User.self) { plainTemplate in
                     let from = ApiCoreBase.configuration.mail.email
                     let subject = isInvite ? "Invitation" : "Registration" // TODO: Localize!!!!!!
-                    let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: double.string, html: double.html)
+                    let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: plainTemplate, html: htmlTemplate)
                     return try req.mail.send(mail).map(to: User.self) { mailResult in
                         switch mailResult {
                         case .success:
@@ -92,6 +97,7 @@ public class UsersManager {
                             throw AuthError.emailFailedToSend
                         }
                     }
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import FluentSQL
 import MailCore
 import ErrorsCore
 import JWT
+import Templator
 
 
 public class UsersController: Controller {
@@ -135,14 +136,14 @@ public class UsersController: Controller {
                     if !verifyPayload.redirectUri.isEmpty {
                         return req.redirect(to: verifyPayload.redirectUri).asFuture(on: req)
                     } else {
-                        let templateModel = try InfoWebTemplate.Model(
+                        let templateModel = try WebTemplateInfoScreen.Model(
                             title: "Success", // TODO: Translate!!!!
                             text: "Your account has been activated",
                             user: user,
                             on: req
                         )
-                        let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
-                        return try template.asHtmlResponse(.ok, to: req)
+                        let templator = try req.make(Templates<ApiCoreDatabase>.self)
+                        return try templator.get(WebTemplateInfoScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
                     }
                 }
             }
@@ -228,9 +229,8 @@ public class UsersController: Controller {
                     user: user,
                     on: req
                 )
-                
-                let template = try InvitationInputTemplate.parsed(.html, model: templateModel, on: req)
-                return try template.asHtmlResponse(.ok, to: req)
+                let templator = try req.make(Templates<ApiCoreDatabase>.self)
+                return try templator.get(WebTemplateInvitationInputScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
             }
         }
         
@@ -281,15 +281,15 @@ public class UsersController: Controller {
                             if !jwtPayload.redirectUri.isEmpty {
                                 return req.redirect(to: jwtPayload.redirectUri).asFuture(on: req)
                             } else {
-                                let templateModel = try InfoWebTemplate.Model(
+                                let templateModel = try WebTemplateInfoScreen.Model(
                                     title: "Success", // TODO: Translate!!!!
                                     text: "Your account has been created",
                                     user: user,
-                                    //action: InfoWebTemplate.Model.Action(link: "link", title: "title", text: "text"),
+                                    //action: WebTemplateInfoScreen.Model.Action(link: "link", title: "title", text: "text"),
                                     on: req
                                 )
-                                let template = try InfoWebTemplate.parsed(.html, model: templateModel, on: req)
-                                return try template.asHtmlResponse(.ok, to: req)
+                                let templator = try req.make(Templates<ApiCoreDatabase>.self)
+                                return try templator.get(WebTemplateInfoScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
                             }
                         }
                     }
