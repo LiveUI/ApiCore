@@ -13,7 +13,7 @@ public class WebTemplateInvitationInputScreen: TemplateSource {
     
     public static var name: String = "web.invitation"
     
-    public static var link: String = ""
+    public static var link: String = "https://raw.githubusercontent.com/LiveUI/ApiCore/master/Resources/Templates/web.invitation.leaf"
     
     public static var deletable: Bool = false
     

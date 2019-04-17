@@ -58,7 +58,7 @@ public class WebTemplateInfoScreen: TemplateSource {
     /// Template name
     public static var name: String = "web.info-message"
     
-    public static var link: String = ""
+    public static var link: String = "https://raw.githubusercontent.com/LiveUI/ApiCore/master/Resources/Templates/web.info-message.leaf"
     
     public static var deletable: Bool = false
     

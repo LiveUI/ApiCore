@@ -13,7 +13,7 @@ public class WebTemplatePasswordRecoveryInputScreen: TemplateSource {
     
     public static var name: String = "web.password-recovery"
     
-    public static var link: String = ""
+    public static var link: String = "https://raw.githubusercontent.com/LiveUI/ApiCore/master/Resources/Templates/web.password-recovery.leaf"
     
     public static var deletable: Bool = false
     
