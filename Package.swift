@@ -7,6 +7,7 @@ let package = Package(
         .library(name: "ApiCore", targets: ["ApiCore"]),
         .library(name: "FileCore", targets: ["FileCore"]),
         .library(name: "ImageCore", targets: ["ImageCore"]),
+        .library(name: "Templator", targets: ["Templator"]),
         .library(name: "ApiCoreTestTools", targets: ["ApiCoreTestTools"])
     ],
     dependencies: [
