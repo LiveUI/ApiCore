@@ -7,7 +7,6 @@ let package = Package(
         .library(name: "ApiCore", targets: ["ApiCore"]),
         .library(name: "FileCore", targets: ["FileCore"]),
         .library(name: "ImageCore", targets: ["ImageCore"]),
-        .library(name: "Templator", targets: ["Templator"]),
         .library(name: "ApiCoreTestTools", targets: ["ApiCoreTestTools"])
     ],
     dependencies: [
@@ -24,6 +23,7 @@ let package = Package(
         .package(url: "https://github.com/LiveUI/ErrorsCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/VaporTestTools.git", from: "0.1.5"),
         .package(url: "https://github.com/LiveUI/FluentTestTools.git", .branch("master")),
+        .package(url: "https://github.com/Einstore/Templator.git", .branch("master")),
         .package(url: "https://github.com/vapor-community/Imperial.git", from: "0.11.3")
     ],
     targets: [
@@ -52,11 +52,6 @@ let package = Package(
             "ImageCore",
             "Imperial",
             "Templator"
-            ]
-        ),
-        .target(name: "Templator", dependencies: [
-            "Vapor",
-            "Fluent"
             ]
         ),
         .target(name: "FileCore", dependencies: [
