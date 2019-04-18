@@ -227,6 +227,9 @@ public final class Configuration: Configurable {
         /// Admin email (all administration emails should be sent from this email)
         public internal(set) var email: String = "admin@apicore"
         
+        /// SMTP configuration string `smtp_server;username;password;port`
+        public internal(set) var smtp: String
+        
         /// Mailgun configuration
         public final class MailGun: Codable {
             
@@ -248,8 +251,9 @@ public final class Configuration: Configurable {
         public internal(set) var mailgun: MailGun
         
         /// Initializer
-        init(mailgun: MailGun) {
+        init(mailgun: MailGun, smtp: String) {
             self.mailgun = mailgun
+            self.smtp = smtp
         }
         
     }
@@ -431,6 +435,8 @@ extension Configuration {
         // Mail
         load("APICORE_MAIL_EMAIL", to: &mail.email)
         
+        load("APICORE_MAIL_SMTP", to: &mail.smtp)
+        
         load("APICORE_MAIL_MAILGUN_DOMAIN", to: &mail.mailgun.domain)
         load("APICORE_MAIL_MAILGUN_KEY", to: &mail.mailgun.key)
 
@@ -511,7 +517,8 @@ extension Configuration {
                 mailgun: Configuration.Mail.MailGun(
                     domain: "",
                     key: ""
-                )
+                ),
+                smtp: ""
             ),
             templates: Templates(
                 enabled: true,
