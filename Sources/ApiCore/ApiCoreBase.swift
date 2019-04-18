@@ -121,6 +121,24 @@ public class ApiCoreBase {
             print("Github login disabled")
         }
         
+        // Gitlab login
+        if ApiCoreBase.configuration.auth.gitlab.enabled {
+            print("Enabling Gitlab login for \(configuration.auth.gitlab.host)")
+            let githubLogin = try GitlabLoginManager(
+                GitlabConfig(
+                    server: ApiCoreBase.configuration.auth.gitlab.host,
+                    api: ApiCoreBase.configuration.auth.gitlab.api
+                ),
+                services: &services,
+                jwtSecret: ApiCoreBase.configuration.jwtSecret
+            )
+            services.register { _ in
+                githubLogin
+            }
+        } else {
+            print("Gitlab login disabled")
+        }
+        
         // Templates
         try Templates<ApiCoreDatabase>.setup(services: &services)
         

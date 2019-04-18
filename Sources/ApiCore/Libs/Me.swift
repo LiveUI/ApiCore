@@ -58,4 +58,17 @@ public struct Me {
         }
     }
     
+    /// Server URL
+    
+    public static func serverURL() -> URL {
+        let stringUrl = ApiCoreBase.configuration.server.url ?? "http://localhost:8080"
+        guard var url = URL(string: stringUrl) else {
+            fatalError("Invalid server URL: \(stringUrl)")
+        }
+        if let prefix = ApiCoreBase.configuration.server.pathPrefix, !prefix.isEmpty {
+            url.appendPathComponent(prefix)
+        }
+        return url
+    }
+    
 }

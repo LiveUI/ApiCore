@@ -1,6 +1,6 @@
 //
 //  URL+Parameters.swift
-//  GithubLogin
+//  GitlabLogin
 //
 //  Created by Ondrej Rafaj on 27/03/2019.
 //
@@ -11,7 +11,7 @@ import JWT
 
 
 /// JWT service
-final class GithubJWTService: Service {
+final class GitlabJWTService: Service {
     
     /// Signer
     var signer: JWTSigner
@@ -22,7 +22,7 @@ final class GithubJWTService: Service {
     }
     
     /// Sign user info to token
-    func signUserInfoToToken(info: UserInfo) throws -> String {
+    func signUserInfoToToken(info: GitlabUserInfo) throws -> String {
         var jwt = JWT(payload: info)
         
         jwt.header.typ = nil // set to nil to avoid dictionary re-ordering causing probs
@@ -40,12 +40,12 @@ final class GithubJWTService: Service {
 
 extension URL {
     
-    @discardableResult func append(userInfo: UserInfo, on req: Request) throws -> URL? {
+    @discardableResult func append(userInfo: GitlabUserInfo, on req: Request) throws -> URL? {
         guard var urlComponents = URLComponents(string:  absoluteString) else { return absoluteURL }
         var queryItems: [URLQueryItem] = urlComponents.queryItems ??  []
         
         // Add user info as a JWT token
-        let jwtService: GithubJWTService = try req.make()
+        let jwtService: GitlabJWTService = try req.make()
         let token = try jwtService.signUserInfoToToken(info: userInfo)
         
         let infoValue = URLQueryItem(name: "info", value: token)
