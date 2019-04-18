@@ -19,9 +19,9 @@ extension ApiCoreBase {
         } else if !configuration.mail.smtp.isEmpty {
             let parts = configuration.mail.smtp.split(separator: ";")
             guard parts.count >= 3 else {
-                fatalError("Invalid SMTP configuration; Should be `smtp_server;username;password;port`, where port is an optional value which defaults to 465")
+                fatalError("Invalid SMTP configuration; Should be `smtp_server;username;password;port`, where port is an optional value which defaults to 25")
             }
-            let port: Int32 = (parts.count >= 4) ? Int32(parts[3]) ?? 465 : 465
+            let port: Int32 = (parts.count >= 4) ? Int32(parts[3]) ?? 25 : 25
             mail = Mailer.Config.smtp(
                 SMTP(
                     hostname: String(parts[0]),
