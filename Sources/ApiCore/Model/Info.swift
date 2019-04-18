@@ -29,6 +29,9 @@ public struct Info: Content {
         /// Team configuration (single or multi)
         public let singleTeam: Bool
         
+        /// Classic login is enabled/disabled
+        public let allowLogin: Bool
+        
         /// New registrations are enabled/disabled
         public let allowRegistrations: Bool
         
@@ -54,6 +57,7 @@ public struct Info: Content {
         public let allowedGitlabGroups: [String]
         
         enum CodingKeys: String, CodingKey {
+            case allowLogin = "allow_login"
             case singleTeam = "single_team"
             case allowRegistrations = "allow_registrations"
             case allowedRegistrationDomains = "allowed_registration_domains"
@@ -102,6 +106,7 @@ public struct Info: Content {
         })
         config = Config(
             singleTeam: ApiCoreBase.configuration.general.singleTeam,
+            allowLogin: ApiCoreBase.configuration.auth.allowLogin,
             allowRegistrations: ApiCoreBase.configuration.auth.allowRegistrations,
             allowedRegistrationDomains: ApiCoreBase.configuration.auth.allowedDomainsForRegistration,
             allowInvitations: ApiCoreBase.configuration.auth.allowInvitations,

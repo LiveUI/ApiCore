@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import FluentPostgreSQL
+import ErrorsCore
 
 
 public class AuthManager {
@@ -87,6 +88,9 @@ public class AuthManager {
     
     /// Login helper
     public static func login(request req: Request, login: User.Auth.Login) throws -> Future<Response> {
+        guard ApiCoreBase.configuration.auth.allowLogin else {
+            throw ErrorsCore.HTTPError.notAuthorized
+        }
         return try loginData(request: req, login: login).flatMap(to: Response.self) { (publicToken, user) in
             return try publicToken.asResponse(.ok, to: req).map(to: Response.self) { response in
                 try response.http.headers.replaceOrAdd(name: "Authorization", value: "Bearer \(user.asJWTToken(on: req))")

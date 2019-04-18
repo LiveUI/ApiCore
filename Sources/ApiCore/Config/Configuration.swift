@@ -105,6 +105,9 @@ public final class Configuration: Configurable {
             
         }
         
+        /// Allow login using username and password
+        public internal(set) var allowLogin: Bool
+        
         /// Allow new registrations (enabled by default)
         public internal(set) var allowRegistrations: Bool
         
@@ -124,6 +127,7 @@ public final class Configuration: Configurable {
         public internal(set) var gitlab: Gitlab
         
         enum CodingKeys: String, CodingKey {
+            case allowLogin = "allow_login"
             case allowRegistrations = "allow_registrations"
             case allowedDomainsForRegistration = "registration_domains"
             case allowInvitations = "allow_invitations"
@@ -133,7 +137,8 @@ public final class Configuration: Configurable {
         }
         
         /// Initializer
-        init(allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String], github: Github, gitlab: Gitlab) {
+        init(allowLogin: Bool, allowRegistrations: Bool, allowedDomainsForRegistration: [String], allowInvitations: Bool, allowedDomainsForInvitations: [String], github: Github, gitlab: Gitlab) {
+            self.allowLogin = allowLogin
             self.allowRegistrations = allowRegistrations
             self.allowInvitations = allowInvitations
             self.allowedDomainsForRegistration = allowedDomainsForRegistration
@@ -399,6 +404,7 @@ extension Configuration {
         load("APICORE_GENERAL_SINGLE_TEAM", to: &general.singleTeam)
         
         // Auth
+        load("APICORE_AUTH_ALLOW_LOGIN", to: &auth.allowLogin)
         load("APICORE_AUTH_ALLOW_REGISTRATIONS", to: &auth.allowRegistrations)
         load("APICORE_AUTH_REGISTRATION_DOMAINS", to: &auth.allowedDomainsForRegistration)
         load("APICORE_AUTH_ALLOW_REGISTRATIONS", to: &auth.allowInvitations)
@@ -471,6 +477,7 @@ extension Configuration {
                 singleTeam: false
             ),
             auth: Configuration.Auth(
+                allowLogin: true,
                 allowRegistrations: true,
                 allowedDomainsForRegistration: [],
                 allowInvitations: true,

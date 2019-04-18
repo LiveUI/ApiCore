@@ -29,6 +29,42 @@ public class ServerController: Controller {
             return info
         }
         
+        router.get("authenticators") { req -> [Authenticator] in
+            var authenticators: [Authenticator] = []
+            if ApiCoreBase.configuration.auth.allowLogin {
+                authenticators.append(
+                    Authenticator(
+                        button: req.serverURL().appendingPathComponent("auth").absoluteString,
+                        name: "Login",
+                        identifier: "login",
+                        icon: "users",
+                        type: "BASIC"
+                    )
+                )
+            }
+            if ApiCoreBase.configuration.auth.github.enabled {
+                authenticators.append(
+                    Authenticator(
+                        button: req.serverURL().appendingPathComponent("auth/github/login").absoluteString,
+                        name: "Github",
+                        identifier: "github",
+                        icon: "github"
+                    )
+                )
+            }
+            if ApiCoreBase.configuration.auth.gitlab.enabled {
+                authenticators.append(
+                    Authenticator(
+                        button: req.serverURL().appendingPathComponent("auth/gitlab/login").absoluteString,
+                        name: "GitLab",
+                        identifier: "gitlab",
+                        icon: "gitlab"
+                    )
+                )
+            }
+            return authenticators
+        }
+        
         // Upload a server image (admin only)
         secure.post("server", "image") { req -> Future<Response> in
             return try req.me.isSystemAdmin().flatMap(to: Response.self) { isAdmin in
