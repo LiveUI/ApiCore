@@ -83,6 +83,9 @@ public class ApiCoreBase {
     /// Main configure method for ApiCore
     public static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
         // Set max upload filesize
+        if configuration.server.maxUploadFilesize ?? 0 < 50 {
+            configuration.server.maxUploadFilesize = 50
+        }
         let mb = Double(configuration.server.maxUploadFilesize ?? 50)
         let maxBodySize = Int(Filesize.megabyte(mb).value)
         let serverConfig = NIOServerConfig.default(maxBodySize: maxBodySize)
