@@ -72,7 +72,6 @@ public final class Auth: Controller {
         booted = true
     }
     
-    
     /// Return authenticated user details back to the system for authentication
     ///
     /// - Parameters:
