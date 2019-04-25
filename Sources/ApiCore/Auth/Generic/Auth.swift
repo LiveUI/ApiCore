@@ -53,12 +53,7 @@ public final class Auth: Controller {
     
     static var authenticators: [Authenticable.Type] = []
     
-    static var booted: Bool = false
-    
     static func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-        guard booted == false else {
-            fatalError("Authenticators have already booted")
-        }
         for auth in authenticators {
             try auth.configure(&config, &env, &services)
         }
@@ -69,7 +64,6 @@ public final class Auth: Controller {
         for auth in authenticators {
             try auth.boot(router: router, secure: secure, debug: debug)
         }
-        booted = true
     }
     
     /// Return authenticated user details back to the system for authentication

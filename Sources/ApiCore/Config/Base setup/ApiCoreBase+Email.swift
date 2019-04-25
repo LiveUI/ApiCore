@@ -7,6 +7,7 @@
 
 import Foundation
 import MailCore
+import Vapor
 
 
 extension ApiCoreBase {
@@ -32,7 +33,13 @@ extension ApiCoreBase {
             )
             print("Configuring SMTP for \(parts[1])@\(parts[0]):\(port) as the main mailing service")
         } else {
-            fatalError("Email service hasn't been configured")
+            let message = "Email service hasn't been configured"
+            if try Environment.detect() == .production {
+                fatalError(message)
+            } else {
+                print(message)
+                mail = Mailer.Config.none
+            }
         }
         try Mailer(config: mail, registerOn: &services)
     }

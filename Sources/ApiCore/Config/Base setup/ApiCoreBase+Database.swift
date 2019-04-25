@@ -1,5 +1,5 @@
 //
-//  ApiCoreBase+Models.swift
+//  ApiCoreBase+Database.swift
 //  ApiCore
 //
 //  Created by Ondrej Rafaj on 17/04/2019.
