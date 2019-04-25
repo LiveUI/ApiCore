@@ -19,13 +19,16 @@ public struct Authenticator: Content {
     
     public var icon: String
     
-    public var type: String
+    public var color: String?
     
-    public init(button: String, name: String, identifier: String, icon: String, type: String = "OAUTH") {
+    public var type: AuthType
+    
+    public init(button: String, name: String, identifier: String, icon: String, color: String?, type: AuthType = .oauth) {
         self.button = button
         self.name = name
         self.identifier = identifier
         self.icon = icon
+        self.color = color
         self.type = type
     }
     

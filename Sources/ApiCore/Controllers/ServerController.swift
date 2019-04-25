@@ -38,7 +38,8 @@ public class ServerController: Controller {
                         name: "Login",
                         identifier: "login",
                         icon: "users",
-                        type: "BASIC"
+                        color: nil,
+                        type: .basic
                     )
                 )
             }
@@ -48,7 +49,8 @@ public class ServerController: Controller {
                         button: req.serverURL().appendingPathComponent("auth/github/login").absoluteString,
                         name: "Github",
                         identifier: "github",
-                        icon: "github"
+                        icon: "github",
+                        color: "000000"
                     )
                 )
             }
@@ -58,7 +60,19 @@ public class ServerController: Controller {
                         button: req.serverURL().appendingPathComponent("auth/gitlab/login").absoluteString,
                         name: "GitLab",
                         identifier: "gitlab",
-                        icon: "gitlab"
+                        icon: "gitlab",
+                        color: "D75D38"
+                    )
+                )
+            }
+            for auth in Auth.authenticators {
+                authenticators.append(
+                    Authenticator(
+                        button: req.serverURL().appendingPathComponent(auth.link).absoluteString,
+                        name: auth.name,
+                        identifier: auth.name.lowercased(),
+                        icon: auth.icon,
+                        color: auth.color
                     )
                 )
             }

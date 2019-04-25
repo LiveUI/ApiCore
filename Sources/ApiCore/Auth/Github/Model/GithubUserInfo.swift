@@ -28,6 +28,8 @@ public struct GithubUserInfo: Codable, JWTPayload, UserSource {
     public var token: String?
     public let githubToken: String
     
+    public var info: [String : String]?
+    
     /// Initializer
     init(user: GithubUser, emails: GithubEmails, githubToken: String, token: String? = nil) throws {
         username = user.login

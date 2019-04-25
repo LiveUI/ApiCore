@@ -9,7 +9,7 @@ import Foundation
 import JWT
 
 
-public struct GitlabUserInfo: Codable, JWTPayload, UserSource {
+public struct GitlabUserInfo: JWTPayload, UserSource {
     
     public enum Error: Swift.Error {
         case missingEmail
@@ -27,6 +27,8 @@ public struct GitlabUserInfo: Codable, JWTPayload, UserSource {
     
     public var token: String?
     public let gitlabToken: String
+    
+    public var info: [String : String]?
     
     /// Initializer
     init(user: GitlabUser, gitlabToken: String, token: String? = nil) throws {

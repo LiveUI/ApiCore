@@ -8,7 +8,9 @@
 import Foundation
 import Vapor
 
-public protocol UserSource {
+
+/// Common interface for third-party authentication
+public protocol UserSource: Codable {
     
     // Username / nickname
     var username: String { get }
@@ -21,6 +23,12 @@ public protocol UserSource {
     
     /// Email
     var email: String { get }
+    
+    /// ApiCore permanent login token
+    var token: String? { get set }
+    
+    /// Additional info
+    var info: [String: String]? { get set }
     
 }
 

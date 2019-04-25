@@ -10,7 +10,6 @@ import Vapor
 import Fluent
 import FluentPostgreSQL
 import ErrorsCore
-import MailCore
 import Leaf
 import FileCore
 import Templator
@@ -77,7 +76,8 @@ public class ApiCoreBase {
         UsersController.self,
         TeamsController.self,
         LogsController.self,
-        ServerController.self
+        ServerController.self,
+        Auth.self
     ]
     
     /// Main configure method for ApiCore
@@ -93,10 +93,7 @@ public class ApiCoreBase {
         
         try setupDatabase(&services)
         
-        // Setup mailing
-        // TODO: MVP! Support SendGrid and SMTP!!!!!!
-        let mail = Mailer.Config.mailgun(key: configuration.mail.mailgun.key, domain: configuration.mail.mailgun.domain)
-        try Mailer(config: mail, registerOn: &services)
+        try setupEmails(&services)
         
         // Check JWT secret's security
         if env.isRelease && configuration.jwtSecret == "secret" {
@@ -141,6 +138,8 @@ public class ApiCoreBase {
         } else {
             print("Gitlab login disabled")
         }
+        
+        try Auth.configure(&config, &env, &services)
         
         // Templates
         try Templates<ApiCoreDatabase>.setup(services: &services)
