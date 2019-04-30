@@ -21,12 +21,27 @@ import ImageCore
 /// Server routes
 public class ServerController: Controller {
     
-    /// Setup routes
+    /// Setvarroutes
     public static func boot(router: Router, secure: Router, debug: Router) throws {
         // Get server info
-        router.get("info") { req -> Info in
-            let info = try Info(req)
-            return info
+        router.get("info") { req -> EventLoopFuture<Info> in
+            func info(_ system: System) throws -> Info {
+                var info = try Info(req)
+                info.icons = info.icons.map({ icon in
+                    var icon = icon
+                    icon.url.append("?guid=" + system.value)
+                    return icon
+                })
+                return info
+            }
+            return SystemManager.get(for: "LogoUUID", on: req).flatMap({ system in
+                guard let system = system else {
+                    return SystemManager.set(value: UUID().uuidString, for: "LogoUUID", on: req).map({ system in
+                        return try info(system)
+                    })
+                }
+                return try req.eventLoop.newSucceededFuture(result: info(system))
+            })
         }
         
         router.get("authenticators") { req -> [Authenticator] in
@@ -91,8 +106,10 @@ public class ServerController: Controller {
                         throw ImageError.invalidImageFormat
                     }
                     
-                    return try Logo.create(from: data, on: req).map({ _ in
-                        return try req.response.noContent()
+                    return try Logo.create(from: data, on: req).flatMap({ _ in
+                        return SystemManager.set(value: UUID().uuidString, for: "LogoUUID", on: req).map({ _ in
+                            return try req.response.noContent()
+                        })
                     })
                 })
             }

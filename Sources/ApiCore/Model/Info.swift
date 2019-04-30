@@ -19,7 +19,7 @@ public struct Info: Content {
         public let size: IconSize
         
         /// URL
-        public let url: String
+        public var url: String
         
     }
     
@@ -84,7 +84,7 @@ public struct Info: Content {
     public let interface: String?
     
     /// Server icons
-    public let icons: [Icon]
+    public var icons: [Icon]
     
     /// Server config
     public let config: Config

@@ -20,6 +20,7 @@ extension ApiCoreBase {
         add(model: TeamUser.self, database: .db)
         add(model: Token.self, database: .db)
         add(model: ErrorLog.self, database: .db)
+        add(model: System.self, database: .db)
         
         try Templator.Templates<ApiCoreDatabase>.setup(models: &migrationConfig, database: .db)
         
