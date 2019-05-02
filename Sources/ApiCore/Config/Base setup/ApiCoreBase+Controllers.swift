@@ -31,7 +31,7 @@ extension ApiCoreBase {
         // Template endpoints
         if configuration.templates.enabled {
             print("Enabling template endpoints")
-            try Templator.Templates<ApiCoreDatabase>.setup(routes: router, permissionCheck: { (route, req) -> EventLoopFuture<Bool> in
+            try Templator.Templates<ApiCoreDatabase>.setup(routes: secureRouter, permissionCheck: { (route, req) -> EventLoopFuture<Bool> in
                 print("Loading permissions \(route) endpoint")
                 return try req.me.isSystemAdmin()
             })
