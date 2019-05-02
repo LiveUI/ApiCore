@@ -15,6 +15,7 @@ extension ApiCoreBase {
     @discardableResult public static func boot(router: Router) throws -> (router: Router, secure: Router, debug: Router) {
         let group: Router
         if let prefix = configuration.server.pathPrefix {
+            print("Using path prefix \(prefix) for all API endpoints")
             group = router.grouped(prefix)
         } else {
             group = router
@@ -29,6 +30,7 @@ extension ApiCoreBase {
         
         // Template endpoints
         if configuration.templates.enabled {
+            print("Enabling template endpoints")
             try Templator.Templates<ApiCoreDatabase>.setup(routes: router, permissionCheck: { (route, req) -> EventLoopFuture<Bool> in
                 return try req.me.isSystemAdmin()
             })
