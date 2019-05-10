@@ -13,6 +13,9 @@ import ErrorsCore
 /// Local filesystem client
 public class LocalClient: FileManagement, Service {
     
+    /// Marks if service is remote or local
+    public let isRemote: Bool = false
+    
     /// Error alias
     typealias Error = FileCoreManager.Error
     

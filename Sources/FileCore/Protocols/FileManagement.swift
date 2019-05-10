@@ -12,6 +12,9 @@ import Vapor
 /// Basic file management protocol
 public protocol FileManagement {
     
+    /// Marks if service is remote or local
+    var isRemote: Bool { get }
+    
     /// Save file from data
     ///
     /// - parameters:

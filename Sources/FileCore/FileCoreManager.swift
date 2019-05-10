@@ -14,6 +14,11 @@ import ErrorsCore
 /// Filesystem manager
 public class FileCoreManager: CoreManager, Service {
     
+    /// Marks if service is remote or local
+    public var isRemote: Bool {
+        return client.isRemote
+    }
+    
     /// Filesystem configurations
     public enum Configuration {
         

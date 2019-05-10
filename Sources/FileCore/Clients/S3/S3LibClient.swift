@@ -13,6 +13,9 @@ import S3
 /// S3 filesystem client
 class S3LibClient: FileManagement, Service {
     
+    /// Marks if service is remote or local
+    public let isRemote: Bool = true
+    
     /// Error alias
     typealias Error = FileCoreManager.Error
     
