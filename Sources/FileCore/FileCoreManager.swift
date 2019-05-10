@@ -109,6 +109,11 @@ public class FileCoreManager: CoreManager, Service {
     /// Filesystem location used in current instance
     public internal(set) var config: Configuration
     
+    /// Return a server url for the filesystem
+    public func serverUrl() throws -> URL? {
+        return try client.serverUrl()
+    }
+    
     /// Client for current configuration
     let client: FileManagement
     

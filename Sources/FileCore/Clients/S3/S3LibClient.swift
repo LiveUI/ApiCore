@@ -25,6 +25,13 @@ class S3LibClient: FileManagement, Service {
     /// S3 connector
     let s3: S3Client
     
+    let bucket: String
+    
+    /// Return a server url for the filesystem
+    public func serverUrl() throws -> URL? {
+        return config.region.url(bucket: bucket)
+    }
+    
     /// Save file
     public func save(file data: Data, to path: String, mime: MediaType, on container: Container) throws -> EventLoopFuture<Void> {
         let file = File.Upload.init(data: data, destination: path, access: .publicRead, mime: mime.description)
@@ -86,6 +93,7 @@ class S3LibClient: FileManagement, Service {
     /// Initializer
     init(_ config: S3Signer.Config, bucket: String) throws {
         self.config = config
+        self.bucket = bucket
         
         s3 = try S3(defaultBucket: bucket, signer: S3Signer(config)) as S3Client
     }

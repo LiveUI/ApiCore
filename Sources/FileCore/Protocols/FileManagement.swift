@@ -15,6 +15,13 @@ public protocol FileManagement {
     /// Marks if service is remote or local
     var isRemote: Bool { get }
     
+    
+    /// Return a server url for the filesystem
+    ///
+    /// - Returns: URL (Optional)
+    /// - Throws: Error
+    func serverUrl() throws -> URL?
+    
     /// Save file from data
     ///
     /// - parameters:

@@ -22,6 +22,9 @@ public class LocalClient: FileManagement, Service {
     /// Configuration
     let config: LocalConfig
     
+    /// Return a server url for the filesystem
+    public func serverUrl() throws -> URL? { return nil }
+    
     /// Save file
     public func save(file: Data, to path: String, mime: MediaType, on container: Container) throws -> EventLoopFuture<Void> {
         let url = self.path(file: path)
