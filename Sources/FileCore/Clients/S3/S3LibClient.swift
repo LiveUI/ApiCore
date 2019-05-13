@@ -29,7 +29,8 @@ class S3LibClient: FileManagement, Service {
     
     /// Return a server url for the filesystem
     public func serverUrl() throws -> URL? {
-        return config.region.url(bucket: bucket)
+        let url = URL(string: config.region.hostUrlString(bucket: bucket))
+        return url
     }
     
     /// Save file
