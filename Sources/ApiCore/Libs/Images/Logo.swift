@@ -64,7 +64,7 @@ public struct Logo {
     }
     
     /// Logo as a BASE64 encoded string
-    public static let base64: String = """
+    public static var base64: String = """
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAACXBIWXMAAAsTAAAL
         EwEAmpwYAAALcmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJl
         Z2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1w
