@@ -32,7 +32,7 @@ extension LinuxTests {
         // Look for duplicates
         let crossReferenceKeys = Dictionary(grouping: thisClass.allTests, by: { $0.0 })
         let duplicateKeys = crossReferenceKeys.filter { $1.count > 1 }.sorted { $0.1.count > $1.1.count }
-        XCTAssertTrue(duplicateKeys.isEmpty, "You shouldn't have any duplicate keys in allTests")
+        XCTAssertTrue(duplicateKeys.isEmpty, "You shouldn't have any duplicate keys in allTests: \(duplicateKeys)")
         
 //        let crossReferenceFuncs = Dictionary(grouping: thisClass.allTests, by: { ($0.1 as () -> ()) })
 //        let duplicateFuncs = crossReferenceFuncs.filter { $1.count > 1 }.sorted { $0.1.count > $1.1.count }
