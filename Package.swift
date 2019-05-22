@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0-rc.4"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc.2"),
         .package(url: "https://github.com/vapor/leaf.git", from: "3.0.0-rc.2"),
-        .package(url: "https://github.com/twostraws/SwiftGD.git", from: "2.0.0"),
+        .package(url: "https://github.com/twostraws/SwiftGD.git", .upToNextMinor(from: "2.3.0")),
         .package(url: "https://github.com/LiveUI/S3.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/MailCore.git", .branch("master")),
         .package(url: "https://github.com/LiveUI/ErrorsCore.git", .branch("master")),
