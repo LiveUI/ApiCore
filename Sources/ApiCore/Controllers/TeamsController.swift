@@ -117,6 +117,9 @@ class TeamsController: Controller {
                 throw Error.singleTeamConfiguration
             }
             return try req.content.decode(Team.New.self).flatMap(to: Response.self) { newTeam in
+                guard !newTeam.name.isEmpty else {
+                    throw Team.Error.emptyParameter("name")
+                }
                 return try Team.exists(identifier: newTeam.identifier, on: req).flatMap(to: Response.self) { identifierExists in
                     if identifierExists {
                         throw Team.Error.identifierAlreadyExists
@@ -139,6 +142,9 @@ class TeamsController: Controller {
                 throw Error.singleTeamConfiguration
             }
             return try req.content.decode(Team.Identifier.self).flatMap(to: Response.self) { identifierObject in
+                guard !identifierObject.identifier.isEmpty else {
+                    throw Team.Error.emptyParameter("identifier")
+                }
                 return try Team.exists(identifier: identifierObject.identifier, on: req).map(to: Response.self) { identifierExists in
                     if identifierExists {
                         throw Team.Error.identifierAlreadyExists
@@ -155,6 +161,10 @@ class TeamsController: Controller {
             let id = try req.parameters.next(DbIdentifier.self)
             return try req.me.verifiedTeam(id: id).flatMap(to: Team.self, { team in
                 return try req.content.decode(Team.New.self).flatMap(to: Team.self) { newTeam in
+                    guard !newTeam.name.isEmpty else {
+                        throw Team.Error.emptyParameter("name")
+                    }
+                    
                     team.name = newTeam.name
                     
                     func save() -> Future<Team> {

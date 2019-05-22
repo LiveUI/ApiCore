@@ -23,6 +23,9 @@ public final class Team: DbCoreModel {
     /// Team errors
     public enum Error: FrontendError {
         
+        /// Empty parameter
+        case emptyParameter(String)
+        
         /// Team identifier already exists
         case identifierAlreadyExists
         
@@ -32,6 +35,8 @@ public final class Team: DbCoreModel {
         /// Error identifier
         public var identifier: String {
             switch self {
+            case .emptyParameter:
+                return "team_error.missing_param"
             case .identifierAlreadyExists:
                 return "team_error.identifier_already_exists"
             case .invalidTeam:
@@ -47,6 +52,8 @@ public final class Team: DbCoreModel {
         /// Reason for failure
         public var reason: String {
             switch self {
+            case .emptyParameter(let param):
+                return "Invalid parameter: \(param)"
             case .identifierAlreadyExists:
                 return "Team identifier already exists"
             case .invalidTeam:

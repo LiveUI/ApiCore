@@ -32,6 +32,7 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
         ("testLinuxTests", testLinuxTests),
         ("testGetTeams", testGetTeams),
         ("testCreateTeam", testCreateTeam),
+        ("testCreateEmptyTeam", testCreateEmptyTeam),
         ("testValidTeamNameCheck", testValidTeamNameCheck),
         ("testInvalidTeamNameCheck", testInvalidTeamNameCheck),
         ("testGetSingleTeam", testGetSingleTeam),
@@ -128,6 +129,22 @@ class TeamsControllerTests: XCTestCase, TeamsTestCase, LinuxTests {
             count = app.testable.count(allFor: Team.self)
             XCTAssertEqual(count, 4, "There should be three team entries in the db")
         }
+    }
+    
+    func testCreateEmptyTeam() {
+        // Execute request
+        let post = Team(name: "", identifier: "team-3")
+        let postData = try! post.asJson()
+        let req = HTTPRequest.testable.post(uri: "/teams", data: postData, headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ] , authorizedUser: user1, on: app
+        )
+        let r = app.testable.response(to: req)
+        
+        r.response.testable.debug()
+        
+        XCTAssertTrue(r.response.testable.has(statusCode: .conflict), "Wrong status code")
+        XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
     }
     
     func testValidTeamNameCheck() {

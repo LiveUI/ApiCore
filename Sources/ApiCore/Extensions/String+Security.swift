@@ -15,7 +15,7 @@ extension String {
         guard count > 6 else {
             throw AuthError.invalidPassword(reason: .tooShort)
         }
-        // TODO: Needs strength validation!!!!!!!!!
+        // TODO: Needs stronger validation!!!!!!!!!
         return true
     }
     
