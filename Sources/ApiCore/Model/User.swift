@@ -364,6 +364,23 @@ public final class User: DbCoreModel {
         
     }
     
+    /// Identify
+    public struct Identify: DbCoreModel {
+        
+        /// Id
+        public var id: DbIdentifier?
+        
+        // Username / nickname
+        public var username: String
+        
+        /// Initializer
+        public init(id: DbIdentifier, username: String) {
+            self.id = id
+            self.username = username
+        }
+        
+    }
+    
     /// Disable object
     public struct Disable: Content {
         

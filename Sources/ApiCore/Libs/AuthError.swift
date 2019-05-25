@@ -112,7 +112,7 @@ public enum AuthError: FrontendError {
             return .unauthorized
         case .invalidEmail, .invalidPassword:
             return .notAcceptable
-        case .invalidToken, .unverifiedAccount:
+        case .invalidToken, .unverifiedAccount, .emailExists:
             return .preconditionFailed
         default:
             return .internalServerError

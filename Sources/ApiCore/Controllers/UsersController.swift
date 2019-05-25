@@ -89,6 +89,19 @@ public class UsersController: Controller {
             }
         }
         
+        secure.get("users", "identify") { req -> Future<User.Identify> in
+            if let search = req.query.search {
+                return try User.query(on: req).decode(User.Display.self).filter(\User.email == search).decode(User.Identify.self).paginate(on: req).first().map() { user in
+                    guard let user = user else {
+                        throw ErrorsCore.HTTPError.notFound
+                    }
+                    return user
+                }
+            } else {
+                throw ErrorsCore.HTTPError.notFound
+            }
+        }
+        
         secure.post("users", "disable") { req -> Future<User> in
             return try User.Disable.fill(post: req).flatMap(to: User.self) { disable in
                 return User.query(on: req).filter(\User.id == disable.id).first().flatMap(to: User.self) { user in

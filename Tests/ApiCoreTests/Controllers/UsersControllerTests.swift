@@ -32,6 +32,8 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         ("testGetUsers", testGetUsers),
         ("testRegisterUser", testRegisterUser),
         ("testInviteUser", testInviteUser),
+        ("testInviteExistingUser", testInviteExistingUser),
+        ("testIdentify", testIdentify),
         ("testSearchUsersWithoutParams", testSearchUsersWithoutParams),
         ("testRegistrationsHaveBeenDisabled", testRegistrationsHaveBeenDisabled),
         ("testRegisterUserValidDomain", testRegisterUserValidDomain),
@@ -190,6 +192,39 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             """, "Email has a wrong html")
         
         XCTAssertTrue(r.response.testable.has(statusCode: .created), "Wrong status code")
+        XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+    }
+    
+    func testInviteExistingUser() {
+        let post = User.Invitation(firstname: "Super", lastname: "Admin", email: "core@liveui.io")
+        let req = try! HTTPRequest.testable.post(uri: "/users/invite", data: post.asJson(), headers: [
+            "Content-Type": "application/json; charset=utf-8"
+            ], authorizedUser: user2, on: app)
+        let r = app.testable.response(to: req)
+        
+        r.response.testable.debug()
+        
+        // Check returned data
+        let object = r.response.testable.content(as: ErrorResponse.self)!
+        XCTAssertEqual(object.error, "auth.email_exists", "Error code doesn't match")
+        XCTAssertEqual(object.description, "Email already exists", "Error description doesn't match")
+        
+        XCTAssertTrue(r.response.testable.has(statusCode: .preconditionFailed), "Wrong status code")
+        XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
+    }
+    
+    func testIdentify() {
+        let req = HTTPRequest.testable.get(uri: "/users/identify?search=\(user2.email)", authorizedUser: user1, on: app)
+        let r = app.testable.response(to: req)
+        
+        r.response.testable.debug()
+        
+        // Check returned data
+        let object = r.response.testable.content(as: User.Identify.self)!
+        XCTAssertEqual(object.id, user2.id, "User ID doesn't match")
+        XCTAssertEqual(object.username, user2.username, "User nickname doesn't match")
+        
+        XCTAssertTrue(r.response.testable.has(statusCode: .ok), "Wrong status code")
         XCTAssertTrue(r.response.testable.has(contentType: "application/json; charset=utf-8"), "Missing content type")
     }
     
