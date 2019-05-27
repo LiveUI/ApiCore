@@ -23,7 +23,7 @@ public final class Configuration: Configurable {
         
         /// Single team server (all team functionality will be disabled, all new users will be automatically assigned to the main team if enabled)
         /// (disabled by default)
-        public internal(set) var singleTeam: Bool
+        public var singleTeam: Bool
         
         enum CodingKeys: String, CodingKey {
             case singleTeam = "single_team"
@@ -43,22 +43,22 @@ public final class Configuration: Configurable {
         public struct Github: Codable {
             
             /// Enable Github login
-            public internal(set) var enabled: Bool
+            public var enabled: Bool
             
             /// Client / app ID
-            public internal(set) var client: String
+            public var client: String
             
             /// Client secret
-            public internal(set) var secret: String
+            public var secret: String
             
             /// URL for github auth service (default is https://github.com)
-            public internal(set) var host: String
+            public var host: String
             
             /// URL for the github API (default is https://api.github.com)
-            public internal(set) var api: String
+            public var api: String
             
             /// Allowed teams
-            public internal(set) var teams: [String]
+            public var teams: [String]
             
             /// Initializer
             init(enabled: Bool, client: String, secret: String, host: String = "https://github.com", api: String = "https://api.github.com", teams: [String] = []) {
@@ -76,22 +76,22 @@ public final class Configuration: Configurable {
         public struct Gitlab: Codable {
             
             /// Enable Github login
-            public internal(set) var enabled: Bool
+            public var enabled: Bool
             
             /// Client / app ID
-            public internal(set) var application: String
+            public var application: String
             
             /// Client secret
-            public internal(set) var secret: String
+            public var secret: String
             
             /// URL for github auth service (default is https://gitlab.com)
-            public internal(set) var host: String
+            public var host: String
             
             /// URL for the github API (default is https://gitlab.com/api/v4/)
-            public internal(set) var api: String
+            public var api: String
             
             /// Allowed teams
-            public internal(set) var groups: [String]
+            public var groups: [String]
             
             /// Initializer
             init(enabled: Bool, application: String, secret: String, host: String = "https://gitlab.com", api: String = "https://gitlab.com/api/v4/", groups: [String] = []) {
@@ -106,25 +106,25 @@ public final class Configuration: Configurable {
         }
         
         /// Allow login using username and password
-        public internal(set) var allowLogin: Bool
+        public var allowLogin: Bool
         
         /// Allow new registrations (enabled by default)
-        public internal(set) var allowRegistrations: Bool
+        public var allowRegistrations: Bool
         
         /// Domains allowed to go through a self-registration process
-        public internal(set) var allowedDomainsForRegistration: [String]
+        public var allowedDomainsForRegistration: [String]
         
         /// Allow new registrations (enabled by default)
-        public internal(set) var allowInvitations: Bool
+        public var allowInvitations: Bool
         
         /// Domains allowed to go through a self-registration process
-        public internal(set) var allowedDomainsForInvitations: [String]
+        public var allowedDomainsForInvitations: [String]
         
         /// Github login settings
-        public internal(set) var github: Github
+        public var github: Github
         
         /// Gitlab login settings
-        public internal(set) var gitlab: Gitlab
+        public var gitlab: Gitlab
         
         enum CodingKeys: String, CodingKey {
             case allowLogin = "allow_login"
@@ -153,22 +153,22 @@ public final class Configuration: Configurable {
     public final class Server: Codable {
         
         /// Server name
-        public internal(set) var name: String
+        public var name: String
         
         /// Server subtitle (motto, etc)
-        public internal(set) var subtitle: String?
+        public var subtitle: String?
         
         /// Server URL
-        public internal(set) var url: String?
+        public var url: String?
         
         /// Server interface URL (optional)
-        public internal(set) var interface: String?
+        public var interface: String?
         
         ///
-        public internal(set) var pathPrefix: String?
+        public var pathPrefix: String?
         
         /// Max upload filesize (in Mb, default is 2Mb)
-        public internal(set) var maxUploadFilesize: Double?
+        public var maxUploadFilesize: Double?
         
         enum CodingKeys: String, CodingKey {
             case name
@@ -192,22 +192,22 @@ public final class Configuration: Configurable {
     public final class Database: Codable {
         
         /// Database host, default `localhost`
-        public internal(set) var host: String?
+        public var host: String?
         
         /// Database port, default 12324
-        public internal(set) var port: Int?
+        public var port: Int?
         
         /// Database user
-        public internal(set) var user: String
+        public var user: String
         
         /// Database password
-        public internal(set) var password: String?
+        public var password: String?
         
         /// Database name
-        public internal(set) var database: String
+        public var database: String
         
         /// Enable query logging
-        public internal(set) var logging: Bool
+        public var logging: Bool
         
         /// Initializer
         init(host: String?, port: Int?, user: String, password: String?, database: String, logging: Bool) {
@@ -225,19 +225,19 @@ public final class Configuration: Configurable {
     public final class Mail: Codable {
         
         /// Admin email (all administration emails should be sent from this email)
-        public internal(set) var email: String = "admin@apicore"
+        public var email: String = "admin@apicore"
         
         /// SMTP configuration string `smtp_server;username;password;port`
-        public internal(set) var smtp: String
+        public var smtp: String
         
         /// Mailgun configuration
         public final class MailGun: Codable {
             
             /// Mailgun domain
-            public internal(set) var domain: String
+            public var domain: String
             
             /// Mailgun API key
-            public internal(set) var key: String
+            public var key: String
             
             /// Initializer
             init(domain: String, key: String) {
@@ -248,7 +248,7 @@ public final class Configuration: Configurable {
         }
         
         /// Mailgun configuration
-        public internal(set) var mailgun: MailGun
+        public var mailgun: MailGun
         
         /// Initializer
         init(mailgun: MailGun, smtp: String) {
@@ -265,7 +265,7 @@ public final class Configuration: Configurable {
         public final class Local: Codable {
             
             /// Root storage folder path
-            public internal(set) var root: String
+            public var root: String
             
             /// Initializer
             init(root: String) {
@@ -278,22 +278,22 @@ public final class Configuration: Configurable {
         public final class S3: Codable {
             
             /// Enable S3
-            public internal(set) var enabled: Bool
+            public var enabled: Bool
             
             /// Default bucket
-            public internal(set) var bucket: String
+            public var bucket: String
             
             /// AWS Access Key
-            public internal(set) var accessKey: String
+            public var accessKey: String
             
             /// AWS Secret Key
-            public internal(set) var secretKey: String
+            public var secretKey: String
             
             /// The region where S3 bucket is located.
-            public internal(set) var region: Region
+            public var region: Region
             
             /// AWS Security Token. Used to validate temporary credentials, such as those from an EC2 Instance's IAM role
-            public internal(set) var securityToken : String?
+            public var securityToken : String?
             
             /// Initializer
             init(enabled: Bool, bucket: String, accessKey: String, secretKey: String, region: Region, securityToken: String?) {
@@ -317,10 +317,10 @@ public final class Configuration: Configurable {
         }
         
         /// Local filestorage configuration
-        public internal(set) var local: Local
+        public var local: Local
         
         /// S3 configuration
-        public internal(set) var s3: S3
+        public var s3: S3
         
         /// Initializer
         init(local: Local, s3: S3) {
@@ -334,10 +334,10 @@ public final class Configuration: Configurable {
     public final class Templates: Codable {
         
         /// Enable or disable templates endpoint
-        public internal(set) var enabled: Bool
+        public var enabled: Bool
         
         /// Root path
-        public internal(set) var root: String
+        public var root: String
         
         /// Initializer
         init(enabled: Bool, root: String) {
@@ -348,28 +348,28 @@ public final class Configuration: Configurable {
     }
     
     /// General settings
-    public internal(set) var general: General
+    public var general: General
     
     /// Authentication settings
-    public internal(set) var auth: Auth
+    public var auth: Auth
     
     /// Server info
-    public internal(set) var server: Server
+    public var server: Server
     
     /// Word to use in JWT encoding / decoding
-    public internal(set) var jwtSecret: String
+    public var jwtSecret: String
     
     /// Database information
-    public internal(set) var database: Database
+    public var database: Database
     
     /// Email information
-    public internal(set) var mail: Mail
+    public var mail: Mail
     
     /// Templates information
-    public internal(set) var templates: Templates
+    public var templates: Templates
     
     /// Storage information
-    public internal(set) var storage: Storage
+    public var storage: Storage
     
     enum CodingKeys: String, CodingKey {
         case general
