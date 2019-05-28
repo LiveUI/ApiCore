@@ -7,11 +7,19 @@
 
 import Foundation
 import S3
+import ResourceCache
 
 
 extension ApiCoreBase {
     
     static func setupStorage(_ services: inout Services) throws {
+        services.register(
+            ResourceCache.Cache(
+                Cache.Config(
+                    storagePath: configuration.storage.local.root.finished(with: "/").appending("ResourceCache")
+                )
+            )
+        )
         if configuration.storage.s3.enabled {
             let config = S3Signer.Config(accessKey: configuration.storage.s3.accessKey,
                                          secretKey: configuration.storage.s3.secretKey,

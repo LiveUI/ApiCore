@@ -13,6 +13,11 @@ import MailCore
 import Templator
 
 
+public protocol EmailRedirects {
+    var redirectUrl: String { get }
+}
+
+
 public class UsersManager {
     
     public static func userFromExternalAuthenticationService(_ source: UserSource, on req: Request) throws -> EventLoopFuture<User> {
@@ -58,13 +63,13 @@ public class UsersManager {
         }
     }
     
-    public static func save(_ user: User, targetUri: String?, isInvite: Bool, on req: Request) throws -> Future<User> {
+    public static func save(_ user: User, redirects: EmailRedirects, isInvite: Bool, on req: Request) throws -> Future<User> {
         return user.save(on: req).flatMap(to: User.self) { user in
             let jwtService = try req.make(JWTService.self)
             let jwtToken = try jwtService.signEmailConfirmation(
                 user: user,
                 type: (isInvite ? .invitation : .registration),
-                redirectUri: targetUri,
+                redirects: redirects,
                 on: req
             )
             
@@ -103,12 +108,12 @@ public class UsersManager {
     }
     
     public static func invite(_ req: Request) throws -> Future<Response> {
-        return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { emailConfirmation in
-            if !ApiCoreBase.configuration.auth.allowedDomainsForInvitations.isEmpty {
-                guard ApiCoreBase.configuration.auth.allowInvitations == true else {
-                    throw UsersController.Error.invitationsNotPermitted
-                }
+        if !ApiCoreBase.configuration.auth.allowedDomainsForInvitations.isEmpty {
+            guard ApiCoreBase.configuration.auth.allowInvitations else {
+                throw UsersController.Error.invitationsNotPermitted
             }
+        }
+        return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { emailConfirmation in
             try checkDomain(
                 email: emailConfirmation.email,
                 for: ApiCoreBase.configuration.auth.allowedDomainsForInvitations
@@ -130,14 +135,14 @@ public class UsersManager {
                     
                     if ApiCoreBase.configuration.general.singleTeam == true { // Single team scenario
                         return Team.adminTeam(on: req).flatMap(to: Response.self) { singleTeam in
-                            return try save(user, targetUri: emailConfirmation.targetUri, isInvite: true, on: req).flatMap(to: Response.self) { newUser in
+                            return try save(user, redirects: emailConfirmation, isInvite: true, on: req).flatMap(to: Response.self) { newUser in
                                 return singleTeam.users.attach(newUser, on: req).flatMap(to: Response.self) { _ in
                                     return try newUser.asDisplay().asResponse(.created, to: req)
                                 }
                             }
                         }
                     } else {
-                        return try save(user, targetUri: emailConfirmation.targetUri, isInvite: true, on: req).flatMap(to: Response.self) { user in
+                        return try save(user, redirects: emailConfirmation, isInvite: true, on: req).flatMap(to: Response.self) { user in
                             return try user.asDisplay().asResponse(.created, to: req)
                         }
                     }
@@ -162,14 +167,14 @@ public class UsersManager {
                     
                     if ApiCoreBase.configuration.general.singleTeam == true { // Single team scenario
                         return Team.adminTeam(on: req).flatMap(to: Response.self) { singleTeam in
-                            return try save(user, targetUri: emailConfirmation.targetUri, isInvite: false, on: req).flatMap(to: Response.self) { newUser in
+                            return try save(user, redirects: emailConfirmation, isInvite: false, on: req).flatMap(to: Response.self) { newUser in
                                 return singleTeam.users.attach(newUser, on: req).flatMap(to: Response.self) { _ in
                                     return try newUser.asDisplay().asResponse(.created, to: req)
                                 }
                             }
                         }
                     } else {
-                        return try save(user, targetUri: emailConfirmation.targetUri, isInvite: false, on: req).flatMap(to: Response.self) { user in
+                        return try save(user, redirects: emailConfirmation, isInvite: false, on: req).flatMap(to: Response.self) { user in
                             return try user.asDisplay().asResponse(.created, to: req)
                         }
                     }

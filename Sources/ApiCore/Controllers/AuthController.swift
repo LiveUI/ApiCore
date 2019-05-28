@@ -86,8 +86,7 @@ public class AuthController: Controller {
         
         // Forgotten password
         router.post("auth", "start-recovery") { req -> Future<Response> in
-            // Read user email from request
-            // Read redirect url from request
+            // Read user email & redirect url from request
             return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { recoveryData in
                 // Fetch the user by email
                 return User.query(on: req).filter(\User.email == recoveryData.email).first().flatMap(to: Response.self) { optionalUser in
@@ -99,15 +98,13 @@ public class AuthController: Controller {
                     let jwtToken = try jwtService.signEmailConfirmation(
                         user: user,
                         type: .passwordRecovery,
-                        redirectUri: recoveryData.targetUri,
+                        redirects: recoveryData,
                         on: req
                     )
                     
-                    let inputLink = req.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery"
-                    
                     let templateModel = try User.Auth.InputTemplate(
                         verification: jwtToken,
-                        link: (recoveryData.targetUri ?? inputLink) + "?token=" + jwtToken,
+                        link: recoveryData.redirectUrl + "?token=" + jwtToken,
                         type: .passwordRecovery,
                         user: user,
                         on: req
@@ -133,41 +130,8 @@ public class AuthController: Controller {
             }
         }
         
-        router.get("auth", "input-recovery") { req -> Future<Response> in
-            let jwtService: JWTService = try req.make()
-            
-            guard let token = req.query.token else {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            
-            // Get user payload
-            guard let jwtPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            try jwtPayload.exp.verifyNotExpired()
-            guard jwtPayload.type == .passwordRecovery else {
-                throw AuthError.invalidToken
-            }
-            
-            return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
-                guard let user = user else {
-                    throw ErrorsCore.HTTPError.notFound
-                }
-                
-                let templateModel = try User.Auth.InputTemplate(
-                    verification: token,
-                    link: "?token=" + token,
-                    type: .passwordRecovery,
-                    user: user,
-                    on: req
-                )
-                let templator = try req.make(Templates<ApiCoreDatabase>.self)
-                return try templator.get(WebTemplatePasswordRecoveryInputScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
-            }
-        }
-        
         // Finish password recovery process
-        router.post("auth", "finish-recovery") { req -> Future<Response> in
+        router.post("auth", "finish-recovery") { req -> Future<User> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -182,8 +146,8 @@ public class AuthController: Controller {
                 throw AuthError.invalidToken
             }
             
-            return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
-                return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
+            return try User.Auth.Password.fill(post: req).flatMap() { password in
+                return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap() { user in
                     // Validate user
                     guard let user = user else {
                         throw ErrorsCore.HTTPError.notFound
@@ -206,21 +170,7 @@ public class AuthController: Controller {
                     }
                     
                     // Save new password
-                    return user.save(on: req).flatMap(to: Response.self) { user in
-                        if !jwtPayload.redirectUri.isEmpty {
-                            return req.redirect(to: jwtPayload.redirectUri).asFuture(on: req)
-                        } else {
-                            let templateModel = try WebTemplateInfoScreen.Model(
-                                title: "Success", // TODO: Translate!!!!
-                                text: "Your password has been changed",
-                                user: user,
-                                //action: WebTemplateInfoScreen.Model.Action(link: "link", title: "title", text: "text"),
-                                on: req
-                            )
-                            let templator = try req.make(Templates<ApiCoreDatabase>.self)
-                            return try templator.get(WebTemplateInfoScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
-                        }
-                    }
+                    return user.save(on: req)
                 }
             }
         }

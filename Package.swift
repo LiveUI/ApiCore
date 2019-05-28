@@ -7,6 +7,7 @@ let package = Package(
         .library(name: "ApiCore", targets: ["ApiCore"]),
         .library(name: "FileCore", targets: ["FileCore"]),
         .library(name: "ImageCore", targets: ["ImageCore"]),
+        .library(name: "ResourceCache", targets: ["ResourceCache"]),
         .library(name: "ApiCoreTestTools", targets: ["ApiCoreTestTools"])
     ],
     dependencies: [
@@ -34,6 +35,12 @@ let package = Package(
                 "ApiCore"
             ]
         ),
+        .target(
+            name: "ResourceCache",
+            dependencies: [
+                "Vapor"
+            ]
+        ),
         .target(name: "ApiCoreRun", dependencies: [
             "ApiCoreApp"
             ]
@@ -51,7 +58,8 @@ let package = Package(
             "FileCore",
             "ImageCore",
             "Imperial",
-            "Templator"
+            "Templator",
+            "ResourceCache"
             ]
         ),
         .target(name: "FileCore", dependencies: [

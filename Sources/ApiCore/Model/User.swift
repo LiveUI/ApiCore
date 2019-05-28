@@ -166,22 +166,22 @@ public final class User: DbCoreModel {
         public struct URI: Content {
             
             /// Target URI to tell client where to redirect
-            public let targetUri: String?
+            public let targetUri: String
             
         }
         
         /// Email confirmation object
-        public struct EmailConfirmation: Content {
+        public struct EmailConfirmation: Content, EmailRedirects {
             
             /// Email
             public let email: String
             
-            /// Target URI to tell client where to redirect
-            public let targetUri: String?
+            /// Target URI for input form
+            public let redirectUrl: String
             
             enum CodingKeys: String, CodingKey {
                 case email
-                case targetUri = "target"
+                case redirectUrl = "redirect"
             }
             
         }

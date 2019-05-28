@@ -121,7 +121,7 @@ public class UsersController: Controller {
             }
         }
     
-        secure.get("users", "verify") { req -> Future<Response> in
+        secure.get("users", "verify") { req -> Future<User> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -136,7 +136,7 @@ public class UsersController: Controller {
                 throw AuthError.invalidToken
             }
             
-            return User.query(on: req).filter(\User.id == verifyPayload.userId).first().flatMap(to: Response.self) { user in
+            return User.query(on: req).filter(\User.id == verifyPayload.userId).first().flatMap() { user in
                 // Validate user
                 guard let user = user else {
                     throw ErrorsCore.HTTPError.notFound
@@ -145,20 +145,7 @@ public class UsersController: Controller {
                 // If no error save
                 user.verified = true
                 
-                return user.save(on: req).flatMap(to: Response.self) { user in
-                    if !verifyPayload.redirectUri.isEmpty {
-                        return req.redirect(to: verifyPayload.redirectUri).asFuture(on: req)
-                    } else {
-                        let templateModel = try WebTemplateInfoScreen.Model(
-                            title: "Success", // TODO: Translate!!!!
-                            text: "Your account has been activated",
-                            user: user,
-                            on: req
-                        )
-                        let templator = try req.make(Templates<ApiCoreDatabase>.self)
-                        return try templator.get(WebTemplateInfoScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
-                    }
-                }
+                return user.save(on: req)
             }
         }
         
@@ -210,45 +197,8 @@ public class UsersController: Controller {
             return try UsersManager.invite(req)
         }
         
-        // Input invitation data
-        router.get("users", "input-invite") { req -> Future<Response> in
-            let jwtService: JWTService = try req.make()
-            
-            guard let token = req.query.token else {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            
-            // Get user payload
-            guard let jwtPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            try jwtPayload.exp.verifyNotExpired()
-            guard jwtPayload.type == .invitation else {
-                throw AuthError.invalidToken
-            }
-            
-            return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
-                guard let user = user else {
-                    throw ErrorsCore.HTTPError.notFound
-                }
-                
-                let nick = String(user.email.split(separator: "@")[0])
-                user.username = nick
-                
-                let templateModel = try User.Auth.InputTemplate(
-                    verification: token,
-                    link: "?token=" + token,
-                    type: .invitation,
-                    user: user,
-                    on: req
-                )
-                let templator = try req.make(Templates<ApiCoreDatabase>.self)
-                return try templator.get(WebTemplateInvitationInputScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
-            }
-        }
-        
         // Finish invitation
-        router.post("users", "finish-invitation") { req -> Future<Response> in
+        router.post("users", "finish-invitation") { req -> Future<User> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -263,9 +213,9 @@ public class UsersController: Controller {
                 throw AuthError.invalidToken
             }
             
-            return try User.Auth.Username.fill(post: req).flatMap(to: Response.self) { username in
-                return try User.Auth.Password.fill(post: req).flatMap(to: Response.self) { password in
-                    return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap(to: Response.self) { user in
+            return try User.Auth.Username.fill(post: req).flatMap() { username in
+                return try User.Auth.Password.fill(post: req).flatMap() { password in
+                    return User.query(on: req).filter(\User.id == jwtPayload.userId).first().flatMap() { user in
                         // Validate user
                         guard let user = user else {
                             throw ErrorsCore.HTTPError.notFound
@@ -290,21 +240,7 @@ public class UsersController: Controller {
                         }
                         
                         // Save new password
-                        return user.save(on: req).flatMap(to: Response.self) { user in
-                            if !jwtPayload.redirectUri.isEmpty {
-                                return req.redirect(to: jwtPayload.redirectUri).asFuture(on: req)
-                            } else {
-                                let templateModel = try WebTemplateInfoScreen.Model(
-                                    title: "Success", // TODO: Translate!!!!
-                                    text: "Your account has been created",
-                                    user: user,
-                                    //action: WebTemplateInfoScreen.Model.Action(link: "link", title: "title", text: "text"),
-                                    on: req
-                                )
-                                let templator = try req.make(Templates<ApiCoreDatabase>.self)
-                                return try templator.get(WebTemplateInfoScreen.self, data: templateModel, on: req).asHtmlResponse(.ok, to: req)
-                            }
-                        }
+                        return user.save(on: req)
                     }
                 }
             }

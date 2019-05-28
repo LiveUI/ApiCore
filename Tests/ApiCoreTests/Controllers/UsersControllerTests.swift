@@ -19,6 +19,38 @@ import ErrorsCore
 
 class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     
+    struct UserData: Codable {
+        public var username: String?
+        public var firstname: String?
+        public var lastname: String?
+        public var email: String?
+        public var redirect: String?
+        public var password: String?
+        
+        static var invitation: UserData {
+            return UserData(
+                username: nil,
+                firstname: "Lemmy",
+                lastname: "Kilmister",
+                email: "lemmy@liveui.io",
+                redirect: "url",
+                password: nil
+            )
+        }
+        
+        static var registration: UserData {
+            return UserData(
+                username: "username",
+                firstname: "Lemmy",
+                lastname: "Kilmister",
+                email: "lemmy@liveui.io",
+                redirect: "url",
+                password: "sup3rS3cr3t"
+            )
+        }
+        
+    }
+    
     var app: Application!
     
     var adminTeam: Team!
@@ -79,7 +111,8 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     }
     
     func testRegisterUser() {
-        let post = User.Registration(username: "lemmy", firstname: "Lemmy", lastname: "Kilmister", email: "lemmy@liveui.io", password: "passw0rd")
+        let post = UserData.registration
+        
         let req = try! HTTPRequest.testable.post(uri: "/users", data: post.asJson(), headers: [
             "Content-Type": "application/json; charset=utf-8"
             ]
@@ -99,7 +132,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertEqual(user.firstname, post.firstname, "Firstname doesn't match")
         XCTAssertEqual(user.lastname, post.lastname, "Lastname doesn't match")
         XCTAssertEqual(user.email, post.email, "Email doesn't match")
-        XCTAssertTrue(post.password.verify(against: user.password!), "Password doesn't match")
+        XCTAssertTrue(post.password!.verify(against: user.password!), "Password doesn't match")
         XCTAssertEqual(user.disabled, false, "Disabled should be false")
         XCTAssertEqual(user.su, false, "SU should be false")
         
@@ -135,7 +168,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     }
     
     func testInviteUser() {
-        let post = User.Invitation(firstname: "Lemmy", lastname: "Kilmister", email: "lemmy@liveui.io")
+        let post = UserData.invitation
         let req = try! HTTPRequest.testable.post(uri: "/users/invite", data: post.asJson(), headers: [
             "Content-Type": "application/json; charset=utf-8"
             ], authorizedUser: user1, on: app)
@@ -196,7 +229,11 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     }
     
     func testInviteExistingUser() {
-        let post = User.Invitation(firstname: "Super", lastname: "Admin", email: "core@liveui.io")
+        var post = UserData.invitation
+        post.firstname = "Super"
+        post.lastname = "Admin"
+        post.email = "core@liveui.io"
+        
         let req = try! HTTPRequest.testable.post(uri: "/users/invite", data: post.asJson(), headers: [
             "Content-Type": "application/json; charset=utf-8"
             ], authorizedUser: user2, on: app)
@@ -266,7 +303,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     func testRegisterUserValidDomain() {
         ApiCoreBase.configuration.auth.allowedDomainsForRegistration = ["liveui.io"]
         
-        let post = User.Registration(username: "lemmy", firstname: "Lemmy", lastname: "Kilmister", email: "lemmy@liveui.io", password: "passw0rd")
+        let post = UserData.registration
         let req = try! HTTPRequest.testable.post(uri: "/users", data: post.asJson(), headers: [
             "Content-Type": "application/json; charset=utf-8"
             ]
@@ -282,7 +319,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     func testRegisterUserInvalidDomain1() {
         ApiCoreBase.configuration.auth.allowedDomainsForRegistration = ["example.com"]
         
-        let post = User.Registration(username: "lemmy", firstname: "Lemmy", lastname: "Kilmister", email: "lemmy@liveui.io", password: "passw0rd")
+        let post = UserData.registration
         let req = try! HTTPRequest.testable.post(uri: "/users", data: post.asJson(), headers: [
             "Content-Type": "application/json; charset=utf-8"
             ]
@@ -302,7 +339,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
     func testRegisterUserInvalidDomain2() {
         ApiCoreBase.configuration.auth.allowedDomainsForRegistration = ["example.com"]
         
-        let post = User.Registration(username: "lemmy", firstname: "Lemmy", lastname: "Kilmister", email: "lemmy@", password: "passw0rd")
+        let post = UserData.registration
         let req = try! HTTPRequest.testable.post(uri: "/users", data: post.asJson(), headers: [
             "Content-Type": "application/json; charset=utf-8"
             ]

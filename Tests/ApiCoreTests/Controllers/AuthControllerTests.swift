@@ -267,10 +267,8 @@ extension AuthControllerTests {
     }
     
     @discardableResult private func startRecovery(type: RecoveryType) -> String {
-        let fakeReq = app.testable.fakeRequest()
-        
-        let target: String = (type == .redirectUrl) ? "https://example.com/target_url_which_would_call_finish_recovery_endpoint" : (fakeReq.serverURL().absoluteString.finished(with: "/") + "auth/input-recovery")
-        let data = User.Auth.EmailConfirmation(email: "dev@liveui.io", targetUri: ((type == .redirectUrl) ? target : nil))
+        let target: String = "https://example.com/target_url_which_would_call_finish_recovery_endpoint"
+        let data = User.Auth.EmailConfirmation(email: "dev@liveui.io", redirectUrl: target)
         let req = try! HTTPRequest.testable.post(uri: "/auth/start-recovery", data: data.asJson(), headers: ["Content-Type": "application/json; charset=utf-8"])
         var token: String = ""
         do {
