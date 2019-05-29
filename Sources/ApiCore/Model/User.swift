@@ -29,7 +29,7 @@ public protocol UserCreator: Content {
 public final class User: DbCoreModel {
     
     /// Template object
-    public struct EmailTemplate: Content {
+    public final class EmailTemplate: EmailTemplateData {
         
         /// Verification
         public var verification: String
@@ -37,11 +37,18 @@ public final class User: DbCoreModel {
         /// Server link
         public var link: String
         
-        /// User registration
-        public var user: User
+        public var user: User.Display?
+        public var info: Info?
+        public var settings: [String: String]?
         
         /// Sender (for invitations only)
         public var sender: User?
+        
+        init(verification: String, link: String, sender: User? = nil) {
+            self.verification = verification
+            self.link = link
+            self.sender = sender
+        }
         
     }
     
@@ -187,7 +194,7 @@ public final class User: DbCoreModel {
         }
         
         /// Input template data model
-        public struct InputTemplate: Content {
+        public final class InputTemplate: EmailTemplateData {
             
             /// Template type
             public enum TemplateType {
@@ -206,14 +213,9 @@ public final class User: DbCoreModel {
             /// Recovery validation endpoint link
             public let link: String?
             
-            /// User
-            public var user: User
-            
-            /// Finish recovery link
-            public var finish: String
-            
-            /// System wide template data
-            public var system: FrontendSystemData
+            public var user: User.Display?
+            public var info: Info?
+            public var settings: [String: String]?
             
             /// Initializer
             ///
@@ -224,12 +226,9 @@ public final class User: DbCoreModel {
             ///   - type: Template type (passwordRecovery or invitation)
             ///   - req: Request
             /// - Throws: whatever comes it's way
-            public init(verification: String, link: String? = nil, type: TemplateType, user: User, on req: Request) throws {
+            public init(verification: String, link: String, type: TemplateType, on req: Request) throws {
                 self.verification = verification
                 self.link = link
-                self.user = user
-                finish = req.serverURL().absoluteString.finished(with: "/") + "\(type == .passwordRecovery ? "auth/finish-recovery" : "users/finish-invitation")?token=" + verification
-                system = try FrontendSystemData(req)
             }
             
         }

@@ -20,6 +20,7 @@ extension ApiCoreBase {
         add(model: Token.self, database: .db)
         add(model: ErrorLog.self, database: .db)
         add(model: System.self, database: .db)
+        add(model: Setting.self, database: .db)
         
         // Data migrations
         migrationConfig.add(migration: BaseMigration.self, database: .db)

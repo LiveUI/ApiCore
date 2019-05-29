@@ -26,6 +26,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         public var email: String?
         public var redirect: String?
         public var password: String?
+        public var link: String?
         
         static var invitation: UserData {
             return UserData(
@@ -34,7 +35,8 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
                 lastname: "Kilmister",
                 email: "lemmy@liveui.io",
                 redirect: "url",
-                password: nil
+                password: nil,
+                link: "url"
             )
         }
         
@@ -45,7 +47,8 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
                 lastname: "Kilmister",
                 email: "lemmy@liveui.io",
                 redirect: "url",
-                password: "sup3rS3cr3t"
+                password: "sup3rS3cr3t",
+                link: "url"
             )
         }
         
@@ -147,7 +150,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertEqual(mailer.receivedMessage!.text, """
             Hi Lemmy Kilmister
             
-            To finish your registration, please confirm your email lemmy@liveui.io by clicking on this link http://localhost:8080/users/verify?token=\(token)
+            To finish your registration, please confirm your email lemmy@liveui.io by clicking on this link url?token=\(token)
             
             Verification code is: |\(token)|
             
@@ -156,7 +159,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
         XCTAssertEqual(mailer.receivedMessage!.html, """
             <h1>Hi Lemmy Kilmister</h1>
             <p>&nbsp;</p>
-            <p>To finish your registration, please confirm your email lemmy@liveui.io by clicking on this <a href=\"http://localhost:8080/users/verify?token=\(token)\">link</a></p>
+            <p>To finish your registration, please confirm your email lemmy@liveui.io by clicking on this <a href=\"url?token=\(token)\">link</a></p>
             <p>&nbsp;</p>
             <p>Verification code is: <strong>\(token)</strong></p>
             <p>&nbsp;</p>
@@ -204,7 +207,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             Hi Lemmy Kilmister
             
             You have been invited to one of our teams by Super Admin (core@liveui.io).
-            You can confirm your registration now by clicking on this link http://localhost:8080/users/input-invite?token=\(token)
+            You can confirm your registration now by clicking on this link url?token=\(token)
             
             Verification code is: |\(token)|
             
@@ -215,7 +218,7 @@ class UsersControllerTests: XCTestCase, UsersTestCase, LinuxTests {
             <p>&nbsp;</p>
             <p>
                 You have been invited to one of our teams by Super Admin (core@liveui.io).<br />
-                You can confirm your registration now by clicking on this <a href=\"http://localhost:8080/users/input-invite?token=\(token)\">link</a>
+                You can confirm your registration now by clicking on this <a href="url?token=\(token)\">link</a>
             </p>
             <p>&nbsp;</p>
             <p>Verification code is: <strong>\(token)</strong></p>

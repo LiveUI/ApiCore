@@ -76,7 +76,8 @@ public class ApiCoreBase {
         TeamsController.self,
         LogsController.self,
         ServerController.self,
-        Auth.self
+        Auth.self,
+        SettingsController.self
     ]
     
     /// Main configure method for ApiCore

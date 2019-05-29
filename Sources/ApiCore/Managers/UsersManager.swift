@@ -76,26 +76,26 @@ public class UsersManager {
             let templateModel = try User.EmailTemplate(
                 verification: jwtToken,
                 link: redirects.linkUrl + "?token=" + jwtToken,
-                user: user,
                 sender: isInvite ? req.me.user() : nil
             )
-            
-            let templator = try req.make(Templator.self)
-            let template = isInvite ? "invitation" : "registration"
-            let htmlFuture = try templator.get(name: "email.\(template).html", data: templateModel, on: req)
-            let plainFuture = try templator.get(name: "email.\(template).plain", data: templateModel, on: req)
-            
-            return htmlFuture.flatMap(to: User.self) { htmlTemplate in
-                return plainFuture.flatMap(to: User.self) { plainTemplate in
-                    let from = ApiCoreBase.configuration.mail.email
-                    let subject = isInvite ? "Invitation" : "Registration" // TODO: Localize!!!!!!
-                    let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: plainTemplate, html: htmlTemplate)
-                    return try req.mail.send(mail).map(to: User.self) { mailResult in
-                        switch mailResult {
-                        case .success:
-                            return user
-                        default:
-                            throw AuthError.emailFailedToSend
+            return try templateModel.setup(user: user.asDisplay(), on: req).flatMap() { _ in
+                let templator = try req.make(Templator.self)
+                let template = isInvite ? "invitation" : "registration"
+                let htmlFuture = try templator.get(name: "email.\(template).html", data: templateModel, on: req)
+                let plainFuture = try templator.get(name: "email.\(template).plain", data: templateModel, on: req)
+                
+                return htmlFuture.flatMap(to: User.self) { htmlTemplate in
+                    return plainFuture.flatMap(to: User.self) { plainTemplate in
+                        let from = ApiCoreBase.configuration.mail.email
+                        let subject = isInvite ? "Invitation" : "Registration" // TODO: Localize!!!!!!
+                        let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: plainTemplate, html: htmlTemplate)
+                        return try req.mail.send(mail).map(to: User.self) { mailResult in
+                            switch mailResult {
+                            case .success:
+                                return user
+                            default:
+                                throw AuthError.emailFailedToSend
+                            }
                         }
                     }
                 }

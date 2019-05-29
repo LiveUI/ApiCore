@@ -105,26 +105,26 @@ public class AuthController: Controller {
                         verification: jwtToken,
                         link: recoveryData.linkUrl + "?token=" + jwtToken,
                         type: .passwordRecovery,
-                        user: user,
                         on: req
                     )
-                    
-                    let templator = try req.make(Templator.self)
-                    let htmlFuture = try templator.get(name: "email.password-recovery.html", data: templateModel, on: req)
-                    let plainFuture = try templator.get(name: "email.password-recovery.plain", data: templateModel, on: req)
-                    
-                    return htmlFuture.flatMap(to: Response.self) { htmlTemplate in
-                        return plainFuture.flatMap(to: Response.self) { plainTemplate in
-                            let from = ApiCoreBase.configuration.mail.email
-                            let subject = "Password recovery" // TODO: Localize!!!!!!
-                            // FIX: HTML/Plain
-                            let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: plainTemplate, html: htmlTemplate)
-                            return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
-                                switch mailResult {
-                                case .success:
-                                    return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
-                                default:
-                                    throw AuthError.emailFailedToSend
+                    return try templateModel.setup(user: user.asDisplay(), on: req).flatMap() { _ in
+                        let templator = try req.make(Templator.self)
+                        let htmlFuture = try templator.get(name: "email.password-recovery.html", data: templateModel, on: req)
+                        let plainFuture = try templator.get(name: "email.password-recovery.plain", data: templateModel, on: req)
+                        
+                        return htmlFuture.flatMap(to: Response.self) { htmlTemplate in
+                            return plainFuture.flatMap(to: Response.self) { plainTemplate in
+                                let from = ApiCoreBase.configuration.mail.email
+                                let subject = "Password recovery" // TODO: Localize!!!!!!
+                                // FIX: HTML/Plain
+                                let mail = Mailer.Message(from: from, to: user.email, subject: subject, text: plainTemplate, html: htmlTemplate)
+                                return try req.mail.send(mail).flatMap(to: Response.self) { mailResult in
+                                    switch mailResult {
+                                    case .success:
+                                        return try req.response.success(status: .created, code: "auth.recovery_sent", description: "Password recovery email has been sent").asFuture(on: req)
+                                    default:
+                                        throw AuthError.emailFailedToSend
+                                    }
                                 }
                             }
                         }
