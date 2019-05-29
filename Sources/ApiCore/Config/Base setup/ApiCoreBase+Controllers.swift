@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Templator
 
 
 extension ApiCoreBase {
@@ -26,14 +25,6 @@ extension ApiCoreBase {
         
         for c in controllers {
             try c.boot(router: group, secure: secureRouter, debug: debugRouter)
-        }
-        
-        // Template endpoints
-        if configuration.templates.enabled {
-            print("Enabling template endpoints")
-            try Templator.Templates<ApiCoreDatabase>.setup(routes: secureRouter, permissionCheck: { (route, req) -> EventLoopFuture<Bool> in
-                return try req.me.isSystemAdmin()
-            })
         }
         
         return (group, secureRouter, debugRouter)

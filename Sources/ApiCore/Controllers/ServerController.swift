@@ -157,6 +157,13 @@ public class ServerController: Controller {
             }
         }
         
+        // Update template packs
+        secure.get("server", "templates", "reload") { req -> Response in
+            let templator = try req.make(Templator.self)
+            try templator.reset()
+            return try req.response.noContent()
+        }
+        
         // Get the current commit (if available)
         debug.get("server", "commit") { req -> String in
             let config = DirectoryConfig.detect()

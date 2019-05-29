@@ -10,7 +10,6 @@ import Vapor
 import FluentPostgreSQL
 import ErrorsCore
 import MailCore
-import Templator
 
 
 public protocol EmailRedirects {
@@ -81,15 +80,12 @@ public class UsersManager {
                 sender: isInvite ? req.me.user() : nil
             )
             
-            let templator = try req.make(Templates<ApiCoreDatabase>.self)
+            let templator = try req.make(Templator.self)
+            let template = isInvite ? "invitation" : "registration"
+            let htmlFuture = try templator.get(name: "email.\(template).html", data: templateModel, on: req)
+            let plainFuture = try templator.get(name: "email.\(template).plain", data: templateModel, on: req)
             
-            let htmlFuture = try isInvite ?
-                templator.get(EmailTemplateInvitationHTML.self, data: templateModel, on: req) :
-                templator.get(EmailTemplateRegistrationHTML.self, data: templateModel, on: req)
             return htmlFuture.flatMap(to: User.self) { htmlTemplate in
-                let plainFuture = try isInvite ?
-                    templator.get(EmailTemplateInvitationPlain.self, data: templateModel, on: req) :
-                    templator.get(EmailTemplateRegistrationPlain.self, data: templateModel, on: req)
                 return plainFuture.flatMap(to: User.self) { plainTemplate in
                     let from = ApiCoreBase.configuration.mail.email
                     let subject = isInvite ? "Invitation" : "Registration" // TODO: Localize!!!!!!

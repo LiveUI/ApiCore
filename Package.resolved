@@ -290,15 +290,6 @@
         }
       },
       {
-        "package": "Templator",
-        "repositoryURL": "https://github.com/Einstore/Templator.git",
-        "state": {
-          "branch": "master",
-          "revision": "4f4fdc5cdccd1860d9da91da4975a4f6fb81a581",
-          "version": null
-        }
-      },
-      {
         "package": "URLEncodedForm",
         "repositoryURL": "https://github.com/vapor/url-encoded-form.git",
         "state": {

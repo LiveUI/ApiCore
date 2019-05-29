@@ -12,7 +12,6 @@ import FluentPostgreSQL
 import ErrorsCore
 import Leaf
 import FileCore
-import Templator
 
 
 /// Default database typealias
@@ -141,11 +140,14 @@ public class ApiCoreBase {
         
         try Auth.configure(&config, &env, &services)
         
-        // Templates
-        try Templates<ApiCoreDatabase>.setup(services: &services)
-        
         // Filesystem
         try setupStorage(&services)
+        
+        // Templates
+        try services.register(LeafProvider())
+        
+        let templator = try Templator(packageUrl: ApiCoreBase.configuration.mail.templates)
+        services.register(templator)
         
         // UUID service
         services.register(RequestIdService.self)

@@ -12,7 +12,6 @@ import FluentSQL
 import MailCore
 import ErrorsCore
 import JWT
-import Templator
 
 
 public class UsersController: Controller {

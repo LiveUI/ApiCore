@@ -14,7 +14,6 @@ import Random
 import MailCore
 import JWT
 import Leaf
-import Templator
 
 
 public class AuthController: Controller {
@@ -109,9 +108,13 @@ public class AuthController: Controller {
                         user: user,
                         on: req
                     )
-                    let templator = try req.make(Templates<ApiCoreDatabase>.self)
-                    return try templator.get(EmailTemplatePasswordRecoveryHTML.self, data: templateModel, on: req).flatMap(to: Response.self) { htmlTemplate in
-                        return try templator.get(EmailTemplatePasswordRecoveryPlain.self, data: templateModel, on: req).flatMap(to: Response.self) { plainTemplate in
+                    
+                    let templator = try req.make(Templator.self)
+                    let htmlFuture = try templator.get(name: "email.password-recovery.html", data: templateModel, on: req)
+                    let plainFuture = try templator.get(name: "email.password-recovery.plain", data: templateModel, on: req)
+                    
+                    return htmlFuture.flatMap(to: Response.self) { htmlTemplate in
+                        return plainFuture.flatMap(to: Response.self) { plainTemplate in
                             let from = ApiCoreBase.configuration.mail.email
                             let subject = "Password recovery" // TODO: Localize!!!!!!
                             // FIX: HTML/Plain

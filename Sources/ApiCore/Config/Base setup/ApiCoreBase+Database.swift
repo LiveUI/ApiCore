@@ -7,7 +7,6 @@
 
 import Foundation
 import Vapor
-import Templator
 import FluentPostgreSQL
 
 
@@ -21,8 +20,6 @@ extension ApiCoreBase {
         add(model: Token.self, database: .db)
         add(model: ErrorLog.self, database: .db)
         add(model: System.self, database: .db)
-        
-        try Templator.Templates<ApiCoreDatabase>.setup(models: &migrationConfig, database: .db)
         
         // Data migrations
         migrationConfig.add(migration: BaseMigration.self, database: .db)

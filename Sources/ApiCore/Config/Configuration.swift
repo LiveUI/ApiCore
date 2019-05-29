@@ -227,6 +227,8 @@ public final class Configuration: Configurable {
         /// Admin email (all administration emails should be sent from this email)
         public var email: String = "admin@apicore"
         
+        public var templates: String
+        
         /// SMTP configuration string `smtp_server;username;password;port`
         public var smtp: String
         
@@ -251,9 +253,10 @@ public final class Configuration: Configurable {
         public var mailgun: MailGun
         
         /// Initializer
-        init(mailgun: MailGun, smtp: String) {
+        init(mailgun: MailGun, smtp: String, templates: String) {
             self.mailgun = mailgun
             self.smtp = smtp
+            self.templates = templates
         }
         
     }
@@ -439,7 +442,9 @@ extension Configuration {
         
         load("APICORE_MAIL_MAILGUN_DOMAIN", to: &mail.mailgun.domain)
         load("APICORE_MAIL_MAILGUN_KEY", to: &mail.mailgun.key)
-
+        
+        load("APICORE_MAIL_TEMPLATES", to: &mail.templates)
+        
         // Database
         load("APICORE_DATABASE_HOST", to: &database.host)
         load("APICORE_DATABASE_USER", to: &database.user)
@@ -458,7 +463,7 @@ extension Configuration {
 
         // Storage (Local)
         load("APICORE_STORAGE_LOCAL_ROOT", to: &storage.local.root)
-
+        
         // Storage (S3)
         load("APICORE_STORAGE_S3_ENABLED", to: &storage.s3.enabled)
         load("APICORE_STORAGE_S3_BUCKET", to: &storage.s3.bucket)
@@ -518,7 +523,8 @@ extension Configuration {
                     domain: "",
                     key: ""
                 ),
-                smtp: ""
+                smtp: "",
+                templates: "https://raw.githubusercontent.com/Einstore/BaseEmailTemplates/master/templates.json"
             ),
             templates: Templates(
                 enabled: true,
