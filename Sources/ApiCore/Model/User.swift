@@ -177,11 +177,11 @@ public final class User: DbCoreModel {
             public let email: String
             
             /// Target URI for input form
-            public let redirectUrl: String
+            public let linkUrl: String
             
             enum CodingKeys: String, CodingKey {
                 case email
-                case redirectUrl = "redirect"
+                case linkUrl = "link"
             }
             
         }

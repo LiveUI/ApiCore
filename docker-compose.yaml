@@ -1,0 +1,54 @@
+version: '2.4'
+
+services:
+    api:
+        image: einstore/einstore-base:2.0
+        volumes:
+            - .:/app
+        working_dir: /app
+        restart: on-failure
+        environment:
+            APICORE_STORAGE_LOCAL_ROOT: /home/apicore
+
+            APICORE_SERVER_NAME: "ApiCore"
+            APICORE_SERVER_PATH_PREFIX: ~
+            APICORE_SERVER_MAX_UPLOAD_FILESIZE: 800
+
+            APICORE_DATABASE_HOST: postgres
+            APICORE_DATABASE_USER: apicore
+            APICORE_DATABASE_PASSWORD: apicore
+            APICORE_DATABASE_DATABASE: apicore
+            APICORE_DATABASE_PORT: 5432
+            APICORE_DATABASE_LOGGING: 'false'
+
+            APICORE_STORAGE_S3_ENABLED: 'false'
+
+            APICORE_JWT_SECRET: secret
+
+        command: ["swift", "run", "ApiCoreRun", "serve", "--hostname", "0.0.0.0", "--port", "8080"]
+
+    postgres:
+        image: postgres:11-alpine
+        restart: always
+        environment:
+            POSTGRES_USER: apicore
+            POSTGRES_PASSWORD: apicore
+            POSTGRES_DB: apicore
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U apicore"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    adminer:
+        image: michalhosna/adminer:master
+        environment:
+            ADMINER_DB: apicore
+            ADMINER_DRIVER: pgsql
+            ADMINER_PASSWORD: apicore
+            ADMINER_SERVER: postgres
+            ADMINER_USERNAME: apicore
+            ADMINER_AUTOLOGIN: 1
+            ADMINER_NAME: ApiCore
+        depends_on:
+            - postgres

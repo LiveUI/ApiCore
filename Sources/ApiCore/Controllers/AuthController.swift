@@ -85,7 +85,7 @@ public class AuthController: Controller {
         }
         
         // Forgotten password
-        router.post("auth", "start-recovery") { req -> Future<Response> in
+        router.post("auth", "recovery") { req -> Future<Response> in
             // Read user email & redirect url from request
             return try User.Auth.EmailConfirmation.fill(post: req).flatMap(to: Response.self) { recoveryData in
                 // Fetch the user by email
@@ -104,7 +104,7 @@ public class AuthController: Controller {
                     
                     let templateModel = try User.Auth.InputTemplate(
                         verification: jwtToken,
-                        link: recoveryData.redirectUrl + "?token=" + jwtToken,
+                        link: recoveryData.linkUrl + "?token=" + jwtToken,
                         type: .passwordRecovery,
                         user: user,
                         on: req
@@ -131,7 +131,7 @@ public class AuthController: Controller {
         }
         
         // Finish password recovery process
-        router.post("auth", "finish-recovery") { req -> Future<User> in
+        router.post("auth", "recovery", "finish") { req -> Future<User.Display> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -170,7 +170,9 @@ public class AuthController: Controller {
                     }
                     
                     // Save new password
-                    return user.save(on: req)
+                    return user.save(on: req).map() { user in
+                        return user.asDisplay()
+                    }
                 }
             }
         }

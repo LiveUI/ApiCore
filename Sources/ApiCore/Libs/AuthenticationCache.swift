@@ -48,14 +48,14 @@ struct JWTConfirmEmailPayload: JWTPayload, EmailRedirects {
     var type: JWTService.TokenType
     
     /// Redirection URL
-    var redirectUrl: String
+    var linkUrl: String
     
     enum CodingKeys: String, CodingKey {
         case exp
         case userId = "user_id"
         case email
         case type
-        case redirectUrl = "redirect"
+        case linkUrl = "link"
     }
     
     /// Verify
@@ -124,7 +124,7 @@ final class JWTService: Service {
                 userId: user.id,
                 email: user.email,
                 type: type,
-                redirectUrl: redirects.redirectUrl
+                linkUrl: redirects.linkUrl
             )
         )
         

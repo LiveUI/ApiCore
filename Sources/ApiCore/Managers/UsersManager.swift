@@ -14,7 +14,7 @@ import Templator
 
 
 public protocol EmailRedirects {
-    var redirectUrl: String { get }
+    var linkUrl: String { get }
 }
 
 
@@ -76,7 +76,7 @@ public class UsersManager {
             // TODO: Add base64 encoded server image to the template!!!
             let templateModel = try User.EmailTemplate(
                 verification: jwtToken,
-                link: req.serverURL().absoluteString.finished(with: "/") + "users/\(isInvite ? "input-invite" : "verify")?token=" + jwtToken,
+                link: redirects.linkUrl + "?token=" + jwtToken,
                 user: user,
                 sender: isInvite ? req.me.user() : nil
             )

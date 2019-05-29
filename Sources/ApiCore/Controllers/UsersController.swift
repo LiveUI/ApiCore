@@ -120,34 +120,6 @@ public class UsersController: Controller {
                 }
             }
         }
-    
-        secure.get("users", "verify") { req -> Future<User> in
-            let jwtService: JWTService = try req.make()
-            guard let token = req.query.token else {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            
-            // Get user payload
-            guard let verifyPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
-                throw ErrorsCore.HTTPError.notAuthorized
-            }
-            try verifyPayload.exp.verifyNotExpired()
-            guard verifyPayload.type == .registration || verifyPayload.type == .invitation else {
-                throw AuthError.invalidToken
-            }
-            
-            return User.query(on: req).filter(\User.id == verifyPayload.userId).first().flatMap() { user in
-                // Validate user
-                guard let user = user else {
-                    throw ErrorsCore.HTTPError.notFound
-                }
-                
-                // If no error save
-                user.verified = true
-                
-                return user.save(on: req)
-            }
-        }
         
         // Registration
         router.post("users") { req -> Future<Response> in
@@ -189,6 +161,36 @@ public class UsersController: Controller {
             }
         }
         
+        secure.get("users", "verify") { req -> Future<User.Display> in
+            let jwtService: JWTService = try req.make()
+            guard let token = req.query.token else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            
+            // Get user payload
+            guard let verifyPayload = try? JWT<JWTConfirmEmailPayload>(from: token, verifiedUsing: jwtService.signer).payload else {
+                throw ErrorsCore.HTTPError.notAuthorized
+            }
+            try verifyPayload.exp.verifyNotExpired()
+            guard verifyPayload.type == .registration || verifyPayload.type == .invitation else {
+                throw AuthError.invalidToken
+            }
+            
+            return User.query(on: req).filter(\User.id == verifyPayload.userId).first().flatMap() { user in
+                // Validate user
+                guard let user = user, !user.username.isEmpty else {
+                    throw ErrorsCore.HTTPError.notFound
+                }
+                
+                // If no error save
+                user.verified = true
+                
+                return user.save(on: req).map() { user in
+                    return user.asDisplay()
+                }
+            }
+        }
+        
         // Invitation
         secure.post("users", "invite") { req -> Future<Response> in
             guard ApiCoreBase.configuration.auth.allowInvitations == true else {
@@ -198,7 +200,7 @@ public class UsersController: Controller {
         }
         
         // Finish invitation
-        router.post("users", "finish-invitation") { req -> Future<User> in
+        router.post("users", "invite", "finish") { req -> Future<User.Display> in
             let jwtService: JWTService = try req.make()
             guard let token = req.query.token else {
                 throw ErrorsCore.HTTPError.notAuthorized
@@ -240,7 +242,9 @@ public class UsersController: Controller {
                         }
                         
                         // Save new password
-                        return user.save(on: req)
+                        return user.save(on: req).map() { user in
+                            return user.asDisplay()
+                        }
                     }
                 }
             }

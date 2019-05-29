@@ -70,7 +70,7 @@ public final class Auth: Controller {
     ///
     /// - Parameters:
     ///   - user: Information about the user from the service
-    ///   - redirectUrl: Redirect URL (usually kept in a session when user is redirected from a website)
+    ///   - linkUrl: Redirect URL (usually kept in a session when user is redirected from a website)
     ///   - auth: Original authenticator service type
     ///   - req: Request
     /// - Returns: Redirect to the desired frontend url with JWT signed data
