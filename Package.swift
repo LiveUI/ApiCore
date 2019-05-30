@@ -11,6 +11,9 @@ let package = Package(
         .library(name: "ApiCoreTestTools", targets: ["ApiCoreTestTools"])
     ],
     dependencies: [
+        // Following package has this one as dependency
+        .package(url: "https://github.com/LiveUI/SettingsCore.git", .branch("master")),
+        
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
         .package(url: "https://github.com/vapor/core.git", from: "3.4.1"),
         .package(url: "https://github.com/vapor/crypto.git", from: "3.2.0"),
