@@ -77,9 +77,9 @@
         "package": "ErrorsCore",
         "repositoryURL": "https://github.com/LiveUI/ErrorsCore.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "55e2ea6eed175809e0e8b47db3c8cf80de5d28f1",
-          "version": null
+          "version": "0.1.0"
         }
       },
       {
@@ -104,9 +104,9 @@
         "package": "FluentTestTools",
         "repositoryURL": "https://github.com/LiveUI/FluentTestTools.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "d2e2adcc1d0c375328383cf5d89bc76778f5e78d",
-          "version": null
+          "version": "0.1.0"
         }
       },
       {
@@ -158,9 +158,9 @@
         "package": "MailCore",
         "repositoryURL": "https://github.com/LiveUI/MailCore.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "b921d882715cdebdc8f03e79e3f0dd78a65ba4c4",
-          "version": null
+          "version": "0.2.3"
         }
       },
       {
@@ -194,9 +194,9 @@
         "package": "S3",
         "repositoryURL": "https://github.com/LiveUI/S3.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "48367b8256bcc71becf573f427973da5192a6845",
-          "version": null
+          "version": "3.0.0"
         }
       },
       {
