@@ -56,6 +56,9 @@ public struct Info: Content {
         /// Gitlab teams
         public let allowedGitlabGroups: [String]
         
+        /// Commit hash (if available, n/a otherwise)
+        public let commit: String
+        
         enum CodingKeys: String, CodingKey {
             case allowLogin = "allow_login"
             case singleTeam = "single_team"
@@ -67,6 +70,7 @@ public struct Info: Content {
             case allowedGithubTeams = "allowed_github_teams"
             case gitlabEnabled = "gitlab_enabled"
             case allowedGitlabGroups = "allowed_gitlab_groups"
+            case commit
         }
         
     }
@@ -104,6 +108,16 @@ public struct Info: Content {
             let url = try fm.url(for: "server/image/\($0.rawValue)", on: req)
             return Info.Icon(size: $0, url: url)
         })
+        
+        let dc = DirectoryConfig.detect()
+        let url = URL(fileURLWithPath: dc.workDir).appendingPathComponent("Resources").appendingPathComponent("commit.txt")
+        let commit: String
+        if FileManager.default.fileExists(atPath: url.path), let c = try? String(contentsOfFile: url.path) {
+            commit = c
+        } else {
+            commit = "n/a"
+        }
+        
         config = Config(
             singleTeam: ApiCoreBase.configuration.general.singleTeam,
             allowLogin: ApiCoreBase.configuration.auth.allowLogin,
@@ -114,7 +128,8 @@ public struct Info: Content {
             githubEnabled: ApiCoreBase.configuration.auth.github.enabled,
             allowedGithubTeams: ApiCoreBase.configuration.auth.github.teams,
             gitlabEnabled: ApiCoreBase.configuration.auth.gitlab.enabled,
-            allowedGitlabGroups: ApiCoreBase.configuration.auth.gitlab.groups
+            allowedGitlabGroups: ApiCoreBase.configuration.auth.gitlab.groups,
+            commit: commit
         )
     }
     
