@@ -74,15 +74,6 @@
         }
       },
       {
-        "package": "ErrorsCore",
-        "repositoryURL": "https://github.com/LiveUI/ErrorsCore.git",
-        "state": {
-          "branch": null,
-          "revision": "55e2ea6eed175809e0e8b47db3c8cf80de5d28f1",
-          "version": "0.1.0"
-        }
-      },
-      {
         "package": "Fluent",
         "repositoryURL": "https://github.com/vapor/fluent.git",
         "state": {
@@ -98,15 +89,6 @@
           "branch": null,
           "revision": "8e3eb9d24d54ac58c8d04c194ad6b24f0b1b667e",
           "version": "1.0.0"
-        }
-      },
-      {
-        "package": "FluentTestTools",
-        "repositoryURL": "https://github.com/LiveUI/FluentTestTools.git",
-        "state": {
-          "branch": null,
-          "revision": "d2e2adcc1d0c375328383cf5d89bc76778f5e78d",
-          "version": "0.1.0"
         }
       },
       {

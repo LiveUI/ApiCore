@@ -14,3 +14,4 @@ DerivedData/
 
 *.xcodeproj
 !empty
+.swiftpm
