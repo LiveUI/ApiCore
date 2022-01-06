@@ -14,19 +14,20 @@ extension ApiCoreBase {
     
     static func setupDatabase(_ services: inout Services) throws {
         // Migrate models / tables
-        add(model: Team.self, database: .db)
-        add(model: User.self, database: .db)
-        add(model: TeamUser.self, database: .db)
-        add(model: Token.self, database: .db)
-        add(model: ErrorLog.self, database: .db)
-        add(model: System.self, database: .db)
-        add(model: Setting.self, database: .db)
+        
+        add(model: Team.self, database: .psql)
+        add(model: User.self, database: .psql)
+        add(model: TeamUser.self, database: .psql)
+        add(model: Token.self, database: .psql)
+        add(model: ErrorLog.self, database: .psql)
+        add(model: System.self, database: .psql)
+        add(model: Setting.self, database: .psql)
         
         // Data migrations
-        migrationConfig.add(migration: BaseMigration.self, database: .db)
+        migrationConfig.add(migration: BaseMigration.self, database: .psql)
         
         // Set database on tables that don't have migration
-        FluentDesign.defaultDatabase = .db
+        FluentDesign.defaultDatabase = .psql
         
         // Database - Load database details
         let host = configuration.database.host ?? "localhost"
@@ -50,7 +51,7 @@ extension ApiCoreBase {
     }
     
     /// Add / register model
-    public static func add<Model>(model: Model.Type, database: DatabaseIdentifier<Model.Database>) where Model: Fluent.Migration, Model: Fluent.Model, Model.Database: SchemaSupporting {
+    public static func add<Model>(model: Model.Type, database: DatabaseIdentifier<Model.Database>) where Model: Fluent.Migration, Model: Fluent.Model, Model.Database: Database {
         models.append(model)
         migrationConfig.add(model: model, database: database)
     }

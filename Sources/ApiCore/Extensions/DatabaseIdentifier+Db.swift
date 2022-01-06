@@ -14,7 +14,7 @@ extension DatabaseIdentifier {
     
     /// Default databse identifier
     public static var db: DatabaseIdentifier<ApiCoreDatabase> {
-        return .init("psql")
+        return .psql
     }
     
 }

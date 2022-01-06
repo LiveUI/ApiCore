@@ -18,11 +18,11 @@ class ApiCoreDb {
         var databaseConfig = DatabasesConfig()
         let config = PostgreSQLDatabaseConfig(hostname: hostname, port: port, username: user, database: database, password: password)
         let database = ApiCoreDatabase(config: config)
-        databaseConfig.add(database: database, as: .db)
+        databaseConfig.add(database: database, as: .psql)
         
         // Enable SQL logging if required
         if ApiCoreBase.configuration.database.logging {
-            databaseConfig.enableLogging(on: .db)
+            databaseConfig.enableLogging(on: .psql)
         }
         
         return databaseConfig

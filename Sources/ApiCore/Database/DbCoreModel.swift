@@ -19,6 +19,8 @@ public protocol DbCoreModel: PostgreSQLUUIDModel, Content, Equatable { }
 
 extension DbCoreModel {
     
+    public typealias Database = ApiCoreDatabase
+    
     public static func ==(lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id
     }

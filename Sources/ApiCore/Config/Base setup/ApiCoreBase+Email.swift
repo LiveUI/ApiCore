@@ -15,7 +15,7 @@ extension ApiCoreBase {
     static func setupEmails(_ services: inout Services) throws {
         let mail: Mailer.Config
         if !configuration.mail.mailgun.key.isEmpty, !configuration.mail.mailgun.domain.isEmpty {
-            mail = Mailer.Config.mailgun(key: configuration.mail.mailgun.key, domain: configuration.mail.mailgun.domain)
+            mail = Mailer.Config.mailgun(key: configuration.mail.mailgun.key, domain: configuration.mail.mailgun.domain, region: .eu)
             print("Configuring Mailgun for domain \(configuration.mail.mailgun.domain) as the main mailing service")
         } else if !configuration.mail.smtp.isEmpty {
             let parts = configuration.mail.smtp.split(separator: ";")

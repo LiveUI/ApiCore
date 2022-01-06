@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import S3Signer
+import Mailgun
 
 
 /// Configuration object
@@ -241,10 +242,14 @@ public final class Configuration: Configurable {
             /// Mailgun API key
             public var key: String
             
+            /// Mailgun region
+            public var region: String
+            
             /// Initializer
-            init(domain: String, key: String) {
+            init(domain: String, key: String, region: String) {
                 self.domain = domain
                 self.key = key
+                self.region = region
             }
             
         }
@@ -414,7 +419,7 @@ extension Configuration {
         load("APICORE_AUTH_ALLOW_LOGIN", to: &auth.allowLogin)
         load("APICORE_AUTH_ALLOW_REGISTRATIONS", to: &auth.allowRegistrations)
         load("APICORE_AUTH_REGISTRATION_DOMAINS", to: &auth.allowedDomainsForRegistration)
-        load("APICORE_AUTH_ALLOW_REGISTRATIONS", to: &auth.allowInvitations)
+        load("APICORE_AUTH_ALLOW_INVITATIONS", to: &auth.allowInvitations)
         load("APICORE_AUTH_INVITATION_DOMAINS", to: &auth.allowedDomainsForInvitations)
         
         load("APICORE_AUTH_GITHUB_ENABLED", to: &auth.github.enabled)
@@ -442,6 +447,7 @@ extension Configuration {
         
         load("APICORE_MAIL_MAILGUN_DOMAIN", to: &mail.mailgun.domain)
         load("APICORE_MAIL_MAILGUN_KEY", to: &mail.mailgun.key)
+        load("APICORE_MAIL_MAILGUN_REGION", to: &mail.mailgun.region)
         
         load("APICORE_MAIL_TEMPLATES", to: &mail.templates)
         
@@ -521,7 +527,8 @@ extension Configuration {
             mail: Configuration.Mail(
                 mailgun: Configuration.Mail.MailGun(
                     domain: "",
-                    key: ""
+                    key: "",
+                    region: "eu"
                 ),
                 smtp: "",
                 templates: "https://raw.githubusercontent.com/Einstore/BaseEmailTemplates/master/templates.json"

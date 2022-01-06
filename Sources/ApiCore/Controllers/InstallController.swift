@@ -73,7 +73,7 @@ extension InstallController {
     /// Uninstall all data and drop all tables
     private static func uninstall(on req: Request) throws -> Future<Response> {
         var futures: [Future<Void>] = []
-        return req.requestPooledConnection(to: .db).flatMap(to: Response.self) { connection in
+        return req.requestPooledConnection(to: .psql).flatMap(to: Response.self) { connection in
             futures.append(ApiCoreBase.migrationConfig.revertAll(on: req))
             return futures.flatten(on: req).map(to: Response.self) { _ in
                 return try req.response.maintenanceFinished(message: "Uninstall finished, there are no data nor tables in the database; Please run `/install` before you continue")
